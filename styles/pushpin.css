@@ -1,0 +1,680 @@
+/*
+ * Pushpin Design System — design tokens
+ *
+ * GENERATED FILE. Do not edit by hand.
+ * Source: Pushpin Thumbprint UI Kit, Figma file VVRGrLgkPRU3vs765d5Q3r
+ * Rebuild: node scripts/build-css.mjs
+ *
+ * Custom property names mirror Figma variable paths: the Figma variable
+ * `background/brand/strong` is `--pp-background-brand-strong` here.
+ */
+
+:root {
+
+  /* ── Base colors ─────────────────────────────────────────────────────── */
+  --pp-color-gray-50: #f5f6f6;
+  --pp-color-gray-100: #eeeff2;
+  --pp-color-gray-200: #dddee1;
+  --pp-color-gray-300: #b9bbbf;
+  --pp-color-gray-400: #83878d;
+  --pp-color-gray-500: #686c72;
+  --pp-color-gray-600: #595c61;
+  --pp-color-gray-700: #4c4e52;
+  --pp-color-gray-800: #383a3d;
+  --pp-color-gray-900: #2b2d2f;
+  --pp-color-gray-950: #1f2022;
+  --pp-color-blue-50: #f0faff;
+  --pp-color-blue-100: #e0f4fe;
+  --pp-color-blue-200: #b9ebfe;
+  --pp-color-blue-300: #7cdcfd;
+  --pp-color-blue-400: #36ccfa;
+  --pp-color-blue-500: #0cb6eb;
+  --pp-color-blue-600: #009fd9;
+  --pp-color-blue-700: #0175a3;
+  --pp-color-blue-800: #066286;
+  --pp-color-blue-900: #0b516f;
+  --pp-color-blue-950: #07344a;
+  --pp-color-green-50: #eefbf4;
+  --pp-color-green-100: #d6f5e3;
+  --pp-color-green-200: #b0eacb;
+  --pp-color-green-300: #7cd9ae;
+  --pp-color-green-400: #47c08c;
+  --pp-color-green-500: #24a571;
+  --pp-color-green-600: #16855b;
+  --pp-color-green-700: #126a4b;
+  --pp-color-green-800: #10553c;
+  --pp-color-green-900: #0e4633;
+  --pp-color-green-950: #07271d;
+  --pp-color-indigo-50: #eff4fe;
+  --pp-color-indigo-100: #e1edfe;
+  --pp-color-indigo-200: #c9dbfc;
+  --pp-color-indigo-300: #a8c3f9;
+  --pp-color-indigo-400: #85a1f4;
+  --pp-color-indigo-500: #6881ec;
+  --pp-color-indigo-600: #5968e2;
+  --pp-color-indigo-700: #3d4ac5;
+  --pp-color-indigo-800: #34409f;
+  --pp-color-indigo-900: #313b7e;
+  --pp-color-indigo-950: #1d2249;
+  --pp-color-purple-50: #f6f4fe;
+  --pp-color-purple-100: #efebfc;
+  --pp-color-purple-200: #dfdbf9;
+  --pp-color-purple-300: #c8bdf5;
+  --pp-color-purple-400: #ab98ed;
+  --pp-color-purple-500: #906ee4;
+  --pp-color-purple-600: #7f4fd8;
+  --pp-color-purple-700: #6637b6;
+  --pp-color-purple-800: #5d32a5;
+  --pp-color-purple-900: #4d2b87;
+  --pp-color-purple-950: #301a5b;
+  --pp-color-red-50: #fef2f2;
+  --pp-color-red-100: #fee2e2;
+  --pp-color-red-200: #fecaca;
+  --pp-color-red-300: #fca5a5;
+  --pp-color-red-400: #f87171;
+  --pp-color-red-500: #ef4444;
+  --pp-color-red-600: #dc2626;
+  --pp-color-red-700: #b91c1c;
+  --pp-color-red-800: #991b1b;
+  --pp-color-red-900: #7f1d1d;
+  --pp-color-red-950: #450a0a;
+  --pp-color-yellow-50: #fefce8;
+  --pp-color-yellow-100: #fef9c3;
+  --pp-color-yellow-200: #fef08a;
+  --pp-color-yellow-300: #fde047;
+  --pp-color-yellow-400: #facc15;
+  --pp-color-yellow-500: #eab308;
+  --pp-color-yellow-600: #ca8a04;
+  --pp-color-yellow-700: #a16207;
+  --pp-color-yellow-800: #854d0e;
+  --pp-color-yellow-900: #713f12;
+  --pp-color-yellow-950: #422006;
+  --pp-color-system-white: #ffffff;
+  --pp-color-system-black: #000000;
+  --pp-color-alpha-50: #1f20220d;
+  --pp-color-alpha-100: #1f20221a;
+  --pp-color-alpha-200: #1f202233;
+  --pp-color-alpha-300: #1f20224d;
+  --pp-color-alpha-400: #1f202266;
+  --pp-color-alpha-500: #1f202280;
+  --pp-color-alpha-600: #1f202299;
+  --pp-color-alpha-700: #1f2022b2;
+  --pp-color-alpha-800: #1f2022cc;
+  --pp-color-alpha-900: #1f2022e5;
+  --pp-color-alpha-950: #1f2022f2;
+
+  /* ── Semantic colors (Light) ─────────────────────────────────────────── */
+  --pp-background-neutral-default: var(--pp-color-system-white);
+  --pp-background-neutral-low: var(--pp-color-gray-50);
+  --pp-background-neutral-medium: var(--pp-color-gray-100);
+  --pp-background-neutral-strong: var(--pp-color-gray-300);
+  --pp-background-neutral-heavy: var(--pp-color-gray-500);
+  --pp-background-neutral-inverse: var(--pp-color-gray-950);
+  --pp-background-neutral-inverse-hover: var(--pp-color-gray-800);
+  --pp-background-neutral-default-hover: var(--pp-color-blue-50);
+  --pp-background-neutral-default-pressed: var(--pp-color-blue-100);
+  --pp-background-neutral-default-active: var(--pp-color-blue-100);
+  --pp-background-neutral-low-hover: var(--pp-color-blue-50);
+  --pp-background-neutral-low-pressed: var(--pp-color-blue-100);
+  --pp-background-neutral-strong-active: var(--pp-color-gray-950);
+  --pp-background-brand-low: var(--pp-color-blue-100);
+  --pp-background-brand-low-hover: var(--pp-color-blue-200);
+  --pp-background-brand-medium: var(--pp-color-blue-700);
+  --pp-background-brand-medium-active: var(--pp-color-blue-600);
+  --pp-background-brand-strong: var(--pp-color-blue-950);
+  --pp-background-brand-strong-hover: var(--pp-color-gray-950);
+  --pp-background-brand-strong-pressed: var(--pp-color-blue-950);
+  --pp-background-info-low: var(--pp-color-indigo-100);
+  --pp-background-info-medium: var(--pp-color-indigo-700);
+  --pp-background-info-strong: var(--pp-color-indigo-950);
+  --pp-background-success-low: var(--pp-color-green-100);
+  --pp-background-success-medium: var(--pp-color-green-700);
+  --pp-background-success-strong: var(--pp-color-green-950);
+  --pp-background-warning-low: var(--pp-color-yellow-50);
+  --pp-background-warning-medium: var(--pp-color-yellow-600);
+  --pp-background-warning-strong: var(--pp-color-yellow-950);
+  --pp-background-alert-low: var(--pp-color-red-50);
+  --pp-background-alert-medium: var(--pp-color-red-600);
+  --pp-background-alert-medium-hover: var(--pp-color-red-700);
+  --pp-background-alert-medium-pressed: var(--pp-color-red-800);
+  --pp-background-alert-strong: var(--pp-color-red-950);
+  --pp-background-caution-low: var(--pp-color-yellow-50);
+  --pp-background-caution-low-hover: var(--pp-color-red-50);
+  --pp-background-caution-low-pressed: var(--pp-color-red-100);
+  --pp-background-disabled-low: var(--pp-background-neutral-low);
+  --pp-background-disabled-medium: var(--pp-color-gray-200);
+  --pp-background-ratings-default: var(--pp-background-neutral-default);
+  --pp-background-ratings-default-active: var(--pp-color-yellow-400);
+  --pp-border-neutral-default: var(--pp-color-gray-200);
+  --pp-border-neutral-default-active: var(--pp-color-blue-600);
+  --pp-border-neutral-default-pressed: var(--pp-color-gray-200);
+  --pp-border-neutral-default-disabled: var(--pp-background-neutral-low);
+  --pp-border-neutral-medium: var(--pp-color-gray-300);
+  --pp-border-neutral-medium-disabled: var(--pp-color-gray-200);
+  --pp-border-neutral-strong: var(--pp-color-gray-950);
+  --pp-border-neutral-strong-active: var(--pp-color-gray-950);
+  --pp-border-neutral-low-active: var(--pp-color-gray-950);
+  --pp-border-neutral-inverse: var(--pp-background-neutral-default);
+  --pp-border-disabled-default: var(--pp-background-neutral-low);
+  --pp-border-disabled-medium: var(--pp-color-gray-200);
+  --pp-border-alert-default: var(--pp-color-red-600);
+  --pp-border-alert-default-pressed: var(--pp-color-red-700);
+  --pp-border-alert-strong-pressed: var(--pp-color-red-800);
+  --pp-border-ratings-default: var(--pp-color-yellow-700);
+  --pp-text-neutral-default: var(--pp-color-gray-950);
+  --pp-text-neutral-medium: var(--pp-color-gray-600);
+  --pp-text-neutral-inverse: var(--pp-color-system-white);
+  --pp-text-disabled: var(--pp-color-gray-300);
+  --pp-text-brand-medium: var(--pp-color-blue-600);
+  --pp-text-brand-strong: var(--pp-color-blue-950);
+  --pp-text-on-brand-strong: var(--pp-color-blue-300);
+  --pp-text-on-brand-default: var(--pp-link-brand-default);
+  --pp-text-info-medium: var(--pp-color-indigo-600);
+  --pp-text-info-strong: var(--pp-color-indigo-950);
+  --pp-text-success-medium: var(--pp-color-green-600);
+  --pp-text-success-strong: var(--pp-color-green-950);
+  --pp-text-warning-medium: var(--pp-color-yellow-600);
+  --pp-text-warning-strong: var(--pp-color-yellow-900);
+  --pp-text-alert-medium: var(--pp-color-red-600);
+  --pp-text-alert-strong: var(--pp-color-red-950);
+  --pp-heading-neutral-default: var(--pp-color-gray-950);
+  --pp-heading-neutral-medium: var(--pp-color-gray-600);
+  --pp-heading-neutral-low: var(--pp-color-gray-500);
+  --pp-heading-neutral-inverse: var(--pp-color-system-white);
+  --pp-link-neutral-default: var(--pp-text-neutral-default);
+  --pp-link-neutral-default-hover: var(--pp-color-blue-600);
+  --pp-link-neutral-low: var(--pp-text-neutral-medium);
+  --pp-link-neutral-inverse: var(--pp-background-neutral-default);
+  --pp-link-brand-default: var(--pp-color-blue-700);
+  --pp-link-on-brand-strong: var(--pp-color-blue-300);
+  --pp-link-alert-default: var(--pp-text-alert-medium);
+  --pp-icon-neutral-default: var(--pp-color-gray-950);
+  --pp-icon-neutral-medium: var(--pp-color-gray-600);
+  --pp-icon-neutral-low: var(--pp-color-gray-400);
+  --pp-icon-neutral-inverse: var(--pp-color-system-white);
+  --pp-icon-disabled: var(--pp-color-gray-300);
+  --pp-icon-brand-default: var(--pp-color-blue-600);
+  --pp-icon-brand-low: var(--pp-color-blue-400);
+  --pp-icon-brand-strong: var(--pp-color-blue-950);
+  --pp-icon-on-brand-strong: var(--pp-color-blue-300);
+  --pp-icon-info-default: var(--pp-color-indigo-600);
+  --pp-icon-info-low: var(--pp-color-indigo-400);
+  --pp-icon-info-strong: var(--pp-color-indigo-950);
+  --pp-icon-success-default: var(--pp-color-green-600);
+  --pp-icon-success-low: var(--pp-color-green-400);
+  --pp-icon-success-strong: var(--pp-color-green-950);
+  --pp-icon-warning-default: var(--pp-color-yellow-600);
+  --pp-icon-warning-low: var(--pp-color-yellow-400);
+  --pp-icon-warning-strong: var(--pp-color-yellow-950);
+  --pp-icon-alert-default: var(--pp-color-red-600);
+  --pp-icon-alert-low: var(--pp-color-red-400);
+  --pp-icon-alert-strong: var(--pp-color-red-950);
+  --pp-data-info-low: var(--pp-color-indigo-200);
+  --pp-data-info-medium: var(--pp-color-indigo-600);
+  --pp-data-info-strong: var(--pp-color-indigo-950);
+  --pp-shadow-1: var(--pp-color-alpha-800);
+
+  /* ── Spacing ─────────────────────────────────────────────────────────── */
+  --pp-space-1: 4px;
+  --pp-space-2: 8px;
+  --pp-space-3: 12px;
+  --pp-space-4: 16px;
+  --pp-space-5: 20px;
+  --pp-space-6: 24px;
+  --pp-space-7: 32px;
+  --pp-space-8: 48px;
+  --pp-space-9: 64px;
+  --pp-space-10: 96px;
+  --pp-space-11: 128px;
+  --pp-space-12: 192px;
+  --pp-space-13: 256px;
+
+  /* ── Corner radius ───────────────────────────────────────────────────── */
+  --pp-radius-none: 0px;
+  --pp-radius-xsmall: 4px;
+  --pp-radius-small: 6px;
+  --pp-radius-medium: 8px;
+  --pp-radius-large: 12px;
+  --pp-radius-xlarge: 16px;
+  --pp-radius-xxlarge: 24px;
+  --pp-radius-sides: 9999px;
+  --pp-radius-full: 50%;
+
+  /* ── Font family ─────────────────────────────────────────────────────── */
+  --pp-font-family: "Thumbtack Rise", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* ── Font weight ─────────────────────────────────────────────────────── */
+  --pp-font-weight-regular: 400;
+  --pp-font-weight-medium-regular: 563;
+  --pp-font-weight-medium: 590;
+  --pp-font-weight-medium-bold: 660;
+  --pp-font-weight-bold: 700;
+
+  /* ── Type scale (native — see @media below for desktop) ──────────────── */
+  --pp-font-size-hero: 48px;
+  --pp-line-height-hero: 50.4px;
+  --pp-font-weight-hero: var(--pp-font-weight-medium-regular);
+  --pp-font-size-title-1: 36px;
+  --pp-line-height-title-1: 37.8px;
+  --pp-font-weight-title-1: var(--pp-font-weight-medium-regular);
+  --pp-font-size-title-2: 28px;
+  --pp-line-height-title-2: 30.8px;
+  --pp-font-weight-title-2: var(--pp-font-weight-medium-regular);
+  --pp-font-size-title-3: 22px;
+  --pp-line-height-title-3: 24.2px;
+  --pp-font-weight-title-3: var(--pp-font-weight-medium);
+  --pp-font-size-title-4: 20px;
+  --pp-line-height-title-4: 24px;
+  --pp-font-weight-title-4: var(--pp-font-weight-medium-bold);
+  --pp-font-size-title-5: 18px;
+  --pp-line-height-title-5: 21.6px;
+  --pp-font-weight-title-5: var(--pp-font-weight-medium-bold);
+  --pp-font-size-title-6: 16px;
+  --pp-line-height-title-6: 19.2px;
+  --pp-font-weight-title-6: var(--pp-font-weight-medium-bold);
+  --pp-font-size-title-7: 14px;
+  --pp-line-height-title-7: 16.8px;
+  --pp-font-weight-title-7: var(--pp-font-weight-medium-bold);
+  --pp-font-size-title-8: 12px;
+  --pp-line-height-title-8: 14.4px;
+  --pp-font-weight-title-8: var(--pp-font-weight-medium-bold);
+  --pp-font-size-body-1: 16px;
+  --pp-line-height-body-1: 22.4px;
+  --pp-font-weight-body-1: var(--pp-font-weight-regular);
+  --pp-font-size-body-2: 14px;
+  --pp-line-height-body-2: 19.6px;
+  --pp-font-weight-body-2: var(--pp-font-weight-regular);
+  --pp-font-size-body-3: 12px;
+  --pp-line-height-body-3: 16.8px;
+  --pp-font-weight-body-3: var(--pp-font-weight-regular);
+  --pp-font-size-body-4: 10px;
+  --pp-line-height-body-4: 14px;
+  --pp-font-weight-body-4: var(--pp-font-weight-regular);
+
+  /* ── Line height ratios ──────────────────────────────────────────────── */
+  --pp-leading-flat: 1;
+  --pp-leading-heading-1: 1.05;
+  --pp-leading-heading-2: 1.1;
+  --pp-leading-heading-3: 1.2;
+  --pp-leading-text-1: 1.2;
+  --pp-leading-text-2: 1.4;
+  --pp-leading-text-3: 1.6;
+  --pp-leading-text-4: 1.9;
+
+  /* ── Letter spacing ──────────────────────────────────────────────────── */
+  --pp-tracking-loose: 0.01em;
+  --pp-tracking-tight: -0.01em;
+  --pp-tracking-extra-tight: -0.02em;
+
+  /* ── Elevation ───────────────────────────────────────────────────────── */
+  --pp-shadow-100: 0px 1px 3px rgba(0, 0, 0, 0.1);
+  --pp-shadow-200: 0px 2px 4px rgba(0, 0, 0, 0.15);
+  --pp-shadow-300: 0px 2px 7px rgba(0, 0, 0, 0.15);
+  --pp-shadow-400: 0px 2px 10px rgba(0, 0, 0, 0.2);
+
+  /* ── Motion ──────────────────────────────────────────────────────────── */
+  --pp-duration-1: 75ms;
+  --pp-duration-2: 150ms;
+  --pp-duration-3: 200ms;
+  --pp-duration-4: 250ms;
+  --pp-duration-5: 300ms;
+  --pp-duration-6: 350ms;
+  --pp-ease-in: cubic-bezier(0.50, 0, 1, 1);
+  --pp-ease-out: cubic-bezier(0, 0, 0.40, 1);
+  --pp-ease-in-out: cubic-bezier(0.45, 0, 0.40, 1);
+
+  /* ── Breakpoints ─────────────────────────────────────────────────────── */
+  --pp-breakpoint-small: 481px;
+  --pp-breakpoint-medium: 700px;
+  --pp-breakpoint-large: 1025px;
+  --pp-breakpoint-split-view-small: 769px;
+  --pp-breakpoint-split-view-medium: 1060px;
+
+  /* ── Scrim, wrap, z-index ────────────────────────────────────────────── */
+  --pp-scrim-light-80: rgba(255, 255, 255, 0.8);
+  --pp-scrim-dark-80: rgba(0, 0, 0, 0.8);
+  --pp-wrap-max-width: 946px;
+  --pp-wrap-no-pad-width: 1010px;
+  --pp-z-modal: 200;
+}
+
+/* Dark mode — the Figma "Dark" mode of Tokens / Semantic Colors. */
+[data-pp-theme="dark"] {
+  --pp-background-neutral-default: var(--pp-color-gray-950);
+  --pp-background-neutral-low: var(--pp-color-gray-900);
+  --pp-background-neutral-medium: var(--pp-color-gray-800);
+  --pp-background-neutral-strong: var(--pp-color-gray-700);
+  --pp-background-neutral-heavy: var(--pp-color-gray-300);
+  --pp-background-neutral-inverse: var(--pp-color-system-white);
+  --pp-background-neutral-inverse-hover: var(--pp-color-gray-100);
+  --pp-background-neutral-default-hover: var(--pp-color-blue-950);
+  --pp-background-neutral-default-pressed: var(--pp-color-blue-900);
+  --pp-background-neutral-default-active: var(--pp-color-blue-900);
+  --pp-background-neutral-low-hover: var(--pp-color-blue-950);
+  --pp-background-neutral-low-pressed: var(--pp-color-blue-900);
+  --pp-background-neutral-strong-active: var(--pp-color-gray-50);
+  --pp-background-brand-low: var(--pp-color-blue-950);
+  --pp-background-brand-low-hover: var(--pp-color-blue-900);
+  --pp-background-brand-medium: var(--pp-color-blue-300);
+  --pp-background-brand-medium-active: var(--pp-color-blue-600);
+  --pp-background-brand-strong: var(--pp-color-blue-400);
+  --pp-background-brand-strong-hover: var(--pp-color-blue-500);
+  --pp-background-brand-strong-pressed: var(--pp-color-blue-600);
+  --pp-background-info-low: var(--pp-color-indigo-950);
+  --pp-background-info-medium: var(--pp-color-indigo-300);
+  --pp-background-info-strong: var(--pp-color-indigo-100);
+  --pp-background-success-low: var(--pp-color-green-950);
+  --pp-background-success-medium: var(--pp-color-green-300);
+  --pp-background-success-strong: var(--pp-color-green-100);
+  --pp-background-warning-low: var(--pp-color-yellow-950);
+  --pp-background-warning-medium: var(--pp-color-yellow-300);
+  --pp-background-warning-strong: var(--pp-color-yellow-100);
+  --pp-background-alert-low: var(--pp-color-red-950);
+  --pp-background-alert-medium: var(--pp-color-red-600);
+  --pp-background-alert-medium-hover: var(--pp-color-red-700);
+  --pp-background-alert-medium-pressed: var(--pp-color-red-800);
+  --pp-background-alert-strong: var(--pp-color-red-100);
+  --pp-background-caution-low: var(--pp-color-yellow-950);
+  --pp-background-caution-low-hover: var(--pp-color-red-950);
+  --pp-background-caution-low-pressed: var(--pp-color-red-900);
+  --pp-background-disabled-low: var(--pp-background-neutral-low);
+  --pp-background-disabled-medium: var(--pp-color-gray-800);
+  --pp-background-ratings-default: var(--pp-background-neutral-default);
+  --pp-background-ratings-default-active: var(--pp-color-yellow-500);
+  --pp-border-neutral-default: var(--pp-color-gray-800);
+  --pp-border-neutral-default-active: var(--pp-color-blue-600);
+  --pp-border-neutral-default-pressed: var(--pp-color-gray-700);
+  --pp-border-neutral-default-disabled: var(--pp-background-neutral-low);
+  --pp-border-neutral-medium: var(--pp-color-gray-700);
+  --pp-border-neutral-medium-disabled: var(--pp-color-gray-800);
+  --pp-border-neutral-strong: var(--pp-color-gray-50);
+  --pp-border-neutral-strong-active: var(--pp-color-gray-50);
+  --pp-border-neutral-low-active: var(--pp-color-gray-50);
+  --pp-border-neutral-inverse: var(--pp-color-gray-800);
+  --pp-border-disabled-default: var(--pp-background-neutral-low);
+  --pp-border-disabled-medium: var(--pp-color-gray-800);
+  --pp-border-alert-default: var(--pp-color-red-400);
+  --pp-border-alert-default-pressed: var(--pp-color-red-600);
+  --pp-border-alert-strong-pressed: var(--pp-color-red-600);
+  --pp-border-ratings-default: var(--pp-color-yellow-600);
+  --pp-text-neutral-default: var(--pp-color-gray-50);
+  --pp-text-neutral-medium: var(--pp-color-gray-300);
+  --pp-text-neutral-inverse: var(--pp-color-gray-950);
+  --pp-text-disabled: var(--pp-color-gray-700);
+  --pp-text-brand-medium: var(--pp-color-blue-400);
+  --pp-text-brand-strong: var(--pp-color-blue-100);
+  --pp-text-on-brand-strong: var(--pp-text-neutral-inverse);
+  --pp-text-on-brand-default: var(--pp-link-brand-default);
+  --pp-text-info-medium: var(--pp-color-indigo-400);
+  --pp-text-info-strong: var(--pp-color-indigo-100);
+  --pp-text-success-medium: var(--pp-color-green-400);
+  --pp-text-success-strong: var(--pp-color-green-100);
+  --pp-text-warning-medium: var(--pp-color-yellow-400);
+  --pp-text-warning-strong: var(--pp-color-yellow-100);
+  --pp-text-alert-medium: var(--pp-color-red-400);
+  --pp-text-alert-strong: var(--pp-color-red-100);
+  --pp-heading-neutral-default: var(--pp-color-gray-50);
+  --pp-heading-neutral-medium: var(--pp-color-gray-300);
+  --pp-heading-neutral-low: var(--pp-color-gray-300);
+  --pp-heading-neutral-inverse: var(--pp-color-gray-950);
+  --pp-link-neutral-default: var(--pp-text-neutral-default);
+  --pp-link-neutral-default-hover: var(--pp-color-blue-400);
+  --pp-link-neutral-low: var(--pp-text-neutral-medium);
+  --pp-link-neutral-inverse: var(--pp-background-neutral-default);
+  --pp-link-brand-default: var(--pp-color-blue-400);
+  --pp-link-on-brand-strong: var(--pp-color-blue-950);
+  --pp-link-alert-default: var(--pp-text-alert-medium);
+  --pp-icon-neutral-default: var(--pp-color-gray-50);
+  --pp-icon-neutral-medium: var(--pp-color-gray-300);
+  --pp-icon-neutral-low: var(--pp-color-gray-500);
+  --pp-icon-neutral-inverse: var(--pp-color-gray-950);
+  --pp-icon-disabled: var(--pp-color-gray-600);
+  --pp-icon-brand-default: var(--pp-color-blue-400);
+  --pp-icon-brand-low: var(--pp-color-blue-600);
+  --pp-icon-brand-strong: var(--pp-color-blue-100);
+  --pp-icon-on-brand-strong: var(--pp-text-neutral-inverse);
+  --pp-icon-info-default: var(--pp-color-indigo-400);
+  --pp-icon-info-low: var(--pp-color-indigo-600);
+  --pp-icon-info-strong: var(--pp-color-indigo-100);
+  --pp-icon-success-default: var(--pp-color-green-400);
+  --pp-icon-success-low: var(--pp-color-green-600);
+  --pp-icon-success-strong: var(--pp-color-green-100);
+  --pp-icon-warning-default: var(--pp-color-yellow-400);
+  --pp-icon-warning-low: var(--pp-color-yellow-600);
+  --pp-icon-warning-strong: var(--pp-color-yellow-100);
+  --pp-icon-alert-default: var(--pp-color-red-400);
+  --pp-icon-alert-low: var(--pp-color-red-600);
+  --pp-icon-alert-strong: var(--pp-color-red-100);
+  --pp-data-info-low: var(--pp-color-indigo-800);
+  --pp-data-info-medium: var(--pp-color-indigo-400);
+  --pp-data-info-strong: var(--pp-color-indigo-100);
+  --pp-shadow-1: #ffffffcc;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-pp-theme="light"]) {
+    --pp-background-neutral-default: var(--pp-color-gray-950);
+    --pp-background-neutral-low: var(--pp-color-gray-900);
+    --pp-background-neutral-medium: var(--pp-color-gray-800);
+    --pp-background-neutral-strong: var(--pp-color-gray-700);
+    --pp-background-neutral-heavy: var(--pp-color-gray-300);
+    --pp-background-neutral-inverse: var(--pp-color-system-white);
+    --pp-background-neutral-inverse-hover: var(--pp-color-gray-100);
+    --pp-background-neutral-default-hover: var(--pp-color-blue-950);
+    --pp-background-neutral-default-pressed: var(--pp-color-blue-900);
+    --pp-background-neutral-default-active: var(--pp-color-blue-900);
+    --pp-background-neutral-low-hover: var(--pp-color-blue-950);
+    --pp-background-neutral-low-pressed: var(--pp-color-blue-900);
+    --pp-background-neutral-strong-active: var(--pp-color-gray-50);
+    --pp-background-brand-low: var(--pp-color-blue-950);
+    --pp-background-brand-low-hover: var(--pp-color-blue-900);
+    --pp-background-brand-medium: var(--pp-color-blue-300);
+    --pp-background-brand-medium-active: var(--pp-color-blue-600);
+    --pp-background-brand-strong: var(--pp-color-blue-400);
+    --pp-background-brand-strong-hover: var(--pp-color-blue-500);
+    --pp-background-brand-strong-pressed: var(--pp-color-blue-600);
+    --pp-background-info-low: var(--pp-color-indigo-950);
+    --pp-background-info-medium: var(--pp-color-indigo-300);
+    --pp-background-info-strong: var(--pp-color-indigo-100);
+    --pp-background-success-low: var(--pp-color-green-950);
+    --pp-background-success-medium: var(--pp-color-green-300);
+    --pp-background-success-strong: var(--pp-color-green-100);
+    --pp-background-warning-low: var(--pp-color-yellow-950);
+    --pp-background-warning-medium: var(--pp-color-yellow-300);
+    --pp-background-warning-strong: var(--pp-color-yellow-100);
+    --pp-background-alert-low: var(--pp-color-red-950);
+    --pp-background-alert-medium: var(--pp-color-red-600);
+    --pp-background-alert-medium-hover: var(--pp-color-red-700);
+    --pp-background-alert-medium-pressed: var(--pp-color-red-800);
+    --pp-background-alert-strong: var(--pp-color-red-100);
+    --pp-background-caution-low: var(--pp-color-yellow-950);
+    --pp-background-caution-low-hover: var(--pp-color-red-950);
+    --pp-background-caution-low-pressed: var(--pp-color-red-900);
+    --pp-background-disabled-low: var(--pp-background-neutral-low);
+    --pp-background-disabled-medium: var(--pp-color-gray-800);
+    --pp-background-ratings-default: var(--pp-background-neutral-default);
+    --pp-background-ratings-default-active: var(--pp-color-yellow-500);
+    --pp-border-neutral-default: var(--pp-color-gray-800);
+    --pp-border-neutral-default-active: var(--pp-color-blue-600);
+    --pp-border-neutral-default-pressed: var(--pp-color-gray-700);
+    --pp-border-neutral-default-disabled: var(--pp-background-neutral-low);
+    --pp-border-neutral-medium: var(--pp-color-gray-700);
+    --pp-border-neutral-medium-disabled: var(--pp-color-gray-800);
+    --pp-border-neutral-strong: var(--pp-color-gray-50);
+    --pp-border-neutral-strong-active: var(--pp-color-gray-50);
+    --pp-border-neutral-low-active: var(--pp-color-gray-50);
+    --pp-border-neutral-inverse: var(--pp-color-gray-800);
+    --pp-border-disabled-default: var(--pp-background-neutral-low);
+    --pp-border-disabled-medium: var(--pp-color-gray-800);
+    --pp-border-alert-default: var(--pp-color-red-400);
+    --pp-border-alert-default-pressed: var(--pp-color-red-600);
+    --pp-border-alert-strong-pressed: var(--pp-color-red-600);
+    --pp-border-ratings-default: var(--pp-color-yellow-600);
+    --pp-text-neutral-default: var(--pp-color-gray-50);
+    --pp-text-neutral-medium: var(--pp-color-gray-300);
+    --pp-text-neutral-inverse: var(--pp-color-gray-950);
+    --pp-text-disabled: var(--pp-color-gray-700);
+    --pp-text-brand-medium: var(--pp-color-blue-400);
+    --pp-text-brand-strong: var(--pp-color-blue-100);
+    --pp-text-on-brand-strong: var(--pp-text-neutral-inverse);
+    --pp-text-on-brand-default: var(--pp-link-brand-default);
+    --pp-text-info-medium: var(--pp-color-indigo-400);
+    --pp-text-info-strong: var(--pp-color-indigo-100);
+    --pp-text-success-medium: var(--pp-color-green-400);
+    --pp-text-success-strong: var(--pp-color-green-100);
+    --pp-text-warning-medium: var(--pp-color-yellow-400);
+    --pp-text-warning-strong: var(--pp-color-yellow-100);
+    --pp-text-alert-medium: var(--pp-color-red-400);
+    --pp-text-alert-strong: var(--pp-color-red-100);
+    --pp-heading-neutral-default: var(--pp-color-gray-50);
+    --pp-heading-neutral-medium: var(--pp-color-gray-300);
+    --pp-heading-neutral-low: var(--pp-color-gray-300);
+    --pp-heading-neutral-inverse: var(--pp-color-gray-950);
+    --pp-link-neutral-default: var(--pp-text-neutral-default);
+    --pp-link-neutral-default-hover: var(--pp-color-blue-400);
+    --pp-link-neutral-low: var(--pp-text-neutral-medium);
+    --pp-link-neutral-inverse: var(--pp-background-neutral-default);
+    --pp-link-brand-default: var(--pp-color-blue-400);
+    --pp-link-on-brand-strong: var(--pp-color-blue-950);
+    --pp-link-alert-default: var(--pp-text-alert-medium);
+    --pp-icon-neutral-default: var(--pp-color-gray-50);
+    --pp-icon-neutral-medium: var(--pp-color-gray-300);
+    --pp-icon-neutral-low: var(--pp-color-gray-500);
+    --pp-icon-neutral-inverse: var(--pp-color-gray-950);
+    --pp-icon-disabled: var(--pp-color-gray-600);
+    --pp-icon-brand-default: var(--pp-color-blue-400);
+    --pp-icon-brand-low: var(--pp-color-blue-600);
+    --pp-icon-brand-strong: var(--pp-color-blue-100);
+    --pp-icon-on-brand-strong: var(--pp-text-neutral-inverse);
+    --pp-icon-info-default: var(--pp-color-indigo-400);
+    --pp-icon-info-low: var(--pp-color-indigo-600);
+    --pp-icon-info-strong: var(--pp-color-indigo-100);
+    --pp-icon-success-default: var(--pp-color-green-400);
+    --pp-icon-success-low: var(--pp-color-green-600);
+    --pp-icon-success-strong: var(--pp-color-green-100);
+    --pp-icon-warning-default: var(--pp-color-yellow-400);
+    --pp-icon-warning-low: var(--pp-color-yellow-600);
+    --pp-icon-warning-strong: var(--pp-color-yellow-100);
+    --pp-icon-alert-default: var(--pp-color-red-400);
+    --pp-icon-alert-low: var(--pp-color-red-600);
+    --pp-icon-alert-strong: var(--pp-color-red-100);
+    --pp-data-info-low: var(--pp-color-indigo-800);
+    --pp-data-info-medium: var(--pp-color-indigo-400);
+    --pp-data-info-strong: var(--pp-color-indigo-100);
+    --pp-shadow-1: #ffffffcc;
+  }
+}
+
+/* Desktop type scale — Figma's "desktop" font mode, pinned by the form factor
+ * the project recorded. The base :root above is the "native" mode, so a page
+ * carrying data-pp-form-factor="native" needs no block of its own and holds that
+ * ramp at any window size — which is what a phone frame in a wide browser has to do. */
+[data-pp-form-factor="desktop"] {
+  --pp-font-size-hero: 64px;
+  --pp-line-height-hero: 67.2px;
+  --pp-font-size-title-1: 48px;
+  --pp-line-height-title-1: 50.4px;
+  --pp-font-size-title-2: 36px;
+  --pp-line-height-title-2: 39.6px;
+  --pp-font-size-title-3: 24px;
+  --pp-line-height-title-3: 26.4px;
+}
+
+/* No form factor recorded, or "both": the viewport stands in for the platform axis. */
+@media (min-width: 700px) {
+  :root:not([data-pp-form-factor]) {
+    --pp-font-size-hero: 64px;
+    --pp-line-height-hero: 67.2px;
+    --pp-font-size-title-1: 48px;
+    --pp-line-height-title-1: 50.4px;
+    --pp-font-size-title-2: 36px;
+    --pp-line-height-title-2: 39.6px;
+    --pp-font-size-title-3: 24px;
+    --pp-line-height-title-3: 26.4px;
+  }
+}
+
+/* Type ramp utilities. Class names match the Figma type scale. */
+.pp-hero {
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-hero);
+  line-height: var(--pp-line-height-hero);
+  font-weight: var(--pp-font-weight-hero);
+  letter-spacing: var(--pp-tracking-extra-tight);
+}
+.pp-title-1 {
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-title-1);
+  line-height: var(--pp-line-height-title-1);
+  font-weight: var(--pp-font-weight-title-1);
+  letter-spacing: var(--pp-tracking-extra-tight);
+}
+.pp-title-2 {
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-title-2);
+  line-height: var(--pp-line-height-title-2);
+  font-weight: var(--pp-font-weight-title-2);
+  letter-spacing: var(--pp-tracking-extra-tight);
+}
+.pp-title-3 {
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-title-3);
+  line-height: var(--pp-line-height-title-3);
+  font-weight: var(--pp-font-weight-title-3);
+  letter-spacing: var(--pp-tracking-tight);
+}
+.pp-title-4 {
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-title-4);
+  line-height: var(--pp-line-height-title-4);
+  font-weight: var(--pp-font-weight-title-4);
+}
+.pp-title-5 {
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-title-5);
+  line-height: var(--pp-line-height-title-5);
+  font-weight: var(--pp-font-weight-title-5);
+}
+.pp-title-6 {
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-title-6);
+  line-height: var(--pp-line-height-title-6);
+  font-weight: var(--pp-font-weight-title-6);
+}
+.pp-title-7 {
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-title-7);
+  line-height: var(--pp-line-height-title-7);
+  font-weight: var(--pp-font-weight-title-7);
+}
+.pp-title-8 {
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-title-8);
+  line-height: var(--pp-line-height-title-8);
+  font-weight: var(--pp-font-weight-title-8);
+}
+.pp-body-1 {
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-body-1);
+  line-height: var(--pp-line-height-body-1);
+  font-weight: var(--pp-font-weight-body-1);
+}
+.pp-body-2 {
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-body-2);
+  line-height: var(--pp-line-height-body-2);
+  font-weight: var(--pp-font-weight-body-2);
+}
+.pp-body-3 {
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-body-3);
+  line-height: var(--pp-line-height-body-3);
+  font-weight: var(--pp-font-weight-body-3);
+}
+.pp-body-4 {
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-body-4);
+  line-height: var(--pp-line-height-body-4);
+  font-weight: var(--pp-font-weight-body-4);
+}

@@ -1,0 +1,27 @@
+{
+  "$comment": "Written by the pushpin skill. Lets the Figma bridge work without re-deriving keys. `capturedAt` and `pluginVersion` record which snapshot of the kit this stylesheet came from — compare them against the plugin to find out if it is behind. `designHash` and `sidecarHash` are what the plugin build of the two generated files hashes to, which is what lets an overwrite of either be noticed. `componentsCapturedAt` and `specsCapturedAt` are the latest date each component catalog carries — the catalogs move on their own clocks, and when they move, a component this project declares may have been restyled or lost a variant. `preview` is where the prototype is served and whether Pushpin may start it. `fidelity`, `formFactor` and `colorMode` are the setup interview's answers, and are absent when the project was set up before it asked them.",
+  "designSystem": "pushpin",
+  "pluginVersion": "0.23.7",
+  "capturedAt": "2026-08-06",
+  "componentsCapturedAt": "2026-09-22",
+  "specsCapturedAt": "2026-09-21",
+  "css": "./styles/pushpin.css",
+  "cssHash": "ff6b417809dbcfa9",
+  "designHash": "178119e5dd711d81",
+  "sidecarHash": "fb2ef350f4dd9e8a",
+  "checkHook": true,
+  "preview": {
+    "port": 8131,
+    "root": ".",
+    "autostart": true
+  },
+  "fidelity": "handoff",
+  "formFactor": "native",
+  "colorMode": "both",
+  "pluginPath": "/Users/johnwilliams/.cursor/plugins/cache/johnwilliams-tt-skills/pushpin/c59a946a25dcfcd947a3a849dbe3977b5db82724/pushpin",
+  "figma": {
+    "fileKey": "VVRGrLgkPRU3vs765d5Q3r",
+    "fileName": "Pushpin Thumbprint UI Kit",
+    "libraryKey": "lk-003ce4846b4638268325b33ad167ece0cd390787a2782f1949cee2e38ca2e7719472f0968d45b4c2f0db9b35ec1820babadcf97a9f40fdd6cc84ba22f7b10a80"
+  }
+}

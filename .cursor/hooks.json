@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": "node \"/Users/johnwilliams/Projects/tt-nav-test/.pushpin/pushpin-check.mjs\"",
+        "timeout": 15
+      }
+    ],
+    "preToolUse": [
+      {
+        "command": "node \"/Users/johnwilliams/Projects/tt-nav-test/.pushpin/pushpin-check.mjs\" --guard",
+        "timeout": 10
+      }
+    ]
+  }
+}

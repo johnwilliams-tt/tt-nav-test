@@ -1,0 +1,18 @@
+{
+  "extraKnownMarketplaces": {
+    "johnwilliams-skills": {
+      "source": {
+        "source": "git",
+        "url": "https://github.com/johnwilliams-tt/skills.git",
+        "sparsePaths": [
+          ".claude-plugin",
+          "pushpin"
+        ]
+      },
+      "autoUpdate": true
+    }
+  },
+  "enabledPlugins": {
+    "pushpin@johnwilliams-skills": true
+  }
+}

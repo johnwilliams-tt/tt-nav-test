@@ -1,0 +1,190 @@
+/*
+ * Pushpin Design System — the native device frame
+ *
+ * GENERATED FILE. Do not edit by hand.
+ * Copied beside pushpin.css by `pushpin init` on a project that recorded
+ * `formFactor: native` or `both`. Re-run `init --write --force` to replace it.
+ *
+ * A native prototype has to be looked at on a desktop monitor, and a phone
+ * design laid out edge to edge in a browser window is not the design: the
+ * column is four times too wide and nothing about the reading order survives
+ * it. This draws the phone instead, so what is on screen is the surface that
+ * was designed.
+ *
+ * The type ramp is not this file's business. `<html data-pp-form-factor="native">`
+ * holds the native font mode at any window size, which is what lets the frame
+ * be a frame rather than a place to redeclare four font sizes by hand.
+ *
+ * Link it after pushpin.css:
+ *   <link rel="stylesheet" href="pushpin-device.css">
+ */
+
+/*
+ * The frame is a fixed 393 x 852 and the page scrolls when the window is
+ * shorter. It is deliberately not scaled to fit: a scaled frame is no longer a
+ * 390-wide design, every measurement taken off it is wrong by the scale
+ * factor, and the handoff frame it becomes in Figma is drawn at the real size.
+ * Override the two custom properties for another device rather than zooming.
+ */
+.pp-device {
+  --pp-device-width: 393px;
+  --pp-device-height: 852px;
+
+  /* Grid rather than a column stack, because a transition has two screens on
+     the frame at once and they have to share one cell to slide across each
+     other. The status bar takes the first row; every screen is placed into the
+     second by hand, so an extra screen never opens a row of its own. */
+  display: grid;
+  grid-template-rows: auto 1fr;
+  /* minmax(0, 1fr) rather than a bare 1fr: a row whose text refuses to wrap
+     would otherwise widen the column past the frame and push the frame's own
+     chrome off its edge. The column is the phone's width, whatever is in it. */
+  grid-template-columns: minmax(0, 1fr);
+  position: relative;
+  width: var(--pp-device-width);
+  height: var(--pp-device-height);
+  margin: 0 auto;
+  /* Clip and not hidden. Hidden still makes the frame a scroll container, and
+     anything that brings an element into view — taking focus, most of all —
+     can scroll a phone that has no business scrolling. Clip has no scroll
+     position to move. */
+  overflow: clip;
+  background: var(--pp-background-neutral-default);
+  border-radius: var(--pp-radius-xxlarge);
+  box-shadow: var(--pp-shadow-200);
+}
+
+/* Every screen shares the second row, so two of them stack for a transition.
+   Anything absolutely positioned against the frame — a sheet, a scrim — is
+   left out on purpose: placing it in a grid area would stop it covering the
+   status bar, which is the whole point of a sheet. */
+.pp-device > .pp-screen {
+  grid-row: 2;
+  grid-column: 1;
+}
+
+.pp-screen {
+  display: flex;
+  flex-direction: column;
+  /* A flex item defaults to min-height: auto, which refuses to shrink below
+     its content and lets a long screen push the tab bar out of the frame. */
+  min-height: 0;
+  /* Opaque, because a screen sliding in over the one it replaces would
+     otherwise show it through every gap between panels. */
+  background: var(--pp-background-neutral-default);
+}
+
+/* The part of a screen that scrolls, between the fixed chrome above and below
+   it. The frame itself never scrolls; this does. */
+.pp-screen__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/*
+ * Stands in for the published `Native / Status Bar` component,
+ * OS=iOS X [Dynamic Island]. Declare it as one so a Figma push instances the
+ * real component instead of redrawing this:
+ *
+ *   <div class="pp-status-bar" aria-hidden="true"
+ *        data-pp-component="Native / Status Bar"
+ *        data-pp-variant="OS=iOS X [Dynamic Island], Dark Mode=False"> … </div>
+ *
+ * The type and colour follow the kit rather than Apple's, so the bar reads as
+ * Pushpin. Everything sits on one vertical axis, so a height change does not
+ * shift it. https://developer.apple.com/design/human-interface-guidelines/status-bars
+ */
+.pp-status-bar {
+  position: relative;
+  flex: none;
+  width: 100%;
+  height: 59px;
+  background: var(--pp-background-neutral-default);
+  color: var(--pp-background-neutral-inverse);
+  font-family: var(--pp-font-family);
+}
+
+.pp-status-bar__time {
+  position: absolute;
+  left: 0;
+  width: 35.75%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: 0;
+  font-size: var(--pp-font-size-body-1);
+  font-weight: var(--pp-font-weight-medium-bold);
+  line-height: var(--pp-line-height-body-1);
+  text-align: center;
+}
+
+.pp-status-bar__levels {
+  position: absolute;
+  left: 64.25%;
+  right: 0;
+  top: 0;
+  height: 100%;
+}
+
+.pp-status-bar__levels > * {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* The exported glyphs are single-colour paths, so they are masks rather than
+   images: the colour comes from the bar, which flips with the theme, and the
+   alpha in the mask keeps the battery cap's own transparency. */
+.pp-status-bar__glyph {
+  display: block;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* Sub-pixel offsets and sizes are the iOS status bar spec's own geometry
+   (Figma rXFecV4AAtgjaES8935fbh, node 7964:52218), not values to round. */
+.pp-status-bar__cellular {
+  left: calc(50% - 40.25px);
+  width: 19.2px;
+  height: 12.24px;
+  -webkit-mask-image: url("device/cellular.svg");
+  mask-image: url("device/cellular.svg");
+}
+
+.pp-status-bar__wifi {
+  left: calc(50% - 13.55px);
+  width: 17.142px;
+  height: 12.33px;
+  -webkit-mask-image: url("device/wifi.svg");
+  mask-image: url("device/wifi.svg");
+}
+
+.pp-status-bar__battery {
+  left: calc(50% + 10.75px);
+  width: 25px;
+  height: 13px;
+  border: 1px solid var(--pp-background-neutral-inverse);
+  border-radius: 4.3px;
+  opacity: 0.35;
+}
+
+.pp-status-bar__battery-fill {
+  left: calc(50% + 12.75px);
+  width: 21px;
+  height: 9px;
+  background: var(--pp-background-neutral-inverse);
+  border-radius: 2.5px;
+}
+
+.pp-status-bar__battery-cap {
+  left: calc(50% + 36.75px);
+  width: 1.328px;
+  height: 4.07px;
+  -webkit-mask-image: url("device/battery-cap.svg");
+  mask-image: url("device/battery-cap.svg");
+}
