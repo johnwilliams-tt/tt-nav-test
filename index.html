@@ -2,10 +2,32 @@
 <html lang="en" data-pp-form-factor="native">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>Jobs — pro app nav</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- default, not black-translucent: translucent makes iOS size the web view
+         to the screen minus the status bar while still anchoring it at the top,
+         so the bottom of the screen is unreachable from the page. -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Jobs" />
+    <link rel="manifest" href="manifest.webmanifest" />
     <link rel="stylesheet" href="styles/pushpin.css" />
     <script src="styles/theme-toggle.js" data-pp-default="light" data-pp-modes="both" data-pp-form-factor="native"></script>
+    <script>
+      // On a phone the toggle is hidden (app.css), so a choice it stored would
+      // be one nothing on the page can change. There the app follows the
+      // device's appearance instead, like an installed app does.
+      (function () {
+        var phone = window.matchMedia('(max-width: 600px)');
+        var dark = window.matchMedia('(prefers-color-scheme: dark)');
+        var follow = function () {
+          if (phone.matches) document.documentElement.dataset.ppTheme = dark.matches ? 'dark' : 'light';
+        };
+        follow();
+        phone.addEventListener('change', follow);
+        dark.addEventListener('change', follow);
+      })();
+    </script>
     <link rel="stylesheet" href="styles/pushpin-device.css" />
     <link rel="stylesheet" href="styles/app.css" />
   </head>
@@ -405,8 +427,12 @@
             </div>
           </div>
           <div class="jobs__field">
-            <!-- The field's surface is its own layer so it can be clipped to the
-                 phone's corner curve; the shadow stays on the field, outside the clip. -->
+            <!-- The shade casts the shadow from a clipped fill of its own, the
+                 surface is the painted layer, both clipped to the same curve. The
+                 shadow cannot sit on the field: a clip cuts an element's own
+                 shadow, and a filter on a subtree holding the waves' canvas is
+                 one WebKit stops rendering once the canvas has composited. -->
+            <div class="jobs__shade" aria-hidden="true"><div class="jobs__shade-fill"></div></div>
             <div class="jobs__surface" aria-hidden="true">
               <div class="jobs__waves" data-pp-proposed="Pro / Voice waves">
                 <canvas class="jobs__waves-canvas"></canvas>

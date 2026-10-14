@@ -1,0 +1,7 @@
+{
+  "name": "Jobs — pro app nav",
+  "short_name": "Jobs",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait"
+}

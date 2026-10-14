@@ -741,17 +741,35 @@ h1 {
   position: relative;
   display: grid;
   grid-template-rows: 56px;
-  /* A drop shadow rather than the box shadow the shelf and close button
-     wear: it is cast from what is painted, so it follows the surface's
-     corner curve. A box shadow is cast from the circular-radius box, and the
-     smoothed corner sits inside that box, leaving an unshadowed sliver
-     between the two. drop-shadow's blur is a standard deviation, half the
-     box-shadow blur; the contact layer loses its negative spread. */
+  /* Only changes on the voice axis; see the tab bar's rows. */
+  transition: grid-template-rows var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
+}
+
+/* The shadow, on a layer of its own under the surface. A drop shadow rather
+   than the box shadow the shelf and close button wear: it is cast from what
+   is painted, so it follows the clipped corner curve, where a box shadow is
+   cast from the circular-radius box and the smoothed corner sits inside it,
+   leaving an unshadowed sliver between the two. drop-shadow's blur is a
+   standard deviation, half the box-shadow blur; the contact layer loses its
+   negative spread. The filter sits on the wrapper and the clip on the fill,
+   since a clip is applied after an element's own filter and would cut it.
+   The fill wears the surface's colour, including its dark re-scope, so its
+   anti-aliased edge never shows as a lighter fringe under the surface's. */
+.jobs__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   filter:
     drop-shadow(0 20px 20px color-mix(in srgb, var(--pp-color-gray-950) 15%, transparent))
     drop-shadow(0 2px 2px color-mix(in srgb, var(--pp-color-gray-950) 12%, transparent));
-  /* Only changes on the voice axis; see the tab bar's rows. */
-  transition: grid-template-rows var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
+}
+
+.jobs__shade-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  background: var(--pp-background-neutral-default);
+  transition: background-color var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
 }
 
 /* The painted surface, separate from the field so it can be clipped to the
@@ -773,8 +791,8 @@ h1 {
 /* Voice mode: the panel is 377 x 180 at 54px with the phone's 60% smoothing,
    concentric with the frame's own corners 8px outside it. The panel is
    always dark, whatever the app's theme: its contents carry the dark scope
-   in the markup, and nav.js re-scopes the surface for as long as it is a
-   panel so its colour transition does the swap. The field's own controls
+   in the markup, and nav.js re-scopes the surface and its shadow caster for
+   as long as it is a panel so their colour transition does the swap. The field's own controls
    stay in the app's theme while they fade, which is why the scope is not
    put on the field. */
 .jobs__tabbar[data-state="voice"] .jobs__field {
@@ -1141,4 +1159,61 @@ h1 {
 .jobs__talk-icon--close {
   -webkit-mask-image: url("../assets/icons/close-small.svg");
   mask-image: url("../assets/icons/close-small.svg");
+}
+
+/* On a phone the frame is the phone. Below 600px the drawn device gives way:
+   no page padding, radius, shadow or painted status bar; the screen fills the
+   viewport, the real status bar and home indicator are kept clear through the
+   safe-area insets, and the page itself never scrolls — only the screen's
+   body does, as on the desk. The theme toggle is a desk devtool and goes with
+   the frame.
+
+   The frame is pinned to the viewport rather than sized with viewport units:
+   installed to an iPhone's home screen, WebKit's dvh is not the screen's
+   height and left a band of page beneath the tab bar. The page behind is
+   white for the same reason — iOS paints it into whatever the web view does
+   not cover, and it has to read as the app. */
+@media (max-width: 600px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body {
+    padding: 0;
+    background: var(--pp-background-neutral-default);
+  }
+
+  .jobs-device {
+    position: fixed;
+    inset: 0;
+    width: auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .pp-device {
+    --pp-device-width: 100%;
+    --pp-device-height: 100%;
+    border-radius: 0;
+    clip-path: none;
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* Measured against the frame on the desk; here the frame is the viewport. */
+  .jobs__dim {
+    position: fixed;
+    inset: 0;
+    height: auto;
+  }
+
+  .pp-status-bar {
+    display: none;
+  }
+
+  [data-pp-devtool] {
+    display: none;
+  }
 }

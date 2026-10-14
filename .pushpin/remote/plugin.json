@@ -1,0 +1,25 @@
+{
+  "name": "pushpin",
+  "displayName": "Pushpin Design System",
+  "version": "0.23.7",
+  "description": "Thumbtack's Pushpin design system as an invokable skill. Ships the token stylesheet generated from the Pushpin Thumbprint UI Kit Figma file — colors in light and dark, a responsive type ramp, spacing, radius, elevation, and motion — plus a catalog of every published Figma component, the full 227-icon set with its size ramp, Thumbtack's content design rules and the checks that hold a screen's words to them, the Annotation Kit for arguing a proposed component on canvas, and a verified path for generating Figma layouts from real library instances.",
+  "author": {
+    "name": "John Williams",
+    "url": "https://github.com/johnwilliams-tt"
+  },
+  "homepage": "https://github.com/johnwilliams-tt/skills/tree/main/pushpin",
+  "repository": "https://github.com/johnwilliams-tt/skills",
+  "keywords": [
+    "design-system",
+    "thumbtack",
+    "pushpin",
+    "thumbprint",
+    "design-tokens",
+    "content-design",
+    "figma",
+    "design-tokens-sync"
+  ],
+  "skills": [
+    "./pushpin"
+  ]
+}

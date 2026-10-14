@@ -66,6 +66,17 @@
   var MIC_KNEE = 0.7;
   var LEVEL_IDLE = 0.2;
 
+  // Muted, the waves do more than go quiet: they settle to a lower floor
+  // than idle, run at half the flow, sink by a quarter of the layer, and go
+  // out of focus by this many pixels, so the panel reads as not listening at
+  // a glance. The glide between the two states is a time constant, not a
+  // step.
+  var LEVEL_MUTED = 0.08;
+  var MUTE_FLOW = 0.5;
+  var MUTE_DROP = 25;
+  var MUTE_BLUR = 6;
+  var MUTE_EASE = 0.35;
+
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   var wgsl = `
@@ -133,13 +144,17 @@ fn waveY(x: f32, fi: f32, position: f32, h: f32, energy: f32, phase: f32) -> f32
   return envelope * (h * (0.012 + 0.38 * energy) * harmonic * breathing + position * h * u.layerSeparation.x * 0.75);
 }
 
-fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, phase: f32) -> f32 {
+// feather widens every edge from its 0.6px anti-aliasing width: the shape
+// goes soft-focus rather than ghosted, which is what spreading the blur taps
+// alone would give at a radius this large.
+fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, phase: f32, feather: f32) -> f32 {
   let x = p.x / (span * 0.5);
   let upper = waveY(x, fi, position, h, energy, phase);
   let lower = h * 0.58;
-  let sides = 1.0 - smoothstep(span * 0.5 - 0.6, span * 0.5 + 0.6, abs(p.x));
-  let topCoverage = smoothstep(-0.6, 0.6, p.y - upper);
-  let bottomCoverage = 1.0 - smoothstep(lower - 0.6, lower + 0.6, p.y);
+  let edge = 0.6 + feather;
+  let sides = 1.0 - smoothstep(span * 0.5 - edge, span * 0.5 + edge, abs(p.x));
+  let topCoverage = smoothstep(-edge, edge, p.y - upper);
+  let bottomCoverage = 1.0 - smoothstep(lower - edge, lower + edge, p.y);
   // A substantial filled region, gently dimmed toward its common lower baseline.
   let depthFade = mix(1.0, 0.42, clamp((p.y - upper) / max(lower - upper, 1.0), 0.0, 1.0));
   return sides * topCoverage * bottomCoverage * depthFade;
@@ -157,6 +172,7 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
   // blur radii and glow softness below keep the sizes they were tuned at.
   let dims = max(u.frameData.yz, vec2f(1.0));
   let voiceLevel = u.voiceLevel.x;
+  let feather = max(u.voiceLevel.y, 0.0);
   let motionPhase = u.motionPhase.x;
   let layerCount = u.layerCount.x;
   let waveOpacity = u.waveOpacity.x;
@@ -181,9 +197,9 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
     let fi = f32(i);
     let position = (fi - f32(count - 1) * 0.5) / max(f32(count - 1), 1.0);
     let settings = u.layers[u32(i)].settings;
-    let blurRadius = max(settings.x, 0.0);
+    let blurRadius = max(settings.x, 0.0) + feather * 0.5;
     let glowStrength = max(settings.y, 0.0);
-    let softness = max(settings.z, 0.35);
+    let softness = max(settings.z, 0.35) + feather * 1.5;
     var coverage = 0.0;
     // Fixed 3x3 Gaussian quadrature blurs the filled shape in pixel space.
     for (var by = -1; by <= 1; by = by + 1) {
@@ -191,7 +207,7 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
         let weightX = select(0.25, 0.5, bx == 0);
         let weightY = select(0.25, 0.5, by == 0);
         let tap = p + vec2f(f32(bx), f32(by)) * blurRadius * 1.5;
-        coverage = coverage + filledMask(tap, span, fi, position, h, energy, phase) * weightX * weightY;
+        coverage = coverage + filledMask(tap, span, fi, position, h, energy, phase, feather) * weightX * weightY;
       }
     }
     let y = waveY(x, fi, position, h, energy, phase);
@@ -266,17 +282,18 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
   }
 
   var header = new Float32Array(HEADER_FLOATS);
-  function writeHeader(width, height, level, phase) {
+  function writeHeader(width, height, level, phase, calm) {
     header[1] = width;
     header[2] = height;
     header[4] = level;
+    header[5] = MUTE_BLUR * calm;
     header[8] = phase;
     header[12] = SHAPE.frequency;
     header[16] = SHAPE.layers;
     header[20] = SHAPE.separation;
     header[24] = SHAPE.opacity;
     header[28] = SHAPE.center[0];
-    header[29] = SHAPE.center[1];
+    header[29] = SHAPE.center[1] + MUTE_DROP * calm;
     header[32] = SHAPE.width;
     header[36] = SHAPE.height;
   }
@@ -372,18 +389,16 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
   }
 
   // The backing store follows the layer's CSS size at device density; the
-  // shader is told the CSS size.
+  // shader is told the CSS size. The size is only recorded here and applied
+  // on the next draw: the layer is as wide as the field, so while the panel
+  // is growing it changes every frame, and reallocating the canvas on each of
+  // those frames is a hitch the spring cannot hide.
   var cssWidth = 0;
   var cssHeight = 0;
   function resize(entry) {
-    var dpr = window.devicePixelRatio || 1;
     var rect = entry ? entry.contentRect : canvas.getBoundingClientRect();
     cssWidth = rect.width;
     cssHeight = rect.height;
-    var width = Math.max(1, Math.round(cssWidth * dpr));
-    var height = Math.max(1, Math.round(cssHeight * dpr));
-    if (canvas.width !== width) canvas.width = width;
-    if (canvas.height !== height) canvas.height = height;
   }
   resize();
   if (window.ResizeObserver) {
@@ -392,9 +407,20 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
     }).observe(canvas);
   }
 
-  function draw(level, phase) {
+  function fit() {
+    var dpr = window.devicePixelRatio || 1;
+    var width = Math.max(1, Math.round(cssWidth * dpr));
+    var height = Math.max(1, Math.round(cssHeight * dpr));
+    if (canvas.width !== width) canvas.width = width;
+    if (canvas.height !== height) canvas.height = height;
+  }
+
+  function draw(level, phase, calm) {
     if (!gpu) return;
-    writeHeader(cssWidth, cssHeight, level, phase);
+    // On the way out the panel shrinks under a fading layer; the last size is
+    // kept and stretched rather than chased.
+    if (active) fit();
+    writeHeader(cssWidth, cssHeight, level, phase, calm);
     gpu.device.queue.writeBuffer(gpu.uniforms, 0, header);
     var encoder = gpu.device.createCommandEncoder();
     var pass = encoder.beginRenderPass({
@@ -415,10 +441,11 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
     gpu.device.queue.submit([encoder.finish()]);
   }
 
-  // Voice level. The microphone is asked for when the panel first opens and
-  // let go when it closes, so the browser's recording indicator tracks the
-  // panel; a browser that remembers the grant asks nothing the second time.
-  // Any refusal hands over to the simulated envelope for the session.
+  // Voice level. The microphone is asked for once the panel has grown and
+  // let go once it has shrunk back, so the browser's recording indicator
+  // tracks the panel; a browser that remembers the grant asks nothing the
+  // second time. Any refusal hands over to the simulated envelope for the
+  // session.
   var mic = { stream: null, context: null, analyser: null, samples: null, denied: false };
 
   function micSupported() {
@@ -458,8 +485,8 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
   // Mute is the panel's mic button, read from its pressed state so the two
   // cannot disagree. The track is disabled rather than stopped, which keeps
   // the grant and the recording indicator while sending silence. The loop
-  // also pins the level to idle while muted, so the simulated envelope a
-  // browser without a microphone falls back to goes quiet as well.
+  // also drives the level to the muted floor itself, so the simulated
+  // envelope a browser without a microphone falls back to goes quiet as well.
   var muteButton = document.querySelector('.jobs__talk-button--mic');
 
   function muted() {
@@ -514,6 +541,14 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
 
   // The loop. Runs while the panel is open and through its fade on the way
   // out, then stops, so a closed panel costs nothing.
+  //
+  // Nothing heavy happens while the panel's shape is moving. The spring is
+  // the one thing on screen, and on a phone the first draw, a canvas
+  // reallocation, or the audio session starting or stopping underneath it
+  // shows as a stutter. So the loop and the microphone wait for the shape
+  // to settle on the way in — the moment the layer starts to fade in anyway —
+  // and the microphone is let go only after the shape has settled on the way
+  // out. The GPU side is the exception: it is warmed while the page is idle.
   var active = false;
   var usingMic = false;
   var raf = 0;
@@ -521,7 +556,10 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
   var clock = 0;
   var level = LEVEL_IDLE;
   var phase = 0;
+  var calm = 0;
+  var starting = 0;
   var stopping = 0;
+  var releasing = 0;
 
   function frame(now) {
     raf = requestAnimationFrame(frame);
@@ -531,14 +569,17 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
     dt = dt / (window.__ppSpeed || 1);
     clock += dt;
 
-    var target = muted() ? LEVEL_IDLE : usingMic && mic.analyser ? micLevel() : simulatedLevel(clock);
+    var quiet = muted();
+    calm += ((quiet ? 1 : 0) - calm) * (1 - Math.exp(-dt / MUTE_EASE));
+
+    var target = quiet ? LEVEL_MUTED : usingMic && mic.analyser ? micLevel() : simulatedLevel(clock);
     var rate = target > level ? ATTACK : RELEASE;
     level += (target - level) * (1 - Math.exp(-dt / rate));
 
-    var pace = reduced.matches ? PHASE_REDUCED : PHASE_IDLE + PHASE_SPEECH * level;
+    var pace = reduced.matches ? PHASE_REDUCED : (PHASE_IDLE + PHASE_SPEECH * level) * (1 - (1 - MUTE_FLOW) * calm);
     phase += dt * pace;
 
-    draw(level, phase);
+    draw(level, phase, calm);
   }
 
   function token(name) {
@@ -547,25 +588,38 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
     return /[\d.]s$/.test(value) ? number * 1000 : number;
   }
 
+  // When the panel's shape has stopped moving, measured from the state change.
+  function settled() {
+    if (reduced.matches) return 0;
+    return token('--jobs-assistant-start') + token('--jobs-duration-assistant');
+  }
+
   function start() {
     active = true;
     window.clearTimeout(stopping);
+    window.clearTimeout(releasing);
+    window.clearTimeout(starting);
     if (gpuFailed) return;
-    initGPU().then(function () {
-      if (gpu && active && !raf) {
-        last = 0;
-        raf = requestAnimationFrame(frame);
-      }
-    });
-    startMic().then(function (granted) {
-      usingMic = granted && active;
-      if (!active) stopMic();
-    });
+    starting = window.setTimeout(function () {
+      if (!active) return;
+      initGPU().then(function () {
+        if (gpu && active && !raf) {
+          last = 0;
+          raf = requestAnimationFrame(frame);
+        }
+      });
+      startMic().then(function (granted) {
+        usingMic = granted && active;
+        if (!active) stopMic();
+      });
+    }, settled());
   }
 
   function stop() {
     active = false;
+    window.clearTimeout(starting);
     window.clearTimeout(stopping);
+    window.clearTimeout(releasing);
     stopping = window.setTimeout(
       function () {
         if (active) return;
@@ -573,11 +627,22 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
         raf = 0;
         last = 0;
         usingMic = false;
-        stopMic();
       },
       reduced.matches ? 0 : token('--pp-duration-3')
     );
+    releasing = window.setTimeout(
+      function () {
+        if (!active) stopMic();
+      },
+      settled() + token('--pp-duration-3')
+    );
   }
+
+  var warm = function () {
+    if (!gpu && !gpuPending && !gpuFailed) initGPU();
+  };
+  if (window.requestIdleCallback) requestIdleCallback(warm, { timeout: 3000 });
+  else window.setTimeout(warm, 1500);
 
   function sync() {
     var voice = tabbar.dataset.state === 'voice';

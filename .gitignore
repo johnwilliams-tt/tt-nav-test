@@ -1,0 +1,6 @@
+.vercel
+.claude/settings.local.json
+.impeccable/hook.cache.json
+.pushpin/preview.log
+.pushpin/preview.pid
+pushpin/

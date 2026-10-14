@@ -228,6 +228,10 @@
   // 28 at 56px high, the phone's 54 at 180 — so the clip is right at every
   // size the box passes through, in whichever direction it is travelling.
   var surface = fieldBox.querySelector('.jobs__surface');
+  // The shadow's caster under the surface, kept in step with it: same clip,
+  // same colour scope.
+  var shade = fieldBox.querySelector('.jobs__shade-fill');
+  var skins = [surface, shade].filter(Boolean);
   var PILL = { height: 56, radius: 28 };
   var PANEL = { height: 180, radius: 54 };
   var SMOOTHING = 0.6;
@@ -291,10 +295,13 @@
     var height = box.height;
     var share = Math.min(Math.max((height - PILL.height) / (PANEL.height - PILL.height), 0), 1);
     var radius = PILL.radius + share * (PANEL.radius - PILL.radius);
-    surface.style.clipPath = 'path("' + squircle(width, height, radius) + '")';
+    var clip = 'path("' + squircle(width, height, radius) + '")';
+    skins.forEach(function (skin) {
+      skin.style.clipPath = clip;
+    });
   }
 
-  if (surface && 'ResizeObserver' in window) {
+  if (skins.length && 'ResizeObserver' in window) {
     new ResizeObserver(fitSurface).observe(fieldBox);
     fitSurface();
   }
@@ -318,9 +325,17 @@
   });
 
   // Voice mode. The panel is always dark, whatever the app's theme. Its
-  // contents carry the dark scope in the markup; only the surface is
-  // re-scoped here, and its colour transition carries the swap. Scoping the
-  // whole field would recolour the controls that are still fading out.
+  // contents carry the dark scope in the markup; only the surface and its
+  // shadow caster are re-scoped here, and their colour transition carries the
+  // swap. Scoping the whole field would recolour the controls that are still
+  // fading out.
+  function scopeDark(on) {
+    skins.forEach(function (skin) {
+      if (on) skin.dataset.ppTheme = 'dark';
+      else delete skin.dataset.ppTheme;
+    });
+  }
+
   voice.addEventListener('click', function () {
     window.clearTimeout(talking);
     talk.hidden = false;
@@ -328,7 +343,7 @@
     // forces one to be computed before the state flips.
     void talk.offsetHeight;
     field.blur();
-    surface.dataset.ppTheme = 'dark';
+    scopeDark(true);
     leaveVoice(false);
     tabbar.dataset.state = 'voice';
   });
@@ -358,7 +373,7 @@
   talkClose.addEventListener('click', function () {
     leaveVoice(true);
     tabbar.dataset.state = 'assistant';
-    delete surface.dataset.ppTheme;
+    scopeDark(false);
     window.clearTimeout(talking);
     talking = window.setTimeout(
       function () {
