@@ -7,6 +7,7 @@
   var CONCEPTS = [
     { slug: 'inline-action', name: 'Inline Action' },
     { slug: 'floating-chip', name: 'Floating Chip' },
+    { slug: 'embedded', name: 'Embedded' },
   ];
 
   var match = window.location.pathname.match(/\/([^/]+)\/(?:index\.html)?$/);
