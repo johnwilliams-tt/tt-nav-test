@@ -89,8 +89,9 @@ h1 {
      from the tap. */
   --jobs-prompts-delay: 1000ms;
   --jobs-duration-prompts: 700ms;
-  /* Opening the assistant: the shelf leaves first. This is that move's length
-     and the lead on the bar appearing. */
+  /* Opening the assistant: the shelf narrows into the bar first. This is the
+     lead on the scrim and on the bar's contents, which fade in once the
+     shelf has all but arrived. */
   --jobs-nav-exit: calc(0.6 * var(--jobs-duration-assistant));
   /* Closing runs the other way: the bar leaves, and once it has all but
      settled the shelf rises. */
@@ -165,9 +166,9 @@ h1 {
   height: 18px;
 }
 
-.jobs__action-icon--filter {
-  -webkit-mask-image: url("../assets/icons/filter-small.svg");
-  mask-image: url("../assets/icons/filter-small.svg");
+.jobs__action-icon--search {
+  -webkit-mask-image: url("../assets/icons/search-small.svg");
+  mask-image: url("../assets/icons/search-small.svg");
 }
 
 .jobs__action-icon--plus {
@@ -341,13 +342,10 @@ h1 {
 }
 
 /* The nav floats over the list, on a scrim that fades the rows out beneath it.
-   At rest only the shelf's row has height. Opening the assistant gives that
-   height to the bar's row; the shelf itself leaves by translate, pinned to
-   its row's floor so the More menu can overflow upward out of a fixed track.
-   The rows are all lengths so they interpolate.
-
-   The rows run on the shelf's clock and curve: the shelf leaves before the
-   bar appears, and returns after the bar has gone. */
+   Only the last row has height: the shelf and the assistant bar share it, so
+   the shelf can narrow into the bar's box and hand over to it in place. The
+   shelf is pinned to the row's floor so the More menu can overflow upward
+   out of a fixed track. The rows are all lengths so they interpolate. */
 .jobs__tabbar {
   /* The scrim the More menu and the assistant share: the kit's sheet scrim
      thinned to 40% at the foot, since neither is a sheet, eased out in steps
@@ -371,20 +369,13 @@ h1 {
     padding var(--jobs-nav-exit) var(--pp-ease-in-out) var(--jobs-nav-return);
 }
 
-.jobs__tabbar[data-state="assistant"] {
-  grid-template-rows: 52px 0 0;
-  transition:
-    grid-template-rows var(--jobs-nav-exit) var(--pp-ease-in-out),
-    padding var(--jobs-nav-exit) var(--pp-ease-in-out);
-}
-
 /* Voice: the bar's row grows to the panel's 180 and the margins close to 8px,
    the same inset the phone's own corner curve leaves it. Everything inside
    the bar has faded first (the start delay), so the panel grows empty. It
    opens on the menu's spring; the overshoot lands on the margins, which have
    8px to give, so the panel never meets the frame. */
 .jobs__tabbar[data-state="voice"] {
-  grid-template-rows: 180px 0 0;
+  grid-template-rows: 0px 0px 180px;
   padding: var(--pp-space-2);
   transition:
     grid-template-rows var(--jobs-duration-assistant) var(--jobs-ease-spring) var(--jobs-assistant-start),
@@ -487,35 +478,21 @@ h1 {
 /* The assistant's scrim: easing out to nothing halfway up the frame, so the
    bar reads as lifted off the list without the screen going dark behind a
    single line of input. Anchored to the bar's floor like the dim, it sits
-   above the blurred rows and below the bar. It arrives once the tab bar has
-   left, as the bar appears, and leaves with the bar's contents.
-
-   Its blur is a layer of its own under the tint: a mask fading the blur out
-   up the frame would fade the tint a second time if they shared a box. */
-.jobs__ai-blur,
+   above the blurred rows and below the bar. It arrives while the shelf
+   narrows into the bar, and leaves with the bar's contents. */
 .jobs__ai-scrim {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
   height: calc(var(--pp-device-height) / 2);
+  background: var(--jobs-scrim-fade);
   opacity: 0;
   pointer-events: none;
   transition: opacity var(--pp-duration-3) var(--pp-ease-in);
 }
 
-.jobs__ai-blur {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  -webkit-mask-image: linear-gradient(to top, currentColor 30%, transparent);
-  mask-image: linear-gradient(to top, currentColor 30%, transparent);
-}
-
-.jobs__ai-scrim {
-  background: var(--jobs-scrim-fade);
-}
-
-.jobs__tabbar:is([data-state="assistant"], [data-state="voice"]) :is(.jobs__ai-blur, .jobs__ai-scrim) {
+.jobs__tabbar:is([data-state="assistant"], [data-state="voice"]) .jobs__ai-scrim {
   opacity: 1;
   transition: opacity var(--jobs-duration-assistant) var(--pp-ease-out) var(--jobs-nav-exit);
 }
@@ -533,37 +510,57 @@ h1 {
   --jobs-shelf-row: 52px;
   --jobs-shelf-open: 52px;
 
-  grid-row: 3;
-  /* Pinned to the track's floor: the menu grows upward out of it, and the
-     assistant's collapse of the track leaves the shelf where it is for the
-     translate below to carry off. */
+  grid-area: 3 / 1;
+  /* Pinned to the track's floor: the menu grows upward out of it, and voice
+     mode's taller track leaves the shelf where it is. */
   align-self: end;
   position: relative;
   display: grid;
   grid-template-rows: var(--jobs-shelf-row);
   width: 100%;
   min-width: 0;
-  /* The collapsed bar's own pill radius, held as a constant so the corners do
-     not change as it grows — a stadium radius on the open panel would bow its
-     sides. The kit publishes no 26px radius. */
-  border-radius: 26px;
-  background: var(--pp-background-neutral-default);
-  overflow: clip;
-  /* The kit's elevation tokens stop at --pp-shadow-400, which is too slight to
-     lift a bar that floats over scrolling content; the design's own two-layer
-     shadow is mixed from the gray ramp so it stays dark in both themes. */
-  box-shadow:
-    0 8px 7px -7px color-mix(in srgb, var(--pp-color-gray-950) 25%, transparent),
-    0 20px 40px color-mix(in srgb, var(--pp-color-gray-950) 15%, transparent);
   /* nav.js squashes the shelf before it opens; the squash sits on its floor,
      where the bar meets the screen edge, so it recoils downward. */
   transform-origin: 50% 100%;
-  /* The return from the assistant: the shelf waits for the bar to leave,
-     then rises in and fades up. */
+  /* The return from the assistant: once the bar's contents have cleared, the
+     shelf takes the bar's place in one frame — the same white pill in the
+     same box — and widens back out. */
   transition:
     grid-template-rows var(--jobs-duration-panel) var(--jobs-ease-spring-soft),
-    translate var(--jobs-nav-exit) var(--pp-ease-in-out) var(--jobs-nav-return),
-    opacity var(--jobs-nav-exit) var(--pp-ease-out) var(--jobs-nav-return);
+    width var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--pp-duration-2),
+    margin-left var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--pp-duration-2),
+    opacity 0s linear var(--pp-duration-2);
+}
+
+/* The shelf's paint, split like the assistant bar's: the surface holds the
+   tabs and the menu and is clipped to the phone's 60% corner smoothing, and
+   the shade under it casts the shadow from a fill clipped to the same curve,
+   with the bar's drop shadow so the two match where one hands over to the
+   other. nav.js writes both clips from the surface's size on every frame it
+   changes. The radius is the collapsed bar's 26, held as a constant so the
+   corners do not change as it grows — a stadium radius on the open panel
+   would bow its sides — and the smoothing only shows once the panel is more
+   than a pill. The kit publishes no 26px radius; it is here for the frames
+   before the script runs. */
+.jobs__shelf-shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  filter:
+    drop-shadow(0 20px 20px color-mix(in srgb, var(--pp-color-gray-950) 15%, transparent))
+    drop-shadow(0 2px 2px color-mix(in srgb, var(--pp-color-gray-950) 12%, transparent));
+}
+
+.jobs__shelf-shade-fill,
+.jobs__shelf-surface {
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  background: var(--pp-background-neutral-default);
+}
+
+.jobs__shelf-surface {
+  overflow: clip;
 }
 
 /* Opening is anticipated: the tabs fade and the shelf squashes first, and the
@@ -575,18 +572,20 @@ h1 {
   transition: grid-template-rows calc(0.9 * var(--jobs-duration-panel)) var(--jobs-ease-spring) var(--pp-duration-3);
 }
 
-/* The assistant sends the shelf down off the bottom edge as it fades: its own
-   height plus the bar's bottom margin, so the whole of it has left the frame.
-   It is the first move of the open, so the bar appears on an empty floor.
+/* The assistant narrows the shelf to the bar's box, between the add and
+   close buttons, as they push in from the frame's edges. Once it is there
+   the bar is already under it, so the shelf fades off and leaves the bar.
    Voice mode is a deeper state of the same open assistant, so it stays out. */
 .jobs__tabbar:is([data-state="assistant"], [data-state="voice"]) .jobs__shelf {
-  translate: 0 calc(52px + var(--pp-space-6));
+  width: calc(100% - 2 * (40px + var(--pp-space-2)));
+  margin-left: calc(40px + var(--pp-space-2));
   opacity: 0;
   pointer-events: none;
   transition:
     grid-template-rows var(--jobs-duration-panel) var(--jobs-ease-spring-soft),
-    translate var(--jobs-nav-exit) var(--pp-ease-in-out),
-    opacity var(--jobs-nav-exit) var(--pp-ease-in);
+    width var(--jobs-duration-assistant) var(--jobs-ease-settle),
+    margin-left var(--jobs-duration-assistant) var(--jobs-ease-settle),
+    opacity var(--pp-duration-2) linear var(--jobs-duration-assistant);
 }
 
 /* Both states sit on the bottom edge, so the shelf grows upward. The thumb
@@ -620,7 +619,25 @@ h1 {
   transition:
     opacity var(--pp-duration-2) var(--pp-ease-out) var(--pp-duration-3),
     scale var(--pp-duration-2) var(--pp-ease-out) var(--pp-duration-3),
-    filter var(--pp-duration-2) var(--pp-ease-out) var(--pp-duration-3);
+    filter var(--pp-duration-2) var(--pp-ease-out) var(--pp-duration-3),
+    left var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--pp-duration-2),
+    right var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--pp-duration-2);
+}
+
+/* Under the assistant the tabs blur and fade as the shelf narrows. They keep
+   their full width, centred, so the narrowing shelf crops them from both
+   ends rather than squeezing them. */
+.jobs__tabbar:is([data-state="assistant"], [data-state="voice"]) .jobs__nav {
+  left: calc(-1 * (40px + var(--pp-space-2)));
+  right: calc(-1 * (40px + var(--pp-space-2)));
+  opacity: 0;
+  filter: blur(6px);
+  pointer-events: none;
+  transition:
+    opacity var(--pp-duration-2) var(--pp-ease-in),
+    filter var(--pp-duration-2) var(--pp-ease-in),
+    left var(--jobs-duration-assistant) var(--jobs-ease-settle),
+    right var(--jobs-duration-assistant) var(--jobs-ease-settle);
 }
 
 .jobs__menu {
@@ -779,11 +796,14 @@ h1 {
 }
 
 /* The assistant bar: between a 40px add button on its left and a 40px close
-   button on its right, 8px from each. Hidden while the tabs are up — the Ask
-   Theo tab opens it — and already at its open width, so it appears in place
-   rather than growing out of a circle. */
+   button on its right, 8px from each. It shares the shelf's row and sits
+   under it, already at its open width, so the shelf narrowing onto it is
+   the whole of the transition: the bar shows from the moment the shelf
+   arrives, and is gone the moment the shelf takes back over. */
 .jobs__ask {
-  grid-row: 1;
+  /* The column is explicit too: two items placed on one row with an auto
+     column are set side by side rather than stacked. */
+  grid-area: 3 / 1;
   justify-self: start;
   position: relative;
   display: flex;
@@ -796,22 +816,14 @@ h1 {
   transition:
     width var(--jobs-duration-assistant) var(--jobs-ease-settle),
     margin-left var(--jobs-duration-assistant) var(--jobs-ease-settle),
-    /* Returns on the tabs' schedule after the More menu: once the panel is
-       most of the way down. */
-    opacity var(--pp-duration-2) var(--pp-ease-out) var(--pp-duration-3);
+    opacity 0s linear var(--pp-duration-2);
 }
 
-/* Open: the bar fades in once the shelf has left. */
 .jobs__tabbar:is([data-state="assistant"], [data-state="voice"]) .jobs__ask {
-  width: calc(100% - 2 * (40px + var(--pp-space-2)));
-  margin-left: calc(40px + var(--pp-space-2));
   opacity: 1;
   pointer-events: auto;
   overflow: visible;
-  transition:
-    width var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-nav-exit),
-    margin-left var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-nav-exit),
-    opacity var(--pp-duration-2) var(--pp-ease-out) var(--jobs-nav-exit);
+  transition: opacity 0s linear var(--jobs-duration-assistant);
 }
 
 /* Voice: the whole row, on the tab bar's spring and start delay. */
@@ -832,7 +844,7 @@ h1 {
 }
 
 /* The shadow, on a layer of its own under the surface. A drop shadow rather
-   than the box shadow the shelf and close button wear: it is cast from what
+   than the box shadow the close button wears: it is cast from what
    is painted, so it follows the clipped corner curve, where a box shadow is
    cast from the circular-radius box and the smoothed corner sits inside it,
    leaving an unshadowed sliver between the two. The filter sits on the
@@ -1066,9 +1078,10 @@ h1 {
   opacity: 1;
   pointer-events: auto;
   translate: 0 0;
+  /* On the shelf's clock, so they arrive at its ends as it narrows. */
   transition:
-    translate var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-nav-exit),
-    opacity var(--pp-duration-3) var(--pp-ease-out) var(--jobs-nav-exit);
+    translate var(--jobs-duration-assistant) var(--jobs-ease-settle),
+    opacity var(--pp-duration-2) var(--pp-ease-out);
 }
 
 /* In voice it is not slid away but squeezed out, as the inline bar's is by
@@ -1420,7 +1433,6 @@ h1 {
     height: auto;
   }
 
-  .jobs__ai-blur,
   .jobs__ai-scrim {
     height: calc(100dvh / 2);
   }

@@ -10,6 +10,7 @@
   var dim = document.querySelector('.jobs__dim');
   var menuItems = Array.prototype.slice.call(menu.querySelectorAll('.jobs__menu-item'));
   var moreIndex = items.indexOf(more);
+  var pages = Array.prototype.slice.call(document.querySelectorAll('.jobs__page'));
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   var current = items.findIndex(function (item) {
@@ -47,9 +48,9 @@
   // around it. The bar's inner padding is subtracted because the items sit
   // inside it while the thumb is positioned against the padding box.
   var count = items.length;
-  var inner = 'calc(100% - 2 * var(--pp-space-1))';
+  var inner = 'calc(100% - 2 * var(--jobs-nav-inset))';
   function place(index) {
-    thumb.style.left = 'calc(var(--pp-space-1) + ' + index + ' * ' + inner + ' / ' + count + ')';
+    thumb.style.left = 'calc(var(--jobs-nav-inset) + ' + index + ' * ' + inner + ' / ' + count + ')';
     thumb.style.width = 'calc(' + inner + ' / ' + count + ')';
     thumb.style.translate = '0px';
   }
@@ -86,6 +87,13 @@
       ],
       { duration: ms(TRAVEL) }
     );
+  }
+
+  function showPage(name) {
+    if (!name) return;
+    pages.forEach(function (page) {
+      page.hidden = page.dataset.page !== name;
+    });
   }
 
   function clearSteps() {
@@ -167,13 +175,14 @@
       markRow(null);
       closeMenu();
       select(index, true);
+      showPage(item.dataset.page);
     });
   });
 
   menuItems.forEach(function (item) {
     item.addEventListener('click', function () {
       var tab = item.dataset.tab;
-      // A row that maps to a tab selects it; everything from Quotes down lives
+      // A row that maps to a tab selects it; everything from Marketing down lives
       // behind More, so More is what stays lit — and the row itself, since the
       // tab bar cannot show which of them is current.
       var index = tab === undefined ? moreIndex : Number(tab);
@@ -181,6 +190,7 @@
       // Placed rather than animated: the tab bar is still faded out, so a
       // travelling thumb would do its work where nobody can see it.
       select(index, false);
+      showPage(item.dataset.page);
       closeMenu();
     });
   });
@@ -225,14 +235,14 @@
   // The surface's corner, written from the box rather than transitioned,
   // since a transition between two path() values snaps halfway in engines
   // that cannot interpolate them. The radius follows the height — the pill's
-  // 28 at 56px high, the phone's 54 at 180 — so the clip is right at every
+  // 26 at 52px high, the phone's 54 at 180 — so the clip is right at every
   // size the box passes through, in whichever direction it is travelling.
   var surface = fieldBox.querySelector('.jobs__surface');
   // The shadow's caster under the surface, kept in step with it: same clip,
   // same colour scope.
   var shade = fieldBox.querySelector('.jobs__shade-fill');
   var skins = [surface, shade].filter(Boolean);
-  var PILL = { height: 56, radius: 28 };
+  var PILL = { height: 52, radius: 26 };
   var PANEL = { height: 180, radius: 54 };
   var SMOOTHING = 0.6;
 
@@ -324,6 +334,76 @@
     focusField();
   });
 
+  // The suggestions step aside while the field holds words, and come back if
+  // it is emptied; a tapped one becomes those words. The voice button turns
+  // into send for as long as there is something to send.
+  function syncTyped() {
+    if (field.value) {
+      tabbar.dataset.typed = '';
+    } else if ('typed' in tabbar.dataset) {
+      delete tabbar.dataset.typed;
+      tabbar.dataset.cleared = '';
+    }
+    voice.setAttribute('aria-label', field.value ? 'Send message' : 'Speak instead');
+  }
+
+  // Nothing is listening, so sending is the field clearing for the next one.
+  function send() {
+    field.value = '';
+    syncTyped();
+    field.focus();
+  }
+
+  field.addEventListener('input', syncTyped);
+  field.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' && field.value) {
+      event.preventDefault();
+      send();
+    }
+  });
+  Array.prototype.slice
+    .call(document.querySelectorAll('.jobs__prompt:not(.jobs__prompt--refresh)'))
+    .forEach(function (prompt) {
+      prompt.addEventListener('click', function () {
+        field.value = prompt.textContent.trim();
+        syncTyped();
+        field.focus();
+      });
+    });
+
+  // Two sets, and a refresh advances to the next. The glyph turns once while
+  // the suggestions drop out; the labels change while they are hidden.
+  var prompts = Array.prototype.slice.call(
+    document.querySelectorAll('.jobs__prompt:not(.jobs__prompt--refresh)')
+  );
+  var promptSets = [
+    ['Create a quote', 'Start a job', 'Learn about Theo'],
+    ['Post on social media', 'See pending quotes', 'Send a reminder'],
+  ];
+  var promptSet = 0;
+  var refresh = document.querySelector('.jobs__prompt--refresh');
+  var refreshIcon = refresh.querySelector('.jobs__prompt-icon');
+  var refreshing = 0;
+  refresh.addEventListener('click', function () {
+    var pace = window.__ppSpeed || 1;
+    if (!reduced.matches) {
+      refreshIcon.animate({ rotate: ['0deg', '360deg'] }, { duration: 500 / pace, easing: 'cubic-bezier(0.45, 0, 0.4, 1)' });
+    }
+    window.clearTimeout(refreshing);
+    tabbar.dataset.cleared = '';
+    tabbar.dataset.refreshing = '';
+    refreshing = window.setTimeout(
+      function () {
+        promptSet = (promptSet + 1) % promptSets.length;
+        prompts.forEach(function (prompt, index) {
+          prompt.textContent = promptSets[promptSet][index];
+        });
+        delete tabbar.dataset.refreshing;
+      },
+      reduced.matches ? 0 : 200 / pace
+    );
+  });
+
   // Voice mode. The panel is always dark, whatever the app's theme. Its
   // contents carry the dark scope in the markup; only the surface and its
   // shadow caster are re-scoped here, and their colour transition carries the
@@ -337,6 +417,10 @@
   }
 
   voice.addEventListener('click', function () {
+    if (field.value) {
+      send();
+      return;
+    }
     window.clearTimeout(talking);
     talk.hidden = false;
     // A just-shown element has no prior style to transition from; the read
@@ -394,6 +478,9 @@
     tabbar.dataset.state = 'returning';
     field.blur();
     field.value = '';
+    delete tabbar.dataset.typed;
+    delete tabbar.dataset.cleared;
+    voice.setAttribute('aria-label', 'Speak instead');
     window.clearTimeout(returning);
     returning = window.setTimeout(
       function () {

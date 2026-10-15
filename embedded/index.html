@@ -45,11 +45,11 @@
               <button
                 type="button"
                 class="jobs__action"
-                aria-label="Filter jobs"
+                aria-label="Search"
                 data-pp-component="Icon Button"
                 data-pp-variant="theme=secondary"
               >
-                <span class="jobs__action-icon jobs__action-icon--filter" aria-hidden="true"></span>
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
               </button>
               <button
                 type="button"
@@ -262,6 +262,15 @@
               <button
                 type="button"
                 class="jobs__action"
+                aria-label="Search"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
+              >
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
+              </button>
+              <button
+                type="button"
+                class="jobs__action"
                 aria-label="Create appointment"
                 data-pp-component="Icon Button"
                 data-pp-variant="theme=secondary"
@@ -281,16 +290,16 @@
 
         <section class="jobs__page" data-page="get-paid" aria-labelledby="page-get-paid-title" hidden>
           <header class="jobs__header">
-            <h1 class="pp-title-1 jobs__title" id="page-get-paid-title">Get paid</h1>
+            <h1 class="pp-title-1 jobs__title" id="page-get-paid-title">Payments</h1>
             <div class="jobs__actions">
               <button
                 type="button"
                 class="jobs__action"
-                aria-label="Filter payments"
+                aria-label="Search"
                 data-pp-component="Icon Button"
                 data-pp-variant="theme=secondary"
               >
-                <span class="jobs__action-icon jobs__action-icon--filter" aria-hidden="true"></span>
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
               </button>
               <button
                 type="button"
@@ -312,11 +321,11 @@
               <button
                 type="button"
                 class="jobs__action"
-                aria-label="Filter messages"
+                aria-label="Search"
                 data-pp-component="Icon Button"
                 data-pp-variant="theme=secondary"
               >
-                <span class="jobs__action-icon jobs__action-icon--filter" aria-hidden="true"></span>
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
               </button>
               <button
                 type="button"
@@ -338,11 +347,11 @@
               <button
                 type="button"
                 class="jobs__action"
-                aria-label="Filter quotes"
+                aria-label="Search"
                 data-pp-component="Icon Button"
                 data-pp-variant="theme=secondary"
               >
-                <span class="jobs__action-icon jobs__action-icon--filter" aria-hidden="true"></span>
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
               </button>
               <button
                 type="button"
@@ -546,11 +555,11 @@
               <button
                 type="button"
                 class="jobs__action"
-                aria-label="Filter invoices"
+                aria-label="Search"
                 data-pp-component="Icon Button"
                 data-pp-variant="theme=secondary"
               >
-                <span class="jobs__action-icon jobs__action-icon--filter" aria-hidden="true"></span>
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
               </button>
               <button
                 type="button"
@@ -754,11 +763,11 @@
               <button
                 type="button"
                 class="jobs__action"
-                aria-label="Filter campaigns"
+                aria-label="Search"
                 data-pp-component="Icon Button"
                 data-pp-variant="theme=secondary"
               >
-                <span class="jobs__action-icon jobs__action-icon--filter" aria-hidden="true"></span>
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
               </button>
               <button
                 type="button"
@@ -780,11 +789,11 @@
               <button
                 type="button"
                 class="jobs__action"
-                aria-label="Filter customers"
+                aria-label="Search"
                 data-pp-component="Icon Button"
                 data-pp-variant="theme=secondary"
               >
-                <span class="jobs__action-icon jobs__action-icon--filter" aria-hidden="true"></span>
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
               </button>
               <button
                 type="button"
@@ -943,7 +952,6 @@
             <div class="jobs__scrim-wash"></div>
           </div>
           <div class="jobs__dim" data-state="closed" aria-hidden="true"></div>
-          <div class="jobs__ai-blur" aria-hidden="true"></div>
           <div class="jobs__ai-scrim" aria-hidden="true"></div>
           <!-- The assistant bar. The Ask Theo tab opens it; nothing of it
                shows while the tabs are up. -->
@@ -1014,64 +1022,70 @@
             <button type="button" class="pp-title-7 jobs__prompt" data-pp-component="Button" data-pp-variant="theme=tertiary, size=small">Learn about Theo</button>
           </div>
           <div class="jobs__shelf" data-state="tabs">
-            <nav class="jobs__nav" aria-label="Main">
-              <span class="jobs__nav-thumb" aria-hidden="true"></span>
-              <a class="jobs__nav-item" href="#" aria-current="page" data-page="jobs">
-                <span class="jobs__nav-icon jobs__nav-icon--business" aria-hidden="true"></span>
-                <span class="pp-body-4 jobs__nav-label">Jobs</span>
-              </a>
-              <a class="jobs__nav-item" href="#" data-page="schedule">
-                <span class="jobs__nav-icon jobs__nav-icon--schedule" aria-hidden="true"></span>
-                <span class="pp-body-4 jobs__nav-label">Schedule</span>
-              </a>
-              <button class="jobs__nav-item jobs__nav-item--ask" type="button">
-                <span class="jobs__nav-icon jobs__nav-icon--ask" aria-hidden="true"></span>
-                <span class="pp-body-4 jobs__nav-label">Ask Theo</span>
-              </button>
-              <a class="jobs__nav-item" href="#" data-page="get-paid">
-                <span class="jobs__nav-icon jobs__nav-icon--money" aria-hidden="true"></span>
-                <span class="pp-body-4 jobs__nav-label">Get paid</span>
-              </a>
-              <button
-                class="jobs__nav-item jobs__nav-item--more"
-                type="button"
-                aria-expanded="false"
-                aria-controls="jobs-more-menu"
-              >
-                <span class="jobs__nav-icon jobs__nav-icon--more" aria-hidden="true"></span>
-                <span class="pp-body-4 jobs__nav-label">More</span>
-              </button>
-            </nav>
+            <!-- The same split as the assistant bar's: the shade casts the
+                 shadow from a fill clipped to the surface's curve, since the
+                 clip would cut a shadow worn by the surface itself. -->
+            <div class="jobs__shelf-shade" aria-hidden="true"><div class="jobs__shelf-shade-fill"></div></div>
+            <div class="jobs__shelf-surface">
+              <nav class="jobs__nav" aria-label="Main">
+                <span class="jobs__nav-thumb" aria-hidden="true"></span>
+                <a class="jobs__nav-item" href="#" aria-current="page" data-page="jobs">
+                  <span class="jobs__nav-icon jobs__nav-icon--business" aria-hidden="true"></span>
+                  <span class="pp-body-4 jobs__nav-label">Jobs</span>
+                </a>
+                <a class="jobs__nav-item" href="#" data-page="schedule">
+                  <span class="jobs__nav-icon jobs__nav-icon--schedule" aria-hidden="true"></span>
+                  <span class="pp-body-4 jobs__nav-label">Schedule</span>
+                </a>
+                <button class="jobs__nav-item jobs__nav-item--ask" type="button">
+                  <span class="jobs__nav-icon jobs__nav-icon--ask" aria-hidden="true"></span>
+                  <span class="pp-body-4 jobs__nav-label">Ask Theo</span>
+                </button>
+                <a class="jobs__nav-item" href="#" data-page="get-paid">
+                  <span class="jobs__nav-icon jobs__nav-icon--money" aria-hidden="true"></span>
+                  <span class="pp-body-4 jobs__nav-label">Payments</span>
+                </a>
+                <button
+                  class="jobs__nav-item jobs__nav-item--more"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="jobs-more-menu"
+                >
+                  <span class="jobs__nav-icon jobs__nav-icon--more" aria-hidden="true"></span>
+                  <span class="pp-body-4 jobs__nav-label">More</span>
+                </button>
+              </nav>
 
-            <div class="jobs__menu" id="jobs-more-menu" hidden>
-              <button class="jobs__menu-item" type="button" data-tab="0" data-page="jobs">
-                <span class="jobs__menu-icon jobs__nav-icon--business" aria-hidden="true"></span>
-                <span class="pp-body-2 jobs__menu-label">Jobs</span>
-              </button>
-              <button class="jobs__menu-item" type="button" data-tab="1" data-page="schedule">
-                <span class="jobs__menu-icon jobs__nav-icon--schedule" aria-hidden="true"></span>
-                <span class="pp-body-2 jobs__menu-label">Schedule</span>
-              </button>
-              <button class="jobs__menu-item" type="button" data-action="ask">
-                <span class="jobs__menu-icon jobs__menu-icon--ask" aria-hidden="true"></span>
-                <span class="pp-body-2 jobs__menu-label">Ask Theo</span>
-              </button>
-              <button class="jobs__menu-item" type="button" data-tab="3" data-page="get-paid">
-                <span class="jobs__menu-icon jobs__nav-icon--money" aria-hidden="true"></span>
-                <span class="pp-body-2 jobs__menu-label">Get paid</span>
-              </button>
-              <button class="jobs__menu-item" type="button" data-page="messages">
-                <span class="jobs__menu-icon jobs__nav-icon--messages" aria-hidden="true"></span>
-                <span class="pp-body-2 jobs__menu-label">Messages</span>
-              </button>
-              <button class="jobs__menu-item" type="button" data-page="marketing">
-                <span class="jobs__menu-icon jobs__menu-icon--marketing" aria-hidden="true"></span>
-                <span class="pp-body-2 jobs__menu-label">Marketing</span>
-              </button>
-              <button class="jobs__menu-item" type="button" data-page="customers">
-                <span class="jobs__menu-icon jobs__menu-icon--customers" aria-hidden="true"></span>
-                <span class="pp-body-2 jobs__menu-label">Customers</span>
-              </button>
+              <div class="jobs__menu" id="jobs-more-menu" hidden>
+                <button class="jobs__menu-item" type="button" data-tab="0" data-page="jobs">
+                  <span class="jobs__menu-icon jobs__nav-icon--business" aria-hidden="true"></span>
+                  <span class="pp-body-2 jobs__menu-label">Jobs</span>
+                </button>
+                <button class="jobs__menu-item" type="button" data-tab="1" data-page="schedule">
+                  <span class="jobs__menu-icon jobs__nav-icon--schedule" aria-hidden="true"></span>
+                  <span class="pp-body-2 jobs__menu-label">Schedule</span>
+                </button>
+                <button class="jobs__menu-item" type="button" data-tab="3" data-page="get-paid">
+                  <span class="jobs__menu-icon jobs__nav-icon--money" aria-hidden="true"></span>
+                  <span class="pp-body-2 jobs__menu-label">Payments</span>
+                </button>
+                <button class="jobs__menu-item" type="button" data-page="messages">
+                  <span class="jobs__menu-icon jobs__nav-icon--messages" aria-hidden="true"></span>
+                  <span class="pp-body-2 jobs__menu-label">Messages</span>
+                </button>
+                <button class="jobs__menu-item" type="button" data-page="marketing">
+                  <span class="jobs__menu-icon jobs__menu-icon--marketing" aria-hidden="true"></span>
+                  <span class="pp-body-2 jobs__menu-label">Marketing</span>
+                </button>
+                <button class="jobs__menu-item" type="button" data-page="customers">
+                  <span class="jobs__menu-icon jobs__menu-icon--customers" aria-hidden="true"></span>
+                  <span class="pp-body-2 jobs__menu-label">Customers</span>
+                </button>
+                <button class="jobs__menu-item" type="button" data-action="ask">
+                  <span class="jobs__menu-icon jobs__menu-icon--ask" aria-hidden="true"></span>
+                  <span class="pp-body-2 jobs__menu-label">Ask Theo</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>

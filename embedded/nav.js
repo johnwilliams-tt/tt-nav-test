@@ -365,9 +365,25 @@
     fitSurface();
   }
 
+  // The shelf keeps the bar's 26 at every height. Its size comes from the
+  // observer rather than the bounding box, which the squash scales.
+  var shelfSurface = shelf.querySelector('.jobs__shelf-surface');
+  var shelfSkins = [shelfSurface, shelf.querySelector('.jobs__shelf-shade-fill')].filter(Boolean);
+  var SHELF_RADIUS = 26;
+
+  if (shelfSurface && 'ResizeObserver' in window) {
+    new ResizeObserver(function (entries) {
+      var size = entries[entries.length - 1].contentRect;
+      var clip = 'path("' + squircle(size.width, size.height, SHELF_RADIUS) + '")';
+      shelfSkins.forEach(function (skin) {
+        skin.style.clipPath = clip;
+      });
+    }).observe(shelfSurface);
+  }
+
   // Lined up with the placeholder's arrival, since the caret rides the same
   // fade as the words it sits beside. From the tabs, the placeholder waits
-  // out the tab bar's exit first; from voice, the panel's clearing.
+  // for the shelf to narrow into the bar; from voice, the panel's clearing.
   function focusField(fromVoice) {
     window.clearTimeout(focusing);
     focusing = window.setTimeout(

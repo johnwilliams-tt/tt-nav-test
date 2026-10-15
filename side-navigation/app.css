@@ -1,0 +1,1449 @@
+/* Jobs — pro app navigation prototype. Built from Figma BJbbaCrLcDhly90QyjNDTr, node 2174:1859. */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: var(--pp-space-7) 0;
+  background: var(--pp-background-neutral-low);
+  font-family: var(--pp-font-family);
+  color: var(--pp-text-neutral-default);
+}
+
+p,
+h1 {
+  margin: 0;
+}
+
+/* The frame's corners follow the phone's: 62px with iOS's continuous curve,
+   which is what Figma draws at 60% corner smoothing. The kit frame ships with
+   a plain token radius, and that file is generated, so the override lives
+   here.
+
+   The curve is Figma's own construction for r 62 at 0.6 on 393 x 852 — two
+   cubics and a 36° arc per corner, spanning 99.2px along each edge — written
+   out as a clip path. corner-shape would have been the one-line way to draw
+   it, but in Chromium a corner-shape on this clipping ancestor strips the
+   masks off the tab bar's progressive blur, so the corners are clipped
+   instead. A clip cuts the element's own shadow, which is why the frame sits
+   in a wrapper that casts it: a 62px circle, under the shadow's blur,
+   indistinguishable from the curve. */
+.jobs-device {
+  width: fit-content;
+  margin: 0 auto;
+  border-radius: 62px;
+  box-shadow: var(--pp-shadow-200);
+}
+
+.pp-device {
+  border-radius: 62px;
+  box-shadow: none;
+  clip-path: path(
+    "M 293.8 0 c 34.72 0 52.08 0 65.35 6.76 a 62 62 0 0 1 27.09 27.09 c 6.76 13.26 6.76 30.62 6.76 65.35 L 393 752.8 c 0 34.72 0 52.08 -6.76 65.35 a 62 62 0 0 1 -27.09 27.09 c -13.26 6.76 -30.62 6.76 -65.35 6.76 L 99.2 852 c -34.72 0 -52.08 0 -65.35 -6.76 a 62 62 0 0 1 -27.09 -27.09 c -6.76 -13.26 -6.76 -30.62 -6.76 -65.35 L 0 99.2 c 0 -34.72 0 -52.08 6.76 -65.35 a 62 62 0 0 1 27.09 -27.09 c 13.26 -6.76 30.62 -6.76 65.35 -6.76 Z"
+  );
+}
+
+/* Registered so its calc() resolves to a time in computed style: nav.js reads
+   it to schedule focus and the voice panel's teardown. */
+@property --jobs-assistant-start {
+  syntax: "<time>";
+  inherits: true;
+  initial-value: 0ms;
+}
+
+/* The side menu's progress, 0 closed to 1 open. Registered so it can be
+   transitioned: nav.js writes it straight from the finger while dragging,
+   with the transition off, and on release hands back to the open or closed
+   state, whose value the transition then carries from wherever the finger
+   let go. */
+@property --side-progress {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+/* The screen slides right by the menu's 313px to reveal the menu underneath.
+   The status bar stays put above both, so the screen and its cover run the
+   frame's full height under it rather than starting below it. */
+.pp-device {
+  /* The painted status bar's height, from pushpin-device.css: what the
+     screen's content and the menu both start below. */
+  --side-status-bar: 59px;
+  --side-width: 313px;
+  --side-progress: 0;
+  /* The drawer curve: a fast start that decelerates into place, so a release
+     mid-drag carries on at about the finger's speed. */
+  --side-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  /* A beat past the kit's longest duration, which hurried a slide this wide. */
+  --side-duration: calc(1.25 * var(--pp-duration-6));
+  transition: --side-progress var(--side-duration) var(--side-ease);
+}
+
+.pp-device[data-side="open"] {
+  --side-progress: 1;
+}
+
+.pp-device[data-side-dragging] {
+  transition: none;
+  user-select: none;
+}
+
+/* Placed by hand: with the screen spanning both rows, an auto-placed status
+   bar would open a third one under it. */
+.pp-device > .pp-status-bar {
+  grid-row: 1;
+  grid-column: 1;
+  z-index: 2;
+  background: none;
+}
+
+.pp-device > :is(.pp-screen.jobs, .side-cover) {
+  grid-row: 1 / -1;
+  grid-column: 1;
+  translate: calc(var(--side-progress) * var(--side-width)) 0;
+  /* The phone's corner at every point of the slide, so dragging moves a
+     rounded screen rather than growing its corners. At rest the frame's own
+     smoothed clip sits just inside this circle, so it never shows there. */
+  border-radius: 62px;
+}
+
+.pp-device > .pp-screen.jobs {
+  padding-top: var(--side-status-bar);
+  overflow: clip;
+  /* The kit's elevation tokens stop at --pp-shadow-400, which is too slight
+     to lift a whole screen off the menu; this is the design's own two-layer
+     shadow, faded in with the slide. */
+  box-shadow:
+    0 8px 7px -7px color-mix(in srgb, var(--pp-color-gray-950) calc(25% * var(--side-progress)), transparent),
+    0 20px 40px color-mix(in srgb, var(--pp-color-gray-950) calc(15% * var(--side-progress)), transparent);
+  /* Vertical pans stay the browser's; horizontal ones come to nav.js as the
+     menu's drag. The chip rows and the week strip are scroll containers of
+     their own, so they keep panning sideways. */
+  touch-action: pan-y;
+}
+
+.jobs .pp-screen__body {
+  touch-action: pan-y;
+}
+
+/* The screen's contents sit at 40% while the menu is out: a white veil at
+   60% over a white screen is the same picture, and unlike opacity it can
+   cover the screen's display: contents pages. */
+.side-cover {
+  position: relative;
+  z-index: 1;
+  padding: 0;
+  border: 0;
+  background: color-mix(in srgb, var(--pp-background-neutral-default) calc(60% * var(--side-progress)), transparent);
+  pointer-events: none;
+  touch-action: none;
+  cursor: pointer;
+}
+
+.pp-device:is([data-side="open"], [data-side-dragging]) .side-cover {
+  pointer-events: auto;
+}
+
+.side-menu {
+  position: absolute;
+  top: var(--side-status-bar);
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: var(--side-width);
+  touch-action: none;
+  /* Rises out from under the screen with the slide: from 96% and half
+     strength to full size and full strength, on the same progress, so it
+     tracks the finger and the release alike. It grows from the edge the
+     screen is leaving. */
+  opacity: calc(0.5 + 0.5 * var(--side-progress));
+  scale: calc(0.96 + 0.04 * var(--side-progress));
+  transform-origin: 100% 50%;
+}
+
+/* Out of sight once fully closed: on a phone the frame has no rounded clip,
+   and the menu would show through the screen's corners. It stays up for the
+   length of the closing slide. */
+.pp-device:not([data-side="open"], [data-side-dragging]) .side-menu {
+  visibility: hidden;
+  transition: visibility 0s linear var(--side-duration);
+}
+
+.side-menu__top {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pp-space-6);
+}
+
+.side-menu__header {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 var(--pp-space-4) 0 var(--pp-space-6);
+}
+
+.side-menu__logo {
+  display: block;
+}
+
+.side-menu__list {
+  margin: 0;
+  padding: 0 var(--pp-space-6) 0 var(--pp-space-4);
+  list-style: none;
+}
+
+.side-menu__item {
+  display: flex;
+  align-items: center;
+  gap: var(--pp-space-3);
+  width: 100%;
+  padding: var(--pp-space-3) var(--pp-space-4);
+  border: 0;
+  border-radius: var(--pp-radius-sides);
+  background: none;
+  color: var(--pp-link-neutral-default);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--pp-duration-2) var(--pp-ease-out);
+}
+
+.side-menu__item[aria-current="page"] {
+  background: var(--pp-background-neutral-medium);
+}
+
+.side-menu__icon {
+  flex: none;
+  background-color: var(--pp-icon-neutral-default);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  width: 24px;
+  height: 24px;
+}
+
+.side-menu__icon--business {
+  -webkit-mask-image: url("../assets/icons/business-medium.svg");
+  mask-image: url("../assets/icons/business-medium.svg");
+}
+
+.side-menu__icon--schedule {
+  -webkit-mask-image: url("../assets/icons/date-time-medium.svg");
+  mask-image: url("../assets/icons/date-time-medium.svg");
+}
+
+.side-menu__icon--money {
+  -webkit-mask-image: url("../assets/icons/money-medium.svg");
+  mask-image: url("../assets/icons/money-medium.svg");
+}
+
+.side-menu__icon--marketing {
+  -webkit-mask-image: url("../assets/icons/store-medium.svg");
+  mask-image: url("../assets/icons/store-medium.svg");
+}
+
+.side-menu__icon--customers {
+  -webkit-mask-image: url("../assets/icons/people-medium.svg");
+  mask-image: url("../assets/icons/people-medium.svg");
+}
+
+/* The Settings glyph is exported at 28; as a mask it scales to the row's 24. */
+.side-menu__icon--settings {
+  -webkit-mask-image: url("../assets/icons/settings-medium-28.svg");
+  mask-image: url("../assets/icons/settings-medium-28.svg");
+}
+
+.side-menu__footer {
+  padding: var(--pp-space-7) var(--pp-space-4) var(--pp-space-7) var(--pp-space-6);
+}
+
+/* The kit's Avatar, Pro at small, sized to the 52 of the screen's controls,
+   with its status badge and ring off. It opens nothing yet. */
+.side-menu__profile {
+  display: block;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pp-radius-sides);
+  background: none;
+  cursor: pointer;
+}
+
+.side-menu__avatar {
+  display: block;
+  width: 52px;
+  height: 52px;
+  border-radius: var(--pp-radius-sides);
+  object-fit: cover;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pp-device {
+    transition: none;
+  }
+}
+
+/* The screen: header and filters hold still, the list is what scrolls. */
+.jobs {
+  /* The panel's spring: ~24px past its resting height, reached at the halfway
+     point so the settle back down is a distinct second move rather than a
+     slow drift. The kit's three easings all stop at the target. */
+  --jobs-ease-spring: cubic-bezier(0.22, 1.5, 0.5, 1);
+  /* A spring's pace with the overshoot removed, for the assistant: a surface
+     that ends flush with a screen edge has nowhere to overshoot to, and the
+     jiggle showed on the field's edge and the close button. */
+  --jobs-ease-settle: cubic-bezier(0.34, 1, 0.64, 1);
+  /* The kit's durations stop at 350ms, which is short for a surface this
+     size once it has a spring to settle. */
+  --jobs-duration-assistant: 400ms;
+  /* A beat before the field starts moving; every assistant timing is
+     measured from this start. */
+  --jobs-assistant-start: calc(var(--pp-duration-3) / 1.5);
+  /* The suggested prompts wait well past the field's arrival and rise slowly,
+     so they read as offered rather than as part of the bar opening. Measured
+     from the tap. */
+  --jobs-prompts-delay: 1000ms;
+  --jobs-duration-prompts: 700ms;
+
+  position: relative;
+  row-gap: var(--pp-space-6);
+  padding-top: var(--pp-space-6);
+}
+
+/* One page shows at a time; the wrapper contributes no box so a page's header,
+   chip row and body stay direct children of the screen's column. */
+.jobs__page {
+  display: contents;
+}
+
+.jobs__page[hidden] {
+  display: none;
+}
+
+/* Held at the action buttons' 40 so a page without any, like Settings,
+   puts its title on the same line as the rest. */
+.jobs__header {
+  display: flex;
+  align-items: center;
+  gap: var(--pp-space-4);
+  min-height: 40px;
+  padding: 0 var(--pp-space-6);
+}
+
+.jobs__title {
+  flex: 1;
+  min-width: 0;
+  color: var(--pp-heading-neutral-default);
+}
+
+.jobs__actions {
+  display: flex;
+  align-items: center;
+  flex: none;
+  border-radius: var(--pp-radius-sides);
+  background: var(--pp-background-neutral-low);
+}
+
+.jobs__action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pp-radius-sides);
+  background: var(--pp-background-neutral-low);
+  color: var(--pp-icon-neutral-default);
+  cursor: pointer;
+}
+
+/* Exported glyphs carry a baked fill, so they are masks and the colour stays
+   a token — the same reason pushpin-device.css masks the status bar glyphs. */
+.jobs__action-icon,
+.jobs__menu-button-icon {
+  display: block;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.jobs__action-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.jobs__action-icon--plus {
+  -webkit-mask-image: url("../assets/icons/plus-small.svg");
+  mask-image: url("../assets/icons/plus-small.svg");
+}
+
+.jobs__action-icon--today {
+  -webkit-mask-image: url("../assets/icons/date-time-small.svg");
+  mask-image: url("../assets/icons/date-time-small.svg");
+}
+
+/* The week strip: seven days to the frame, scrolling by day. The day is a
+   fixed 47 so exactly seven sit between the 8px gutters, and the snap holds a
+   day at the left edge, which is where the today button puts today. */
+.jobs__week {
+  display: flex;
+  flex: none;
+  gap: var(--pp-space-2);
+  padding: 0 var(--pp-space-2);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: var(--pp-space-2);
+  scrollbar-width: none;
+}
+
+.jobs__week::-webkit-scrollbar {
+  display: none;
+}
+
+.jobs__day {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pp-space-1);
+  width: 47px;
+  height: 60px;
+  padding: var(--pp-space-2) 0;
+  border: 0;
+  border-radius: var(--pp-radius-small);
+  background: var(--pp-background-neutral-default);
+  color: var(--pp-heading-neutral-medium);
+  font-family: var(--pp-font-family);
+  scroll-snap-align: start;
+  cursor: pointer;
+}
+
+.jobs__day[aria-current="date"] {
+  background: var(--pp-background-neutral-low);
+}
+
+.jobs__day[aria-pressed="true"] {
+  background: var(--pp-background-brand-medium);
+  color: var(--pp-text-neutral-inverse);
+}
+
+.jobs__day-num {
+  color: var(--pp-text-brand-strong);
+}
+
+.jobs__day[aria-pressed="true"] .jobs__day-num {
+  color: var(--pp-text-neutral-inverse);
+}
+
+/* Marks a day with appointments; the empty state has none. */
+.jobs__day-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: var(--pp-radius-sides);
+}
+
+.jobs__day[data-busy] .jobs__day-dot {
+  background: var(--pp-icon-brand-default);
+}
+
+.jobs__day[aria-pressed="true"][data-busy] .jobs__day-dot {
+  background: var(--pp-icon-neutral-inverse);
+}
+
+.jobs__filters {
+  display: flex;
+  flex: none;
+  gap: var(--pp-space-2);
+  padding: 0 var(--pp-space-4);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.jobs__filters::-webkit-scrollbar {
+  display: none;
+}
+
+.jobs__chip {
+  display: flex;
+  align-items: center;
+  flex: none;
+  height: 34px;
+  padding: 0 var(--pp-space-4);
+  border: 1.5px solid var(--pp-border-neutral-default);
+  border-radius: var(--pp-radius-sides);
+  background: var(--pp-background-neutral-default);
+  color: var(--pp-heading-neutral-default);
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-body-3);
+  line-height: var(--pp-line-height-body-3);
+  font-weight: var(--pp-font-weight-bold);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.jobs__chip[aria-pressed="true"] {
+  border-color: var(--pp-border-neutral-default-active);
+  background: var(--pp-background-neutral-default-pressed);
+}
+
+.jobs__body {
+  padding: 0 var(--pp-space-6);
+  /* Clears the floating nav so the last row can be reached. */
+  padding-bottom: var(--pp-space-10);
+}
+
+.jobs__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.jobs__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--pp-space-4);
+  padding: var(--pp-space-4) 0;
+}
+
+.jobs__row + .jobs__row {
+  border-top: 1px solid var(--pp-border-neutral-default);
+}
+
+.jobs__avatar {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--pp-radius-sides);
+  background: var(--pp-background-neutral-medium);
+}
+
+.jobs__text {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  gap: var(--pp-space-1);
+}
+
+.jobs__slot {
+  display: flex;
+  align-items: center;
+  font-weight: var(--pp-font-weight-regular);
+}
+
+.jobs__bone {
+  height: var(--pp-space-3);
+  border-radius: var(--pp-radius-sides);
+  background: var(--pp-background-neutral-medium);
+  color: transparent;
+  line-height: var(--pp-space-3);
+  overflow: hidden;
+  user-select: none;
+}
+
+/* The nav floats over the list, on a scrim that fades the rows out beneath it. */
+/* Five tracks: the menu button, a gap, the assistant field, a gap, the close
+   button. At rest the field is already a bar, filling everything the 52px
+   button leaves. Opening the assistant hands the button's track to the
+   field, which grows leftward as the button leaves. The gaps are tracks
+   rather than `gap` so they can close to nothing and let the field reach
+   the screen's padding edge exactly.
+
+   All five are lengths: a track cannot interpolate between a length and an
+   fr, so the flexible one is written as a percentage minus its neighbours.
+
+   The gap between button and field (track 3) never changes, so the two can
+   only ever be 8px apart while both are on screen. For the field to still
+   land on the screen's padding edge with that gap in front of it, the grid
+   starts 8px early on the left and the button carries the 8px as its
+   margin, which is why its track is 60: closed, the button sits on the
+   padding edge; open, the field sits where the button's left edge was.
+
+   The screen margins are tracks too (1 and 7, and the second row), rather
+   than padding, because voice mode pulls the panel out to 8px from the
+   phone's edges and the margins have to travel with the rest of the grid. */
+.jobs__tabbar {
+  /* 32px from the screen's sides; the left one is 8px short because the menu
+     button carries the 8px as its margin. */
+  --jobs-gutter-left: var(--pp-space-6);
+  --jobs-gutter-right: var(--pp-space-7);
+  /* The assistant's scrim: the kit's sheet scrim thinned to 40% at the foot,
+     since it is not a sheet, eased out in steps so its top edge never reads
+     as a line. */
+  --jobs-scrim-fade: linear-gradient(
+    to top,
+    color-mix(in srgb, var(--pp-scrim-dark-80) 40%, transparent),
+    color-mix(in srgb, var(--pp-scrim-dark-80) 26%, transparent) 30%,
+    color-mix(in srgb, var(--pp-scrim-dark-80) 12%, transparent) 60%,
+    color-mix(in srgb, var(--pp-scrim-dark-80) 3%, transparent) 85%,
+    transparent
+  );
+  position: absolute;
+  inset: auto 0 0 0;
+  display: grid;
+  grid-template-columns:
+    var(--jobs-gutter-left)
+    calc(52px + var(--pp-space-2))
+    var(--pp-space-2)
+    calc(100% - var(--jobs-gutter-left) - var(--jobs-gutter-right) - 52px - 2 * var(--pp-space-2))
+    0
+    0
+    var(--jobs-gutter-right);
+  grid-template-rows: auto var(--pp-space-7);
+  align-items: end;
+  /* Only matters while the voice panel's spring overshoots: the tracks that
+     are closing cannot go below zero, so for a few frames the columns add up
+     to more than the width, and centring splits that excess over both edges
+     instead of spilling it all to the right. */
+  justify-content: center;
+  padding: var(--pp-space-6) 0 0;
+  /* The rows only move on the voice axis, where both directions wait for the
+     panel's contents to clear, so their delay is unconditional. */
+  transition:
+    grid-template-columns var(--jobs-duration-assistant) var(--jobs-ease-settle),
+    grid-template-rows var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
+}
+
+.jobs__tabbar[data-state="assistant"] {
+  grid-template-columns:
+    var(--jobs-gutter-left)
+    0
+    var(--pp-space-2)
+    calc(100% - var(--jobs-gutter-left) - var(--jobs-gutter-right) - 40px - 2 * var(--pp-space-2))
+    var(--pp-space-2)
+    40px
+    var(--jobs-gutter-right);
+  transition:
+    grid-template-columns var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start),
+    grid-template-rows var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
+}
+
+/* Voice: the field takes the whole row and the margins close to 8px, the
+   same inset the phone's own corner curve leaves it. Everything inside the
+   field has faded first (the start delay), so the panel grows empty. */
+.jobs__tabbar[data-state="voice"] {
+  grid-template-columns:
+    var(--pp-space-2)
+    0
+    0
+    calc(100% - 2 * var(--pp-space-2))
+    0
+    0
+    var(--pp-space-2);
+  grid-template-rows: auto var(--pp-space-2);
+  /* The panel opens on the menu's spring and closes on the settle curve: a
+     transition belongs to the state being entered, so the assistant rule
+     above carries the way back. The overshoot lands on the margin tracks,
+     which have 8px to give, so the panel never meets the frame. */
+  transition:
+    grid-template-columns var(--jobs-duration-assistant) var(--jobs-ease-spring) var(--jobs-assistant-start),
+    grid-template-rows var(--jobs-duration-assistant) var(--jobs-ease-spring) var(--jobs-assistant-start);
+}
+
+.jobs__scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* A progressive blur: one backdrop-filter can only be a single radius, so the
+   ramp is five layers, each masked to start lower than the last. A layer's
+   backdrop includes the layers painted before it, so the radii compound
+   downward and the top edge of the container is left untouched. A mask only
+   reads alpha, so currentColor stands in for "fully opaque" and keeps a colour
+   value out of a place that is not about colour. */
+.jobs__scrim-blur {
+  position: absolute;
+  inset: 0;
+}
+
+.jobs__scrim-blur:nth-child(1) {
+  backdrop-filter: blur(0.5px);
+  mask-image: linear-gradient(to bottom, transparent 0%, currentColor 25%);
+}
+
+.jobs__scrim-blur:nth-child(2) {
+  backdrop-filter: blur(1px);
+  mask-image: linear-gradient(to bottom, transparent 15%, currentColor 40%);
+}
+
+.jobs__scrim-blur:nth-child(3) {
+  backdrop-filter: blur(2px);
+  mask-image: linear-gradient(to bottom, transparent 30%, currentColor 55%);
+}
+
+.jobs__scrim-blur:nth-child(4) {
+  backdrop-filter: blur(4px);
+  mask-image: linear-gradient(to bottom, transparent 45%, currentColor 70%);
+}
+
+.jobs__scrim-blur:nth-child(5) {
+  backdrop-filter: blur(8px);
+  mask-image: linear-gradient(to bottom, transparent 60%, currentColor 85%);
+}
+
+/* Painted last, so the wash sits over the blurred rows rather than being
+   blurred with them. */
+.jobs__scrim-wash {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    color-mix(in srgb, var(--pp-background-neutral-default) 60%, transparent) 50%,
+    color-mix(in srgb, var(--pp-background-neutral-default) 90%, transparent)
+  );
+}
+
+/* The assistant's scrim: easing out to nothing halfway up the frame, so the
+   bar reads as lifted off the list without the screen going dark behind a
+   single line of input. Anchored to the bar's floor like the dim, it sits
+   above the blurred rows and below the field. It arrives as the field starts
+   to grow and leaves with the field's contents. */
+.jobs__ai-scrim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--pp-device-height) / 2);
+  background: var(--jobs-scrim-fade);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--pp-duration-3) var(--pp-ease-in);
+}
+
+.jobs__tabbar:is([data-state="assistant"], [data-state="voice"]) .jobs__ai-scrim {
+  opacity: 1;
+  transition: opacity var(--jobs-duration-assistant) var(--pp-ease-out) var(--jobs-assistant-start);
+}
+
+/* The menu button: a 52px white circle in track 2, wearing the field's
+   elevation. Positioned so it paints above the scrim rather than under it
+   with the rest of the in-flow content.
+
+   End-aligned, so its right edge is pinned to the track's and the 8px gap to
+   the field never changes. When the assistant opens, the track collapses to
+   nothing; the circle is the floor, so below it the button overflows its
+   track leftward, which is the direction it is leaving in. */
+.jobs__shelf {
+  grid-column: 2;
+  justify-self: end;
+  position: relative;
+  width: calc(100% - var(--pp-space-2));
+  min-width: 52px;
+  height: 52px;
+  margin-left: var(--pp-space-2);
+  border-radius: var(--pp-radius-sides);
+  background: var(--pp-background-neutral-default);
+  overflow: clip;
+  /* The kit's elevation tokens stop at --pp-shadow-400, which is too slight to
+     lift a control that floats over scrolling content; the design's own
+     two-layer shadow is mixed from the gray ramp so it stays dark in both
+     themes. */
+  box-shadow:
+    0 8px 7px -7px color-mix(in srgb, var(--pp-color-gray-950) 25%, transparent),
+    0 20px 40px color-mix(in srgb, var(--pp-color-gray-950) 15%, transparent);
+  transition: translate calc(0.35 * var(--jobs-duration-assistant)) var(--jobs-ease-settle);
+}
+
+/* Riding the collapsing track alone, the ball would come to rest 24px
+   inside the screen, so this translate is the rest of the way off. The ball
+   is already at its floor when the track starts to close, so the translate
+   starts with the track and runs the same duration on the same curve: the
+   two add up to one move that decelerates with the field. Starting it any
+   later, once the track had already slowed, would read as a second push.
+   The travel is the 24px plus the 40px reach of the ball's shadow, so the
+   shadow has left the stage too by the time the ball is hidden. Voice mode
+   is a deeper state of the same open assistant, so the button stays out. */
+.jobs__tabbar:is([data-state="assistant"], [data-state="voice"]) .jobs__shelf {
+  translate: -64px;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    translate var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start),
+    visibility 0s linear calc(var(--jobs-assistant-start) + var(--jobs-duration-assistant));
+}
+
+/* The kit's Hamburger Icon · Medium at its 28px, centred in the circle. It
+   opens nothing yet. */
+.jobs__menu-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pp-radius-sides);
+  background: none;
+  color: var(--pp-icon-neutral-default);
+  cursor: pointer;
+}
+
+.jobs__menu-button-icon {
+  width: 28px;
+  height: 28px;
+  -webkit-mask-image: url("../assets/icons/hamburger-medium-28.svg");
+  mask-image: url("../assets/icons/hamburger-medium-28.svg");
+}
+
+/* The assistant. At rest it is a bar in track 4 beside the menu button; open
+   it is the same element spanning the row, so the bar does not hand off to a
+   field — it becomes one. Everything inside is placed against its left edge,
+   which is the edge that travels. */
+/* At 52px high the surface's smoothed clip is exactly the 26px pill, so the
+   bar wears the design's own box shadow, the same as the menu button beside
+   it. Only the voice panel's taller box has a smoothed corner a box shadow
+   cannot follow; there the shade below takes over. Both shadows only change
+   on the voice axis, alongside the rows. */
+.jobs__field {
+  grid-column: 4;
+  position: relative;
+  display: grid;
+  grid-template-rows: 52px;
+  border-radius: 26px;
+  box-shadow:
+    0 8px 7px -7px color-mix(in srgb, var(--pp-color-gray-950) 25%, transparent),
+    0 20px 40px color-mix(in srgb, var(--pp-color-gray-950) 15%, transparent);
+  /* Only changes on the voice axis; see .jobs__tabbar's rows. */
+  transition:
+    grid-template-rows var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start),
+    box-shadow var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
+}
+
+/* The voice panel's shadow, on a layer of its own under the surface. A drop
+   shadow is cast from what is painted, so it follows the clipped corner
+   curve, where a box shadow is cast from the circular-radius box and the
+   smoothed corner sits inside it, leaving an unshadowed sliver between the
+   two. It cannot take the contact layer's negative spread, so it is an
+   approximation, which is why it is only worn by the panel. The filter sits
+   on the wrapper and the clip on the fill, since a clip is applied after an
+   element's own filter and would cut it. The fill wears the surface's
+   colour, including its dark re-scope, so its anti-aliased edge never shows
+   as a lighter fringe under the surface's. At rest its colours are
+   transparent rather than the filter being none, so the two interpolate. */
+.jobs__shade {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  filter:
+    drop-shadow(0 20px 20px transparent)
+    drop-shadow(0 2px 2px transparent);
+  transition: filter var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
+}
+
+.jobs__tabbar[data-state="voice"] .jobs__field {
+  box-shadow:
+    0 8px 7px -7px transparent,
+    0 20px 40px transparent;
+}
+
+.jobs__tabbar[data-state="voice"] .jobs__shade {
+  filter:
+    drop-shadow(0 20px 20px color-mix(in srgb, var(--pp-color-gray-950) 15%, transparent))
+    drop-shadow(0 2px 2px color-mix(in srgb, var(--pp-color-gray-950) 12%, transparent));
+}
+
+.jobs__shade-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: 26px;
+  background: var(--pp-background-neutral-default);
+  transition: background-color var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
+}
+
+/* The painted surface, separate from the field so it can be clipped to the
+   phone's corner curve while the field keeps casting the shadow (a clip cuts
+   the element's own shadow). The clip is written by nav.js from the box's
+   size on every frame it changes — a pill at 52px high, the phone's 54px
+   smoothed corner at 180 — because a CSS transition between two path() values
+   is only interpolated by some engines and snaps halfway in the rest. The
+   radius here is the pill's, for the frames before the script runs. */
+.jobs__surface {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  border-radius: 26px;
+  background: var(--pp-background-neutral-default);
+  transition: background-color var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
+}
+
+/* Voice mode: the panel is 377 x 180 at 54px with the phone's 60% smoothing,
+   concentric with the frame's own corners 8px outside it. The panel is
+   always dark, whatever the app's theme: its contents carry the dark scope
+   in the markup, and nav.js re-scopes the surface and its shadow caster for
+   as long as it is a panel so their colour transition does the swap. The field's own controls
+   stay in the app's theme while they fade, which is why the scope is not
+   put on the field. */
+.jobs__tabbar[data-state="voice"] .jobs__field {
+  grid-template-rows: 180px;
+  transition:
+    grid-template-rows var(--jobs-duration-assistant) var(--jobs-ease-spring) var(--jobs-assistant-start),
+    box-shadow var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
+}
+
+/* And shrinks back on the same spring. The way back is the assistant state,
+   whose own curves belong to the fab growing into a field and must not
+   overshoot, so nav.js marks the bar for the length of the return and the
+   spring rides the mark. The tracks that grow back from zero are all
+   growing, so nothing clamps and the undershoot stays centred. */
+.jobs__tabbar[data-from="voice"],
+.jobs__tabbar[data-from="voice"] .jobs__field {
+  transition-timing-function: var(--jobs-ease-spring);
+}
+
+/* The waves sit on the panel's floor and arrive once it has reached its
+   size: up from below and in, together. waves.js draws them into the canvas;
+   this layer only places and choreographs it. */
+.jobs__waves {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 110px;
+  opacity: 0;
+  translate: 0 var(--pp-space-6);
+  transition:
+    opacity var(--pp-duration-3) var(--pp-ease-out),
+    translate var(--pp-duration-3) var(--pp-ease-out);
+}
+
+.jobs__waves-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.jobs__tabbar[data-state="voice"] .jobs__waves {
+  opacity: 1;
+  translate: 0 0;
+  transition:
+    opacity var(--pp-duration-4) var(--jobs-ease-settle) calc(var(--jobs-assistant-start) + var(--jobs-duration-assistant)),
+    translate var(--pp-duration-4) var(--jobs-ease-settle) calc(var(--jobs-assistant-start) + var(--jobs-duration-assistant));
+}
+
+.jobs__fab {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pp-radius-sides);
+  background: none;
+  cursor: pointer;
+}
+
+.jobs__tabbar:not([data-state="nav"], [data-state="returning"]) .jobs__fab {
+  pointer-events: none;
+}
+
+/* The 24px glyph scaled to the bar's 18px about its own centre; the -3px
+   nudge puts it back on the field's 18px text inset, since a centre-origin
+   scale pulls both edges in. */
+.jobs__spark {
+  position: absolute;
+  top: 50%;
+  left: 18px;
+  width: 24px;
+  height: 24px;
+  margin-top: -12px;
+  translate: -3px;
+  scale: 0.75;
+  background-color: var(--pp-icon-brand-default);
+  -webkit-mask-image: url("../assets/icons/ai-spark.svg");
+  mask-image: url("../assets/icons/ai-spark.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  transition: opacity var(--pp-duration-3) var(--pp-ease-out);
+}
+
+/* The spark crossfades into the plus with the field's other contents — the
+   placeholder and the voice button — once the field is nearly at full
+   width, so the plus and the voice icon arrive together. */
+.jobs__tabbar[data-state="assistant"] .jobs__spark {
+  opacity: 0;
+  transition-delay: calc(var(--jobs-assistant-start) + 0.7 * var(--jobs-duration-assistant));
+}
+
+/* Centred where the shrunk spark lands: its 24px box at 18px, nudged -3px,
+   puts the centre 27px in, which is the 18px plus at the same 18px left. */
+.jobs__plus {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 18px;
+  width: 18px;
+  height: 18px;
+  margin: auto 0;
+  background-color: var(--pp-icon-neutral-default);
+  -webkit-mask-image: url("../assets/icons/plus-small.svg");
+  mask-image: url("../assets/icons/plus-small.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  opacity: 0;
+  transition: opacity var(--pp-duration-3) var(--pp-ease-out);
+}
+
+.jobs__tabbar[data-state="assistant"] .jobs__plus {
+  opacity: 1;
+  transition-delay: calc(var(--jobs-assistant-start) + 0.7 * var(--jobs-duration-assistant));
+}
+
+/* Voice mode empties the field first: everything in it, and the close button
+   beside it, is gone before the panel starts to grow. */
+.jobs__tabbar[data-state="voice"] :is(.jobs__spark, .jobs__plus, .jobs__input, .jobs__voice, .jobs__close) {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--jobs-assistant-start) var(--pp-ease-in);
+}
+
+/* At rest the bar's label is the hint below and the fab over it takes the
+   tap; open, this is a field and its placeholder takes over, clear of the
+   voice button. */
+.jobs__input {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(18px + 18px + var(--pp-space-2));
+  right: calc(40px + var(--pp-space-2) * 2);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--pp-heading-neutral-default);
+  font: inherit;
+  pointer-events: none;
+  transition: opacity var(--pp-duration-2) var(--pp-ease-out);
+}
+
+.jobs__input::placeholder {
+  color: transparent;
+  opacity: 1;
+  transition: color var(--pp-duration-3) var(--pp-ease-out);
+}
+
+.jobs__tabbar[data-state="assistant"] .jobs__input::placeholder {
+  color: var(--pp-heading-neutral-default);
+}
+
+/* The resting label, on the placeholder's line and inset, in the design's
+   low heading colour. nav.js cycles it from Ask Theo through every
+   suggestion, fading each out and the next in. It steps aside while the
+   assistant is open, and is back as the field shrinks home. */
+.jobs__hint {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(18px + 18px + var(--pp-space-2));
+  right: var(--pp-space-5);
+  display: flex;
+  align-items: center;
+  color: var(--pp-heading-neutral-low);
+  white-space: nowrap;
+  overflow: hidden;
+  pointer-events: none;
+  transition: opacity var(--pp-duration-6) var(--pp-ease-in-out);
+}
+
+.jobs__hint[data-fading] {
+  opacity: 0;
+}
+
+.jobs__tabbar:not([data-state="nav"], [data-state="returning"]) .jobs__hint {
+  opacity: 0;
+  transition-duration: var(--pp-duration-2);
+}
+
+.jobs__input:focus {
+  outline: none;
+}
+
+.jobs__voice {
+  position: absolute;
+  top: 50%;
+  right: var(--pp-space-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-top: -20px;
+  border: 0;
+  border-radius: var(--pp-radius-sides);
+  background: var(--pp-background-brand-strong);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--pp-duration-2) var(--pp-ease-out);
+}
+
+.jobs__voice-icon {
+  width: 18px;
+  height: 18px;
+  background-color: var(--pp-icon-on-brand-strong);
+  -webkit-mask-image: url("../assets/icons/audio-lines-small.svg");
+  mask-image: url("../assets/icons/audio-lines-small.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  transition:
+    opacity var(--pp-duration-2) var(--pp-ease-out),
+    scale var(--pp-duration-3) var(--jobs-ease-settle);
+}
+
+/* With words in the field the button sends them: the audio lines give way to
+   the arrow in the same spot, each shrinking out as the other grows in. */
+.jobs__voice-icon--send {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  -webkit-mask-image: url("../assets/icons/arrow-up-small.svg");
+  mask-image: url("../assets/icons/arrow-up-small.svg");
+  opacity: 0;
+  scale: 0.5;
+}
+
+.jobs__tabbar[data-typed] .jobs__voice-icon {
+  opacity: 0;
+  scale: 0.5;
+}
+
+.jobs__tabbar[data-typed] .jobs__voice-icon--send {
+  opacity: 1;
+  scale: 1;
+}
+
+/* The field's contents arrive together, once it is nearly at full width, on
+   one slow fade. */
+.jobs__tabbar[data-state="assistant"] :is(.jobs__input, .jobs__voice) {
+  opacity: 1;
+  pointer-events: auto;
+  transition-duration: var(--pp-duration-3);
+  transition-delay: calc(var(--jobs-assistant-start) + 0.7 * var(--jobs-duration-assistant));
+}
+
+.jobs__close {
+  grid-column: 6;
+  align-self: center;
+  /* Positioned for the same reason the shelf and the field are: the scrim is
+     absolutely positioned, so it paints over any static sibling — which was
+     washing this button's shadow out and softening its icon. */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pp-radius-sides);
+  background: var(--pp-background-neutral-default);
+  overflow: clip;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow:
+    0 8px 7px -7px color-mix(in srgb, var(--pp-color-gray-950) 25%, transparent),
+    0 20px 40px color-mix(in srgb, var(--pp-color-gray-950) 15%, transparent);
+  transition: opacity var(--pp-duration-2) var(--pp-ease-out);
+}
+
+.jobs__tabbar[data-state="assistant"] .jobs__close {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: calc(var(--jobs-assistant-start) + 0.42 * var(--jobs-duration-assistant));
+}
+
+.jobs__close-icon {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  background-color: var(--pp-icon-neutral-default);
+  -webkit-mask-image: url("../assets/icons/close-small.svg");
+  mask-image: url("../assets/icons/close-small.svg");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* Suggested prompts, stacked on the open field's left edge 24px above it.
+   Each page has its own, up to three, and the labels cannot share one row at
+   this width, so they stack, hugging their words. They are the last thing in: a beat after the field has opened they
+   rise one at a time from the field outward, and they leave together, at
+   once, on any exit — closing, voice, or text in the field. */
+.jobs__prompts {
+  position: absolute;
+  left: calc(var(--jobs-gutter-left) + var(--pp-space-2));
+  bottom: calc(var(--pp-space-7) + 52px + var(--pp-space-6));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--pp-space-4);
+  pointer-events: none;
+}
+
+/* The kit's tertiary small Button: white, 40 tall, 20 in from either end. */
+.jobs__prompt {
+  --jobs-prompt-order: 0;
+  height: 40px;
+  padding: 0 var(--pp-space-5);
+  border: 0;
+  border-radius: var(--pp-radius-sides);
+  background: var(--pp-background-neutral-default);
+  color: var(--pp-heading-neutral-default);
+  white-space: nowrap;
+  cursor: pointer;
+  opacity: 0;
+  translate: 0 var(--pp-space-2);
+  transition:
+    opacity var(--pp-duration-2) var(--pp-ease-in),
+    translate var(--pp-duration-2) var(--pp-ease-in);
+}
+
+/* Counted from the bar up, so the nearest arrives first. */
+.jobs__prompt:nth-last-child(2) {
+  --jobs-prompt-order: 1;
+}
+
+.jobs__prompt:nth-last-child(3) {
+  --jobs-prompt-order: 2;
+}
+
+.jobs__tabbar[data-state="assistant"]:not([data-typed]) .jobs__prompt {
+  opacity: 1;
+  translate: 0 0;
+  pointer-events: auto;
+  transition:
+    opacity var(--jobs-duration-prompts) var(--pp-ease-out),
+    translate var(--jobs-duration-prompts) var(--jobs-ease-settle);
+  transition-delay: calc(var(--jobs-prompts-delay) + var(--jobs-prompt-order) * var(--pp-duration-1));
+}
+
+/* Typed away and back to empty, the field is already open, so they return
+   without waiting out its growth. */
+.jobs__tabbar[data-state="assistant"][data-cleared] .jobs__prompt {
+  transition-delay: calc(var(--jobs-prompt-order) * var(--pp-duration-1));
+}
+
+/* The voice panel's contents: an expand control up top, the prompt, and the
+   mic, keyboard and stop controls along the floor, all over the waves. It
+   fills the field's grid cell, so it is the panel's padding box, and it is
+   the last thing in: after the panel has its size and the waves are up. */
+.jobs__talk {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 0;
+  padding: var(--pp-space-6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--jobs-assistant-start) var(--pp-ease-in);
+}
+
+.jobs__talk[hidden] {
+  display: none;
+}
+
+.jobs__tabbar[data-state="voice"] .jobs__talk {
+  opacity: 1;
+  pointer-events: auto;
+  /* Starts once the waves are most of the way in. */
+  transition: opacity var(--pp-duration-3) var(--pp-ease-out)
+    calc(var(--jobs-assistant-start) + var(--jobs-duration-assistant) + 0.6 * var(--pp-duration-4));
+}
+
+.jobs__talk-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.jobs__talk-row--top {
+  justify-content: flex-end;
+}
+
+.jobs__talk-group {
+  display: flex;
+  gap: var(--pp-space-2);
+}
+
+.jobs__talk-caption {
+  color: var(--pp-heading-neutral-default);
+  text-align: center;
+  text-wrap: pretty;
+}
+
+.jobs__talk-button {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pp-radius-sides);
+  background: var(--pp-background-neutral-low);
+  cursor: pointer;
+}
+
+.jobs__talk-button--close {
+  background: var(--pp-background-brand-strong);
+}
+
+/* The mic is a mute toggle. Both glyphs share the cell and crossfade, since
+   a mask image cannot transition; the pill goes to the alert fill. */
+.jobs__talk-button--mic {
+  display: grid;
+  place-items: center;
+  transition: background-color var(--pp-duration-2) var(--pp-ease-out);
+}
+
+.jobs__talk-button--mic .jobs__talk-icon {
+  grid-area: 1 / 1;
+  transition: opacity var(--pp-duration-2) var(--pp-ease-out);
+}
+
+.jobs__talk-button--mic .jobs__talk-icon--mic-off {
+  opacity: 0;
+}
+
+.jobs__talk-button--mic[aria-pressed="true"] {
+  background: var(--pp-background-alert-medium);
+}
+
+.jobs__talk-button--mic[aria-pressed="true"] .jobs__talk-icon--mic {
+  opacity: 0;
+}
+
+.jobs__talk-button--mic[aria-pressed="true"] .jobs__talk-icon--mic-off {
+  opacity: 1;
+}
+
+.jobs__talk-icon {
+  width: 18px;
+  height: 18px;
+  background-color: var(--pp-icon-neutral-default);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.jobs__talk-button--close .jobs__talk-icon {
+  background-color: var(--pp-icon-on-brand-strong);
+}
+
+.jobs__talk-icon--expand {
+  -webkit-mask-image: url("../assets/icons/expand-small.svg");
+  mask-image: url("../assets/icons/expand-small.svg");
+}
+
+.jobs__talk-icon--mic {
+  -webkit-mask-image: url("../assets/icons/mic-small.svg");
+  mask-image: url("../assets/icons/mic-small.svg");
+}
+
+.jobs__talk-icon--mic-off {
+  -webkit-mask-image: url("../assets/icons/mic-off-small.svg");
+  mask-image: url("../assets/icons/mic-off-small.svg");
+}
+
+.jobs__talk-icon--keyboard {
+  -webkit-mask-image: url("../assets/icons/message-quote-small.svg");
+  mask-image: url("../assets/icons/message-quote-small.svg");
+}
+
+.jobs__talk-icon--close {
+  -webkit-mask-image: url("../assets/icons/close-small.svg");
+  mask-image: url("../assets/icons/close-small.svg");
+}
+
+/* On a phone the frame is the phone. Below 600px the drawn device gives way:
+   no page padding, radius, shadow or painted status bar; the screen fills the
+   viewport, the real status bar and home indicator are kept clear through the
+   safe-area insets, and the page itself never scrolls — only the screen's
+   body does, as on the desk. The theme toggle is a desk devtool and goes with
+   the frame.
+
+   The frame is pinned to the viewport rather than sized with viewport units:
+   installed to an iPhone's home screen, WebKit's dvh is not the screen's
+   height and left a band of page beneath the tab bar. The page behind is
+   white for the same reason — iOS paints it into whatever the web view does
+   not cover, and it has to read as the app. */
+@media (max-width: 600px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body {
+    padding: 0;
+    background: var(--pp-background-neutral-default);
+  }
+
+  .jobs-device {
+    position: fixed;
+    inset: 0;
+    width: auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .pp-device {
+    --pp-device-width: 100%;
+    --pp-device-height: 100%;
+    border-radius: 0;
+    clip-path: none;
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* No painted status bar to clear: the frame's own safe-area padding does
+     it for the screen, and the menu clears it the same way. */
+  .pp-device > .pp-screen.jobs {
+    padding-top: 0;
+  }
+
+  .side-menu {
+    top: env(safe-area-inset-top);
+  }
+
+  .jobs__ai-scrim {
+    height: calc(100dvh / 2);
+  }
+
+  .pp-status-bar {
+    display: none;
+  }
+
+  [data-pp-devtool] {
+    display: none;
+  }
+}

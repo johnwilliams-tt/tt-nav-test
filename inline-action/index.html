@@ -13,6 +13,7 @@
     <link rel="manifest" href="../manifest.webmanifest" />
     <!-- data-pp-theme on the root element pins light in every browser and OS setting;
          there is no toggle. -->
+    <link rel="stylesheet" href="../styles/fonts.css" />
     <link rel="stylesheet" href="../styles/pushpin.css" />
     <link rel="stylesheet" href="../styles/pushpin-device.css" />
     <link rel="stylesheet" href="app.css" />
@@ -37,313 +38,883 @@
       </div>
 
       <div class="pp-screen jobs">
-        <header class="jobs__header">
-          <h1 class="pp-title-1 jobs__title">Jobs</h1>
-          <div class="jobs__actions">
+        <section class="jobs__page" data-page="jobs" aria-labelledby="page-jobs-title">
+          <header class="jobs__header">
+            <h1 class="pp-title-1 jobs__title" id="page-jobs-title">Jobs</h1>
+            <div class="jobs__actions">
+              <button
+                type="button"
+                class="jobs__action"
+                aria-label="Search"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
+              >
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
+              </button>
+              <button
+                type="button"
+                class="jobs__action"
+                aria-label="Create job"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
+              >
+                <span class="jobs__action-icon jobs__action-icon--plus" aria-hidden="true"></span>
+              </button>
+            </div>
+          </header>
+
+          <div class="jobs__filters" role="group" aria-label="Filter by status">
             <button
               type="button"
-              class="jobs__action"
-              aria-label="Filter jobs"
-              data-pp-component="Icon Button"
-              data-pp-variant="theme=secondary"
+              class="jobs__chip"
+              aria-pressed="true"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=true"
             >
-              <span class="jobs__action-icon jobs__action-icon--filter" aria-hidden="true"></span>
+              All・9
             </button>
             <button
               type="button"
-              class="jobs__action"
-              aria-label="Create job"
-              data-pp-component="Icon Button"
-              data-pp-variant="theme=secondary"
+              class="jobs__chip"
+              aria-pressed="false"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=false"
             >
-              <span class="jobs__action-icon jobs__action-icon--plus" aria-hidden="true"></span>
+              Draft・6
+            </button>
+            <button
+              type="button"
+              class="jobs__chip"
+              aria-pressed="false"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=false"
+            >
+              Sent・5
+            </button>
+            <button
+              type="button"
+              class="jobs__chip"
+              aria-pressed="false"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=false"
+            >
+              Approved・4
+            </button>
+            <button
+              type="button"
+              class="jobs__chip"
+              aria-pressed="false"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=false"
+            >
+              Rejected・1
             </button>
           </div>
-        </header>
 
-        <div class="jobs__filters" role="group" aria-label="Filter by status">
-          <button
-            type="button"
-            class="jobs__chip"
-            aria-pressed="true"
-            data-pp-component="Chip"
-            data-pp-variant="isSelected=true"
-          >
-            All・9
-          </button>
-          <button
-            type="button"
-            class="jobs__chip"
-            aria-pressed="false"
-            data-pp-component="Chip"
-            data-pp-variant="isSelected=false"
-          >
-            Draft・6
-          </button>
-          <button
-            type="button"
-            class="jobs__chip"
-            aria-pressed="false"
-            data-pp-component="Chip"
-            data-pp-variant="isSelected=false"
-          >
-            Sent・5
-          </button>
-          <button
-            type="button"
-            class="jobs__chip"
-            aria-pressed="false"
-            data-pp-component="Chip"
-            data-pp-variant="isSelected=false"
-          >
-            Approved・4
-          </button>
-          <button
-            type="button"
-            class="jobs__chip"
-            aria-pressed="false"
-            data-pp-component="Chip"
-            data-pp-variant="isSelected=false"
-          >
-            Rejected・1
-          </button>
-        </div>
+          <div class="pp-screen__body jobs__body">
+            <ul class="jobs__list" data-pp-proposed="Pro / Job list row">
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
 
-        <div class="pp-screen__body jobs__body">
-          <ul class="jobs__list" data-pp-proposed="Pro / Job list row">
-            <li class="jobs__row">
-              <span
-                class="jobs__avatar jobs__avatar--initials"
-                aria-hidden="true"
-                data-pp-component="Avatar"
-                data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
-                >AL</span
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="jobs__page" data-page="schedule" aria-labelledby="page-schedule-title" hidden>
+          <header class="jobs__header">
+            <h1 class="pp-title-1 jobs__title" id="page-schedule-title">Schedule</h1>
+            <div class="jobs__actions">
+              <button
+                type="button"
+                class="jobs__action jobs__action--today"
+                aria-label="Go to today"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
               >
-              <div class="jobs__text">
-                <div class="jobs__line">
-                  <p class="pp-title-6 jobs__name">Anesti Luarasti</p>
-                  <p class="pp-body-2 jobs__time">3h ago</p>
-                </div>
-                <div class="jobs__line">
-                  <p class="pp-body-2 jobs__service">QUO-1020・Furniture assembly</p>
-                  <p class="pp-body-2 jobs__status">
-                    <span class="jobs__dot jobs__dot--pending" aria-hidden="true"></span>Sent
-                  </p>
-                </div>
-              </div>
-            </li>
-
-            <li class="jobs__row">
-              <img
-                class="jobs__avatar"
-                src="../assets/img/customer-melissa.png"
-                alt=""
-                width="32"
-                height="32"
-                data-pp-component="Avatar"
-                data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=false"
-              />
-              <div class="jobs__text">
-                <div class="jobs__line">
-                  <p class="pp-title-6 jobs__name">Melissa Hribar</p>
-                  <p class="pp-body-2 jobs__time">12h ago</p>
-                </div>
-                <div class="jobs__line">
-                  <p class="pp-body-2 jobs__service">QUO-1019・TV mounting</p>
-                  <p class="pp-body-2 jobs__status">
-                    <span class="jobs__dot jobs__dot--pending" aria-hidden="true"></span>Draft
-                  </p>
-                </div>
-              </div>
-            </li>
-
-            <li class="jobs__row">
-              <img
-                class="jobs__avatar"
-                src="../assets/img/customer-michael.png"
-                alt=""
-                width="32"
-                height="32"
-                data-pp-component="Avatar"
-                data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=false"
-              />
-              <div class="jobs__text">
-                <div class="jobs__line">
-                  <p class="pp-title-6 jobs__name">Michael McCarthy</p>
-                  <p class="pp-body-2 jobs__time">Mon</p>
-                </div>
-                <div class="jobs__line">
-                  <p class="pp-body-2 jobs__service">QUO-1017・Leaking faucet repair</p>
-                  <p class="pp-body-2 jobs__status">
-                    <span class="jobs__dot jobs__dot--approved" aria-hidden="true"></span>Approved
-                  </p>
-                </div>
-              </div>
-            </li>
-
-            <li class="jobs__row">
-              <span
-                class="jobs__avatar jobs__avatar--initials"
-                aria-hidden="true"
-                data-pp-component="Avatar"
-                data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
-                >KB</span
+                <span class="jobs__action-icon jobs__action-icon--today" aria-hidden="true"></span>
+              </button>
+              <button
+                type="button"
+                class="jobs__action"
+                aria-label="Search"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
               >
-              <div class="jobs__text">
-                <div class="jobs__line">
-                  <p class="pp-title-6 jobs__name">Krista Bangsund</p>
-                  <p class="pp-body-2 jobs__time">Tue</p>
-                </div>
-                <div class="jobs__line">
-                  <p class="pp-body-2 jobs__service">QUO-1018・Shelving assembly</p>
-                  <p class="pp-body-2 jobs__status">
-                    <span class="jobs__dot jobs__dot--pending" aria-hidden="true"></span>Sent
-                  </p>
-                </div>
-              </div>
-            </li>
-
-            <li class="jobs__row">
-              <img
-                class="jobs__avatar"
-                src="../assets/img/customer-melissa.png"
-                alt=""
-                width="32"
-                height="32"
-                data-pp-component="Avatar"
-                data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=false"
-              />
-              <div class="jobs__text">
-                <div class="jobs__line">
-                  <p class="pp-title-6 jobs__name">Melissa Hribar</p>
-                  <p class="pp-body-2 jobs__time">12h ago</p>
-                </div>
-                <div class="jobs__line">
-                  <p class="pp-body-2 jobs__service">QUO-1019・TV mounting</p>
-                  <p class="pp-body-2 jobs__status">
-                    <span class="jobs__dot jobs__dot--pending" aria-hidden="true"></span>Draft
-                  </p>
-                </div>
-              </div>
-            </li>
-
-            <li class="jobs__row">
-              <img
-                class="jobs__avatar"
-                src="../assets/img/customer-michael.png"
-                alt=""
-                width="32"
-                height="32"
-                data-pp-component="Avatar"
-                data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=false"
-              />
-              <div class="jobs__text">
-                <div class="jobs__line">
-                  <p class="pp-title-6 jobs__name">Michael McCarthy</p>
-                  <p class="pp-body-2 jobs__time">Mon</p>
-                </div>
-                <div class="jobs__line">
-                  <p class="pp-body-2 jobs__service">QUO-1017・Leaking faucet repair</p>
-                  <p class="pp-body-2 jobs__status">
-                    <span class="jobs__dot jobs__dot--approved" aria-hidden="true"></span>Approved
-                  </p>
-                </div>
-              </div>
-            </li>
-
-            <li class="jobs__row">
-              <span
-                class="jobs__avatar jobs__avatar--initials"
-                aria-hidden="true"
-                data-pp-component="Avatar"
-                data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
-                >KB</span
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
+              </button>
+              <button
+                type="button"
+                class="jobs__action"
+                aria-label="Create appointment"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
               >
-              <div class="jobs__text">
-                <div class="jobs__line">
-                  <p class="pp-title-6 jobs__name">Krista Bangsund</p>
-                  <p class="pp-body-2 jobs__time">Tue</p>
-                </div>
-                <div class="jobs__line">
-                  <p class="pp-body-2 jobs__service">QUO-1018・Shelving assembly</p>
-                  <p class="pp-body-2 jobs__status">
-                    <span class="jobs__dot jobs__dot--rejected" aria-hidden="true"></span>Rejected
-                  </p>
-                </div>
-              </div>
-            </li>
+                <span class="jobs__action-icon jobs__action-icon--plus" aria-hidden="true"></span>
+              </button>
+            </div>
+          </header>
 
-            <li class="jobs__row">
-              <img
-                class="jobs__avatar"
-                src="../assets/img/customer-melissa.png"
-                alt=""
-                width="32"
-                height="32"
-                data-pp-component="Avatar"
-                data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=false"
-              />
-              <div class="jobs__text">
-                <div class="jobs__line">
-                  <p class="pp-title-6 jobs__name">Melissa Hribar</p>
-                  <p class="pp-body-2 jobs__time">12h ago</p>
-                </div>
-                <div class="jobs__line">
-                  <p class="pp-body-2 jobs__service">QUO-1019・TV mounting</p>
-                  <p class="pp-body-2 jobs__status">
-                    <span class="jobs__dot jobs__dot--pending" aria-hidden="true"></span>Draft
-                  </p>
-                </div>
-              </div>
-            </li>
+          <div
+            class="jobs__week"
+            role="group"
+            aria-label="Pick a day"
+            data-pp-proposed="Pro / Week strip"
+          ></div>
+        </section>
 
-            <li class="jobs__row">
-              <img
-                class="jobs__avatar"
-                src="../assets/img/customer-michael.png"
-                alt=""
-                width="32"
-                height="32"
-                data-pp-component="Avatar"
-                data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=false"
-              />
-              <div class="jobs__text">
-                <div class="jobs__line">
-                  <p class="pp-title-6 jobs__name">Michael McCarthy</p>
-                  <p class="pp-body-2 jobs__time">Mon</p>
-                </div>
-                <div class="jobs__line">
-                  <p class="pp-body-2 jobs__service">QUO-1017・Leaking faucet repair</p>
-                  <p class="pp-body-2 jobs__status">
-                    <span class="jobs__dot jobs__dot--approved" aria-hidden="true"></span>Approved
-                  </p>
-                </div>
-              </div>
-            </li>
-
-            <li class="jobs__row">
-              <span
-                class="jobs__avatar jobs__avatar--initials"
-                aria-hidden="true"
-                data-pp-component="Avatar"
-                data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
-                >KB</span
+        <section class="jobs__page" data-page="get-paid" aria-labelledby="page-get-paid-title" hidden>
+          <header class="jobs__header">
+            <h1 class="pp-title-1 jobs__title" id="page-get-paid-title">Payments</h1>
+            <div class="jobs__actions">
+              <button
+                type="button"
+                class="jobs__action"
+                aria-label="Search"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
               >
-              <div class="jobs__text">
-                <div class="jobs__line">
-                  <p class="pp-title-6 jobs__name">Krista Bangsund</p>
-                  <p class="pp-body-2 jobs__time">Tue</p>
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
+              </button>
+              <button
+                type="button"
+                class="jobs__action"
+                aria-label="Request payment"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
+              >
+                <span class="jobs__action-icon jobs__action-icon--plus" aria-hidden="true"></span>
+              </button>
+            </div>
+          </header>
+        </section>
+
+        <section class="jobs__page" data-page="quotes" aria-labelledby="page-quotes-title" hidden>
+          <header class="jobs__header">
+            <h1 class="pp-title-1 jobs__title" id="page-quotes-title">Quotes</h1>
+            <div class="jobs__actions">
+              <button
+                type="button"
+                class="jobs__action"
+                aria-label="Search"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
+              >
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
+              </button>
+              <button
+                type="button"
+                class="jobs__action"
+                aria-label="Create quote"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
+              >
+                <span class="jobs__action-icon jobs__action-icon--plus" aria-hidden="true"></span>
+              </button>
+            </div>
+          </header>
+
+          <div class="jobs__filters" role="group" aria-label="Filter by status">
+            <button
+              type="button"
+              class="jobs__chip"
+              aria-pressed="true"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=true"
+            >
+              All・9
+            </button>
+            <button
+              type="button"
+              class="jobs__chip"
+              aria-pressed="false"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=false"
+            >
+              Draft・6
+            </button>
+            <button
+              type="button"
+              class="jobs__chip"
+              aria-pressed="false"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=false"
+            >
+              Sent・5
+            </button>
+            <button
+              type="button"
+              class="jobs__chip"
+              aria-pressed="false"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=false"
+            >
+              Approved・4
+            </button>
+            <button
+              type="button"
+              class="jobs__chip"
+              aria-pressed="false"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=false"
+            >
+              Rejected・1
+            </button>
+          </div>
+
+          <div class="pp-screen__body jobs__body">
+            <ul class="jobs__list" data-pp-proposed="Pro / Job list row">
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
                 </div>
-                <div class="jobs__line">
-                  <p class="pp-body-2 jobs__service">QUO-1018・Shelving assembly</p>
-                  <p class="pp-body-2 jobs__status">
-                    <span class="jobs__dot jobs__dot--rejected" aria-hidden="true"></span>Rejected
-                  </p>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
                 </div>
-              </div>
-            </li>
-          </ul>
-        </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="jobs__page" data-page="invoices" aria-labelledby="page-invoices-title" hidden>
+          <header class="jobs__header">
+            <h1 class="pp-title-1 jobs__title" id="page-invoices-title">Invoices</h1>
+            <div class="jobs__actions">
+              <button
+                type="button"
+                class="jobs__action"
+                aria-label="Search"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
+              >
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
+              </button>
+              <button
+                type="button"
+                class="jobs__action"
+                aria-label="Create invoice"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
+              >
+                <span class="jobs__action-icon jobs__action-icon--plus" aria-hidden="true"></span>
+              </button>
+            </div>
+          </header>
+
+          <div class="jobs__filters" role="group" aria-label="Filter by status">
+            <button
+              type="button"
+              class="jobs__chip"
+              aria-pressed="true"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=true"
+            >
+              All・9
+            </button>
+            <button
+              type="button"
+              class="jobs__chip"
+              aria-pressed="false"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=false"
+            >
+              Draft・6
+            </button>
+            <button
+              type="button"
+              class="jobs__chip"
+              aria-pressed="false"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=false"
+            >
+              Sent・5
+            </button>
+            <button
+              type="button"
+              class="jobs__chip"
+              aria-pressed="false"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=false"
+            >
+              Approved・4
+            </button>
+            <button
+              type="button"
+              class="jobs__chip"
+              aria-pressed="false"
+              data-pp-component="Chip"
+              data-pp-variant="isSelected=false"
+            >
+              Rejected・1
+            </button>
+          </div>
+
+          <div class="pp-screen__body jobs__body">
+            <ul class="jobs__list" data-pp-proposed="Pro / Job list row">
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="jobs__page" data-page="marketing" aria-labelledby="page-marketing-title" hidden>
+          <header class="jobs__header">
+            <h1 class="pp-title-1 jobs__title" id="page-marketing-title">Marketing</h1>
+            <div class="jobs__actions">
+              <button
+                type="button"
+                class="jobs__action"
+                aria-label="Search"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
+              >
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
+              </button>
+              <button
+                type="button"
+                class="jobs__action"
+                aria-label="Create campaign"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
+              >
+                <span class="jobs__action-icon jobs__action-icon--plus" aria-hidden="true"></span>
+              </button>
+            </div>
+          </header>
+        </section>
+
+        <section class="jobs__page" data-page="customers" aria-labelledby="page-customers-title" hidden>
+          <header class="jobs__header">
+            <h1 class="pp-title-1 jobs__title" id="page-customers-title">Customers</h1>
+            <div class="jobs__actions">
+              <button
+                type="button"
+                class="jobs__action"
+                aria-label="Search"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
+              >
+                <span class="jobs__action-icon jobs__action-icon--search" aria-hidden="true"></span>
+              </button>
+              <button
+                type="button"
+                class="jobs__action"
+                aria-label="Add customer"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary"
+              >
+                <span class="jobs__action-icon jobs__action-icon--plus" aria-hidden="true"></span>
+              </button>
+            </div>
+          </header>
+
+          <div class="pp-screen__body jobs__body">
+            <ul class="jobs__list" data-pp-proposed="Pro / Job list row">
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+
+              <li class="jobs__row">
+                <span
+                  class="jobs__avatar"
+                  aria-hidden="true"
+                  data-pp-component="Avatar"
+                  data-pp-variant="User=Customer, sise=xSmall, 👁️ initials=true"
+                ></span>
+                <div class="jobs__text" aria-hidden="true">
+                  <p class="pp-title-6 jobs__slot"><span class="jobs__bone">Anaïs Ziae-Mohseni</span></p>
+                  <p class="pp-body-2 jobs__slot"><span class="jobs__bone">Clogged drain repair</span></p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </section>
 
         <div class="jobs__tabbar" data-state="nav" data-pp-proposed="Pro / Floating bottom nav">
           <div class="jobs__scrim" aria-hidden="true">
@@ -355,20 +926,21 @@
             <div class="jobs__scrim-wash"></div>
           </div>
           <div class="jobs__dim" data-state="closed" aria-hidden="true"></div>
+          <div class="jobs__ai-scrim" aria-hidden="true"></div>
           <div class="jobs__shelf" data-state="tabs">
             <nav class="jobs__nav" aria-label="Main">
               <span class="jobs__nav-thumb" aria-hidden="true"></span>
-              <a class="jobs__nav-item" href="#">
-                <span class="jobs__nav-icon jobs__nav-icon--home" aria-hidden="true"></span>
-                <span class="pp-body-4 jobs__nav-label">Home</span>
-              </a>
-              <a class="jobs__nav-item" href="#" aria-current="page">
+              <a class="jobs__nav-item" href="#" aria-current="page" data-page="jobs">
                 <span class="jobs__nav-icon jobs__nav-icon--business" aria-hidden="true"></span>
                 <span class="pp-body-4 jobs__nav-label">Jobs</span>
               </a>
-              <a class="jobs__nav-item" href="#">
+              <a class="jobs__nav-item" href="#" data-page="schedule">
                 <span class="jobs__nav-icon jobs__nav-icon--schedule" aria-hidden="true"></span>
                 <span class="pp-body-4 jobs__nav-label">Schedule</span>
+              </a>
+              <a class="jobs__nav-item" href="#" data-page="get-paid">
+                <span class="jobs__nav-icon jobs__nav-icon--money" aria-hidden="true"></span>
+                <span class="pp-body-4 jobs__nav-label">Payments</span>
               </a>
               <button
                 class="jobs__nav-item jobs__nav-item--more"
@@ -382,31 +954,23 @@
             </nav>
 
             <div class="jobs__menu" id="jobs-more-menu" hidden>
-              <button class="jobs__menu-item" type="button" data-tab="0">
-                <span class="jobs__menu-icon jobs__nav-icon--home" aria-hidden="true"></span>
-                <span class="pp-body-2 jobs__menu-label">Home</span>
-              </button>
-              <button class="jobs__menu-item" type="button" data-tab="1">
+              <button class="jobs__menu-item" type="button" data-tab="0" data-page="jobs">
                 <span class="jobs__menu-icon jobs__nav-icon--business" aria-hidden="true"></span>
                 <span class="pp-body-2 jobs__menu-label">Jobs</span>
               </button>
-              <button class="jobs__menu-item" type="button" data-tab="2">
+              <button class="jobs__menu-item" type="button" data-tab="1" data-page="schedule">
                 <span class="jobs__menu-icon jobs__nav-icon--schedule" aria-hidden="true"></span>
                 <span class="pp-body-2 jobs__menu-label">Schedule</span>
               </button>
-              <button class="jobs__menu-item" type="button">
-                <span class="jobs__menu-icon jobs__menu-icon--quotes" aria-hidden="true"></span>
-                <span class="pp-body-2 jobs__menu-label">Quotes</span>
+              <button class="jobs__menu-item" type="button" data-tab="2" data-page="get-paid">
+                <span class="jobs__menu-icon jobs__nav-icon--money" aria-hidden="true"></span>
+                <span class="pp-body-2 jobs__menu-label">Payments</span>
               </button>
-              <button class="jobs__menu-item" type="button">
-                <span class="jobs__menu-icon jobs__menu-icon--invoices" aria-hidden="true"></span>
-                <span class="pp-body-2 jobs__menu-label">Invoices</span>
-              </button>
-              <button class="jobs__menu-item" type="button">
+              <button class="jobs__menu-item" type="button" data-page="marketing">
                 <span class="jobs__menu-icon jobs__menu-icon--marketing" aria-hidden="true"></span>
                 <span class="pp-body-2 jobs__menu-label">Marketing</span>
               </button>
-              <button class="jobs__menu-item" type="button">
+              <button class="jobs__menu-item" type="button" data-page="customers">
                 <span class="jobs__menu-icon jobs__menu-icon--customers" aria-hidden="true"></span>
                 <span class="pp-body-2 jobs__menu-label">Customers</span>
               </button>
@@ -425,6 +989,7 @@
               </div>
             </div>
             <span class="jobs__spark" aria-hidden="true"></span>
+            <span class="jobs__plus" aria-hidden="true"></span>
             <input
               class="pp-body-2 jobs__input"
               type="text"
@@ -440,6 +1005,7 @@
               data-pp-variant="theme=primary, size=large"
             >
               <span class="jobs__voice-icon" aria-hidden="true"></span>
+              <span class="jobs__voice-icon jobs__voice-icon--send" aria-hidden="true"></span>
             </button>
             <!-- The closed field is the fab, so its hit target covers the whole
                  circle and steps aside once the field is open. -->
@@ -476,6 +1042,14 @@
           <button type="button" class="jobs__close" aria-label="Close" data-pp-component="Icon Button" data-pp-variant="theme=secondary, size=large">
             <span class="jobs__close-icon" aria-hidden="true"></span>
           </button>
+          <div class="jobs__prompts" role="group" aria-label="Suggested prompts" data-pp-proposed="Pro / Theo suggestions">
+            <button type="button" class="jobs__prompt jobs__prompt--refresh" aria-label="Refresh suggestions" data-pp-component="Icon Button" data-pp-variant="theme=tertiary, size=large">
+              <span class="jobs__prompt-icon" aria-hidden="true"></span>
+            </button>
+            <button type="button" class="pp-title-7 jobs__prompt" data-pp-component="Button" data-pp-variant="theme=tertiary, size=small">Create a quote</button>
+            <button type="button" class="pp-title-7 jobs__prompt" data-pp-component="Button" data-pp-variant="theme=tertiary, size=small">Start a job</button>
+            <button type="button" class="pp-title-7 jobs__prompt" data-pp-component="Button" data-pp-variant="theme=tertiary, size=small">Learn about Theo</button>
+          </div>
         </div>
       </div>
     </div>
@@ -483,6 +1057,7 @@
     <script src="../speed.js" data-pp-devtool></script>
     <script src="../concepts.js" data-pp-devtool></script>
     <script src="nav.js"></script>
+    <script src="../schedule.js"></script>
     <script src="waves.js"></script>
   </body>
 </html>

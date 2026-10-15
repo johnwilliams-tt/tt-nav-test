@@ -13,6 +13,8 @@
     '--pp-duration-6',
     '--jobs-duration-panel',
     '--jobs-duration-assistant',
+    '--jobs-prompts-delay',
+    '--jobs-duration-prompts',
   ];
 
   var root = document.documentElement;

@@ -1,0 +1,12 @@
+/* Thumbtack Rise as a variable font. The kit's weights sit between the named
+   instances (title-1 is 563, medium-bold 660), and a system-installed copy
+   is matched by instance, so 563 snaps to Bold. Declaring the file with its
+   range the kit uses is what lets the browser render the axis instead. Linked
+   before pushpin.css, whose --pp-font-family names this family first. */
+@font-face {
+  font-family: "Thumbtack Rise";
+  src: url("../assets/fonts/ThumbtackRiseVF.ttf") format("truetype");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
