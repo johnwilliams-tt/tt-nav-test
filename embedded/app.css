@@ -183,7 +183,7 @@ h1 {
 
 /* The week strip: seven days to the frame, scrolling by day. The day is a
    fixed 47 so exactly seven sit between the 8px gutters, and the snap holds a
-   day at the left edge, which is where the today button puts today. */
+   day at the left edge. */
 .jobs__week {
   display: flex;
   flex: none;
@@ -699,7 +699,7 @@ h1 {
   mask-image: url("../assets/icons/people-medium.svg");
 }
 
-/* Theo's star keeps its brand blue here, as in the open bar, rather than taking
+/* Tack AI's star keeps its brand blue here, as in the open bar, rather than taking
    the row's neutral. */
 .jobs__menu-icon--ask {
   background-color: var(--pp-icon-brand-default);
@@ -782,7 +782,7 @@ h1 {
   mask-image: url("../assets/icons/hamburger-medium.svg");
 }
 
-/* Theo's star keeps its brand blue, rather than taking the tab's neutral. */
+/* Tack AI's star keeps its brand blue, rather than taking the tab's neutral. */
 .jobs__nav-icon--ask {
   background-color: var(--pp-icon-brand-default);
   -webkit-mask-image: url("../assets/icons/ai-spark-medium.svg");

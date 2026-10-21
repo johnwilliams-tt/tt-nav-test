@@ -1,7 +1,7 @@
 /* Schedule: the week strip and the month in its header. Days are written
    from today's date, so the strip is live rather than pinned to a date in
    the frame. It opens on the current week; the today button scrolls today
-   into the first position and selects it. Shared by every nav concept. */
+   into the middle position and selects it. Shared by every nav concept. */
 (function () {
   var strip = document.querySelector('.jobs__week');
   var title = document.getElementById('page-schedule-title');
@@ -134,10 +134,17 @@
     });
   });
 
+  // Today lands in the middle of the days on screen: fourth of seven.
+  function centred(index) {
+    var pitch = leftOf(1) || 1;
+    var shown = Math.max(1, Math.round(strip.clientWidth / pitch));
+    return Math.max(0, index - Math.floor(shown / 2));
+  }
+
   if (todayButton) {
     todayButton.addEventListener('click', function () {
       select(todayIndex);
-      scrollTo(todayIndex, true);
+      scrollTo(centred(todayIndex), true);
     });
   }
 

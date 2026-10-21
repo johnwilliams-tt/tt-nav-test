@@ -439,7 +439,7 @@
     document.querySelectorAll('.jobs__prompt:not(.jobs__prompt--refresh)')
   );
   var promptSets = [
-    ['Create a quote', 'Start a job', 'Learn about Theo'],
+    ['Create a quote', 'Start a job', 'Learn about Tack AI'],
     ['Post on social media', 'See pending quotes', 'Send a reminder'],
   ];
   var promptSet = 0;

@@ -1,7 +1,7 @@
 {
   "name": "Jobs — pro app nav",
   "short_name": "Jobs",
-  "start_url": "./",
+  "start_url": "./inline-2/",
   "display": "standalone",
   "orientation": "portrait"
 }

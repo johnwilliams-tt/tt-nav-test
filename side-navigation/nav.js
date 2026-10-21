@@ -203,14 +203,14 @@
     field.focus();
   });
 
-  // At rest the bar's label opens on Ask Theo, then cycles every page's
+  // At rest the bar's label opens on Ask Tack AI, then cycles every page's
   // suggestions, each once however many pages offer it, with searching last;
-  // Ask Theo is not part of the loop. Each is held a while and faded into the
+  // Ask Tack AI is not part of the loop. Each is held a while and faded into the
   // next. The swap waits out the fade's own duration, read from the
   // cascade, so the text only ever changes while it is invisible.
   var hint = document.querySelector('.jobs__hint');
   var HINT_HOLD = 3000;
-  var hints = ['Ask Theo'];
+  var hints = ['Ask Tack AI'];
   Object.keys(PROMPTS).forEach(function (page) {
     PROMPTS[page].forEach(function (label) {
       if (label !== SEARCH && hints.indexOf(label) < 0) hints.push(label);
@@ -246,7 +246,7 @@
     window.clearTimeout(hintTimer);
   }
 
-  // Back to Ask Theo, out of sight, for when the bar comes home.
+  // Back to Ask Tack AI, out of sight, for when the bar comes home.
   function resetHint() {
     stopHint();
     delete hint.dataset.fading;
@@ -401,7 +401,7 @@
       pages.forEach(function (page) {
         page.hidden = page.dataset.page !== row.dataset.page;
       });
-      // A new section starts the bar's label over from Ask Theo.
+      // A new section starts the bar's label over from Ask Tack AI.
       resetHint();
       closeSide();
     });

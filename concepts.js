@@ -2,14 +2,17 @@
    concept is a folder with its own page, and this script is shared, so a
    concept is added here and nowhere else. It sits centred under the device
    frame, carries data-pp-devtool, and is hidden on phones by the page's rule
-   for that attribute. Any ?speed= setting travels with the switch. */
+   for that attribute. Any ?speed= setting travels with the switch. A hidden
+   concept keeps its folder and its URL but is left out of the control,
+   except on its own page, so the control still shows where you are. */
 (function () {
   var CONCEPTS = [
+    { slug: 'inline-2', name: 'Inline 2.0' },
     { slug: 'inline-action', name: 'Inline Action' },
-    { slug: 'floating-chip', name: 'Floating Chip' },
-    { slug: 'floating-action-button', name: 'Floating Action Button' },
-    { slug: 'embedded', name: 'Embedded' },
-    { slug: 'side-navigation', name: 'Side Navigation' },
+    { slug: 'floating-chip', name: 'Floating Chip', hidden: true },
+    { slug: 'floating-action-button', name: 'Floating Action Button', hidden: true },
+    { slug: 'embedded', name: 'Embedded', hidden: true },
+    { slug: 'side-navigation', name: 'Side Navigation', hidden: true },
   ];
 
   var match = window.location.pathname.match(/\/([^/]+)\/(?:index\.html)?$/);
@@ -49,6 +52,7 @@
   var track = document.createElement('ul');
   track.className = 'pp-concepts__track';
   CONCEPTS.forEach(function (concept) {
+    if (concept.hidden && concept !== current) return;
     var item = document.createElement('li');
     var link = document.createElement('a');
     link.className = 'pp-concepts__link';

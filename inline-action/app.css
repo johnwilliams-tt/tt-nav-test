@@ -168,7 +168,7 @@ h1 {
 
 /* The week strip: seven days to the frame, scrolling by day. The day is a
    fixed 47 so exactly seven sit between the 8px gutters, and the snap holds a
-   day at the left edge, which is where the today button puts today. */
+   day at the left edge. */
 .jobs__week {
   display: flex;
   flex: none;
