@@ -156,12 +156,23 @@
       .catch(function () {});
   }
 
-  // Only one row can be lit, and selecting a tab anywhere clears the menu's.
+  // The menu lights the current page's row, wherever it was chosen from. A
+  // row with no tab of its own also lends More its icon for the docked bar.
+  var picked = more.querySelector('.jobs__nav-icon--picked');
   function markRow(row) {
     menuItems.forEach(function (item) {
       item.removeAttribute('aria-current');
     });
     if (row) row.setAttribute('aria-current', 'page');
+    if (!row || row.dataset.tab !== undefined) {
+      delete more.dataset.picked;
+      return;
+    }
+    var rowIcon = getComputedStyle(row.querySelector('.jobs__menu-icon'));
+    var image = rowIcon.maskImage || rowIcon.webkitMaskImage;
+    picked.style.webkitMaskImage = image;
+    picked.style.maskImage = image;
+    more.dataset.picked = '';
   }
 
   items.forEach(function (item, index) {
@@ -172,7 +183,7 @@
         else openMenu();
         return;
       }
-      markRow(null);
+      markRow(menu.querySelector('.jobs__menu-item[data-tab="' + index + '"]'));
       closeMenu();
       select(index, true);
       showPage(item.dataset.page);
@@ -182,11 +193,10 @@
   menuItems.forEach(function (item) {
     item.addEventListener('click', function () {
       var tab = item.dataset.tab;
-      // A row that maps to a tab selects it; everything from Marketing down lives
-      // behind More, so More is what stays lit — and the row itself, since the
-      // tab bar cannot show which of them is current.
+      // A row that maps to a tab selects it; the rest live behind More, so
+      // More is what stays lit.
       var index = tab === undefined ? moreIndex : Number(tab);
-      markRow(tab === undefined ? item : null);
+      markRow(item);
       // Placed rather than animated: the tab bar is still faded out, so a
       // travelling thumb would do its work where nobody can see it.
       select(index, false);
@@ -377,7 +387,7 @@
     document.querySelectorAll('.jobs__prompt:not(.jobs__prompt--refresh)')
   );
   var promptSets = [
-    ['Create a quote', 'Start a job', 'Learn about Tack AI'],
+    ['Create a quote', 'Start a job', 'Learn about the AI assistant'],
     ['Post on social media', 'See pending quotes', 'Send a reminder'],
   ];
   var promptSet = 0;
@@ -475,6 +485,9 @@
   // state that carries it is released once the track has finished moving.
   close.addEventListener('click', function () {
     leaveVoice(false);
+    // The assistant may have been opened from the docked bar; it always
+    // returns to the full one.
+    clearDock();
     tabbar.dataset.state = 'returning';
     field.blur();
     field.value = '';
@@ -490,6 +503,100 @@
     );
   });
 
+  // Docking. Scrolling a list down folds the bar into two circles; reaching
+  // the top of the list or tapping the left circle unfolds it. Scrolling back
+  // up partway leaves it docked.
+  var dockButton = shelf.querySelector('.jobs__dock');
+  var undocking = 0;
+  var tops = new WeakMap();
+  var travel = 0;
+  // Downward scroll, in px, that docks the bar, so a nudge does not.
+  var DOCK_TRAVEL = 24;
+
+  // The tabs keep the undocked shelf's width while it narrows over them: the
+  // row less both gutters, the closed field and the gap in front of it, and
+  // the margin the shelf carries.
+  function sizeNav() {
+    var width =
+      tabbar.clientWidth -
+      token('--jobs-gutter-left') -
+      token('--jobs-gutter-right') -
+      PILL.height -
+      2 * token('--pp-space-2');
+    nav.style.setProperty('--jobs-nav-width', width + 'px');
+  }
+
+  // From the current tab's icon to the docked circle's centre. The shelf's
+  // left and bottom edges hold still while it docks, so this is measured in
+  // the nav's own box, untranslated.
+  function aimDock() {
+    var item = items[current];
+    var glyph = item.querySelector('.jobs__nav-glyph');
+    var half = token('--jobs-dock') / 2;
+    var x = item.offsetLeft + glyph.offsetLeft + glyph.offsetWidth / 2;
+    var y = item.offsetTop + glyph.offsetTop + glyph.offsetHeight / 2;
+    nav.style.setProperty('--jobs-dock-x', half - x + 'px');
+    nav.style.setProperty('--jobs-dock-y', nav.offsetHeight - half - y + 'px');
+  }
+
+  function dock() {
+    if (tabbar.dataset.dock === 'in' || tabbar.dataset.state !== 'nav' || open) return;
+    window.clearTimeout(undocking);
+    aimDock();
+    tabbar.dataset.dock = 'in';
+    nav.inert = true;
+  }
+
+  function undock() {
+    if (tabbar.dataset.dock !== 'in') return;
+    tabbar.dataset.dock = 'out';
+    nav.inert = false;
+    travel = 0;
+    if (document.activeElement === dockButton) items[current].focus({ preventScroll: true });
+    window.clearTimeout(undocking);
+    undocking = window.setTimeout(
+      function () {
+        if (tabbar.dataset.dock === 'out') delete tabbar.dataset.dock;
+      },
+      reduced.matches ? 0 : token('--jobs-duration-dock')
+    );
+  }
+
+  function clearDock() {
+    window.clearTimeout(undocking);
+    delete tabbar.dataset.dock;
+    nav.inert = false;
+    travel = 0;
+  }
+
+  dockButton.addEventListener('click', undock);
+
+  // Scroll does not bubble, so the lists are heard in the capture phase; the
+  // week strip and the chip rows scroll sideways and are not lists.
+  document.addEventListener(
+    'scroll',
+    function (event) {
+      var body = event.target;
+      if (!body.classList || !body.classList.contains('jobs__body')) return;
+      var top = body.scrollTop;
+      var previous = tops.has(body) ? tops.get(body) : top;
+      tops.set(body, top);
+      if (tabbar.dataset.state !== 'nav') return;
+      if (top <= 0) {
+        undock();
+        travel = 0;
+        return;
+      }
+      if (top > previous) {
+        travel += top - previous;
+        if (travel >= DOCK_TRAVEL) dock();
+      } else {
+        travel = 0;
+      }
+    },
+    true
+  );
+
   document.addEventListener('keydown', function (event) {
     if (event.key === 'Escape' && open) {
       closeMenu();
@@ -498,7 +605,9 @@
   });
 
   place(current);
+  sizeNav();
   window.addEventListener('resize', function () {
     if (open) shelf.style.setProperty('--jobs-shelf-open', menu.offsetHeight + 'px');
+    sizeNav();
   });
 })();

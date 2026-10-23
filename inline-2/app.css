@@ -124,7 +124,7 @@ h1 {
 .jobs__header {
   display: flex;
   align-items: center;
-  gap: var(--pp-space-2);
+  gap: var(--pp-space-4);
   height: 40px;
   padding: 0 var(--pp-space-6);
 }
@@ -188,6 +188,11 @@ h1 {
 .jobs__action-icon--back {
   -webkit-mask-image: url("../assets/icons/caret-left-small.svg");
   mask-image: url("../assets/icons/caret-left-small.svg");
+}
+
+.jobs__action-icon--search {
+  -webkit-mask-image: url("../assets/icons/search-small.svg");
+  mask-image: url("../assets/icons/search-small.svg");
 }
 
 .jobs__action-icon--today {
@@ -446,55 +451,22 @@ h1 {
   border-top: 1px solid var(--pp-border-neutral-default);
 }
 
-/* Marketing: one channel so far, social media, shown before its first post. */
-.marketing__card {
+/* Marketing: for now, only the way into social media, centred in the body. */
+.marketing {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: var(--pp-space-4);
-  padding: calc(var(--pp-space-3) + var(--pp-space-6)) 0;
+  justify-content: center;
 }
 
-.marketing__heading {
-  display: flex;
-  flex-direction: column;
-  gap: var(--pp-space-1);
-  width: 100%;
-}
-
-.marketing__title {
-  margin: 0;
-  color: var(--pp-heading-neutral-default);
-}
-
-.marketing__subtitle {
-  color: var(--pp-text-neutral-medium);
-}
-
-.marketing__badge {
-  display: flex;
-  padding: var(--pp-space-3);
-  border-radius: var(--pp-radius-sides);
-  background: var(--pp-background-disabled-low);
-}
-
-.marketing__badge-icon {
-  width: 28px;
-  height: 28px;
-  background-color: var(--pp-icon-neutral-default);
-  -webkit-mask: url("../assets/icons/document-medium-28.svg") center / contain no-repeat;
-  mask: url("../assets/icons/document-medium-28.svg") center / contain no-repeat;
-}
-
-/* The kit's small primary Button, full width. */
+/* The kit's small primary Button. */
 .marketing__cta {
-  width: 100%;
   height: 40px;
   padding: 0 var(--pp-space-5);
   border: 0;
   border-radius: var(--pp-radius-sides);
   background: var(--pp-background-brand-strong);
   color: var(--pp-text-on-brand-strong);
+  white-space: nowrap;
   cursor: pointer;
 }
 

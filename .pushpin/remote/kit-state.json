@@ -14,7 +14,8 @@
     "capture age",
     "components",
     "styles",
-    "annotations"
+    "annotations",
+    "copy source"
   ],
   "moved": {
     "components": {
@@ -32,6 +33,396 @@
       ],
       "changed": [
         {
+          "name": "Navigation / Badge",
+          "key": "f82914e62804bfd07271e157eb493ee1c20eee90",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:34:09.268Z"
+        },
+        {
+          "name": "Disclosure copy",
+          "key": "9cb5ae5148856c50598abd6542e1fc1c75e18212",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:34:09.176Z"
+        },
+        {
+          "name": "iOS / Sheet / Header",
+          "key": "9c0f97077606385d96025b83bee605d002c0262f",
+          "page": "Layouts",
+          "updatedAt": "2026-10-20T17:34:09.172Z"
+        },
+        {
+          "name": "Messager / Media modal",
+          "key": "99ccc1ff94409ce8de706af3dd67994a142c18e8",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:34:09.168Z"
+        },
+        {
+          "name": "iOS / Sheet / Backdrop",
+          "key": "8a6b5c24c1c14e1c7a23713250e3a255f6977210",
+          "page": "Layouts",
+          "updatedAt": "2026-10-20T17:34:09.164Z"
+        },
+        {
+          "name": "Settings / Navigation",
+          "key": "89d92172c1d3386374dbf315c362e70bc7514cc6",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:34:09.160Z"
+        },
+        {
+          "name": "view",
+          "key": "872028cf3cf9807db992c1402fa69c9d9c269188",
+          "page": "Guidelines",
+          "updatedAt": "2026-10-20T17:34:09.155Z"
+        },
+        {
+          "name": "Native / Device Mock",
+          "key": "6a0c19ad7edb949af0dd59a226dae696c97c309e",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:34:09.123Z"
+        },
+        {
+          "name": "Progress",
+          "key": "44ad4404090223b122f7e55f7b6fccadea2bc2d7",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:34:09.086Z"
+        },
+        {
+          "name": "Themed Link",
+          "key": "379ced8ba1b39a1897e02593105eb1cc3001394a",
+          "page": "Link",
+          "updatedAt": "2026-10-20T17:34:09.067Z"
+        },
+        {
+          "name": "Device template / Web",
+          "key": "a2afd87ef9a0c3fb39fd4ca027aeeea4e31b8060",
+          "page": "Layouts",
+          "updatedAt": "2026-10-20T17:34:08.778Z"
+        },
+        {
+          "name": "iOS / Sheet",
+          "key": "972cc358b317396273e7e170662c4d27972d546d",
+          "page": "Layouts",
+          "updatedAt": "2026-10-20T17:34:08.773Z"
+        },
+        {
+          "name": "❌ Headers",
+          "key": "8f322739b21f9129cc7c22d3974077956a27855b",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:34:08.769Z"
+        },
+        {
+          "name": "Web Browers ",
+          "key": "5f54748d344aa1d937542e650098daf23ae18771",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:34:08.765Z"
+        },
+        {
+          "name": "Navigation / Customer",
+          "key": "30af9ad9ab2d9de1e4dcf166b27a63ebfc73b269",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:34:08.761Z"
+        },
+        {
+          "name": "Avatar",
+          "key": "0df3248a5ccec613267d9ba33f3f7f8444b91a9c",
+          "page": "Avatar",
+          "updatedAt": "2026-10-20T17:34:08.758Z"
+        },
+        {
+          "name": "Native / Indicator",
+          "key": "05182f823c3a00232c41d7724d17491dc61efd40",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:34:08.754Z"
+        },
+        {
+          "name": "Star Rating / ReviewScoreSummary",
+          "key": "ffcab530279d1ac112077e913697bf646f7378c6",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:58.790Z"
+        },
+        {
+          "name": "Modal / Confirmation",
+          "key": "f78874ffe7d01874c5e339f93343daff8e51a484",
+          "page": "Modal",
+          "updatedAt": "2026-10-20T17:33:58.786Z"
+        },
+        {
+          "name": "Alert",
+          "key": "de49bf36b6d0b8c71a038c26d7075b9dfea79d0e",
+          "page": "Alert",
+          "updatedAt": "2026-10-20T17:33:58.781Z"
+        },
+        {
+          "name": "Modal / Default",
+          "key": "d351078b671aff5fc049ebbaca592d99f6059da9",
+          "page": "Modal",
+          "updatedAt": "2026-10-20T17:33:58.777Z"
+        },
+        {
+          "name": "Settings / Option",
+          "key": "cf79c977180c50030723a7d699e0df119bcb8575",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:58.772Z"
+        },
+        {
+          "name": "Brand / Logomark",
+          "key": "a40254a3a0b94c0c7d6d6abc8a9a39bd31e68365",
+          "page": "Brand Assets",
+          "updatedAt": "2026-10-20T17:33:58.768Z"
+        },
+        {
+          "name": "Device template / Native",
+          "key": "9517010b8ef0ebd6a0a1fd9a48399233abda5785",
+          "page": "Layouts",
+          "updatedAt": "2026-10-20T17:33:58.764Z"
+        },
+        {
+          "name": "Navigation / Pro / Tabs",
+          "key": "939320af4fadc2432b1e9a7a26446dcee1f6f3e6",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:58.758Z"
+        },
+        {
+          "name": "Bubble / Media",
+          "key": "90886b403d572593a255ee99a401a9e67bb496f7",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:58.753Z"
+        },
+        {
+          "name": "Messenger Elements / Composer",
+          "key": "83e7413015b6501e917d8aa7d460129cdc01abfd",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:58.748Z"
+        },
+        {
+          "name": "Navigation / Customer / Tabs",
+          "key": "6f20cfe9be8dbf491a205f9392f0f9b726cd8a6d",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:58.742Z"
+        },
+        {
+          "name": "Modal / Factory / Footer",
+          "key": "564c5653745f5a1c069e48f49d66b7ca57a11f04",
+          "page": "Modal",
+          "updatedAt": "2026-10-20T17:33:58.736Z"
+        },
+        {
+          "name": "Web Browers / Headers",
+          "key": "52860889d2d0c724f5ac57632b7b2714d99839af",
+          "page": "Layouts",
+          "updatedAt": "2026-10-20T17:33:58.731Z"
+        },
+        {
+          "name": "Input Row",
+          "key": "506a18c60761d0371cd1752f2a797a05272ef189",
+          "page": "Input Row",
+          "updatedAt": "2026-10-20T17:33:58.724Z"
+        },
+        {
+          "name": "iOS / Smart App Banner",
+          "key": "4fe0fa4ca81b39b7d6a28fd444b3ddff8f2b7595",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:58.719Z"
+        },
+        {
+          "name": "Brand / App / Icon",
+          "key": "40972c696e103ef9892ee90df77074e17f409b33",
+          "page": "Brand Assets",
+          "updatedAt": "2026-10-20T17:33:58.710Z"
+        },
+        {
+          "name": "Native / Alphabetic Keyboard",
+          "key": "3d9055e82a656fe808cb418d926a0afcec71e1f5",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:58.704Z"
+        },
+        {
+          "name": "Navigation / Customer / Category Search",
+          "key": "2fcdf3450388e453c728eea921f7427e21609104",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:58.699Z"
+        },
+        {
+          "name": "Navigation / Tab",
+          "key": "2c784f3ab43bbb96de6f34aedbdf9aab41e3cebd",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:58.693Z"
+        },
+        {
+          "name": "Modal / Promotion",
+          "key": "2333a8ce880a7c536463a24850a4096422e59eeb",
+          "page": "Modal",
+          "updatedAt": "2026-10-20T17:33:58.687Z"
+        },
+        {
+          "name": "Native / iOS / Contextual Menu",
+          "key": "232fde9d18d74f4cd09aecd3cadaa4aa6cb98e82",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:58.681Z"
+        },
+        {
+          "name": "Pill",
+          "key": "16f6afc13c439e980e7d2394f8a360d5109e18e4",
+          "page": "Pill",
+          "updatedAt": "2026-10-20T17:33:58.677Z"
+        },
+        {
+          "name": "Tabs",
+          "key": "15314a533334d9410e275a416ae210ccab747ef6",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:58.673Z"
+        },
+        {
+          "name": "Popovers",
+          "key": "14cb5072dcc07ea9dbaf137060572146d03b4fda",
+          "page": "Popover",
+          "updatedAt": "2026-10-20T17:33:58.668Z"
+        },
+        {
+          "name": "Device template / Footer",
+          "key": "0ef1a750f73cf8f4f43a2b20aa6a895dae58ce7c",
+          "page": "Layouts",
+          "updatedAt": "2026-10-20T17:33:58.662Z"
+        },
+        {
+          "name": "Native / iOS / Grouped Table",
+          "key": "007bc7034753c733ae662c4e32c3c4cd00612190",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:58.657Z"
+        },
+        {
+          "name": "Native / Numeric Keyboard",
+          "key": "fd3d151b7e6fb6b2e21b71bc83680c0d0b7535d6",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:34.802Z"
+        },
+        {
+          "name": "Navigation / Pro",
+          "key": "f7adf5ef55df8d2266ecb2e180c4b74302d7ed54",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:34.798Z"
+        },
+        {
+          "name": "Button",
+          "key": "ebc80753f095633977049c061a28a082816ef9c7",
+          "page": "Button",
+          "updatedAt": "2026-10-20T17:33:34.793Z"
+        },
+        {
+          "name": "Native / iOS / Push Notification",
+          "key": "e37db50dbb8b179840ec92856fe4b0dfef9dc815",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:34.789Z"
+        },
+        {
+          "name": "Bubble / Text",
+          "key": "e04ecd46a7c840007f58a33bed0e682bd3f9d4b9",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:34.785Z"
+        },
+        {
+          "name": "Native / Status Bar",
+          "key": "cf8854ca95fea414f6532a7ea321b39190dd46d9",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:34.781Z"
+        },
+        {
+          "name": "Navigation / Customer / Tabs [Logged in]",
+          "key": "c658fa791323284df25162ff1c8e5a015dd658cc",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:34.775Z"
+        },
+        {
+          "name": "Button Row",
+          "key": "ac39db4bceb59767f18e209979b5fdf7067ca94f",
+          "page": "Button Row",
+          "updatedAt": "2026-10-20T17:33:34.763Z"
+        },
+        {
+          "name": "Settings / Navigation / Option",
+          "key": "90e19f84ae4b563432355161f05ef44bb1642e5c",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:34.758Z"
+        },
+        {
+          "name": "Bubble / Structure",
+          "key": "7c26792bdf3e00981a775f352feb5c2ba6fe3a48",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:34.754Z"
+        },
+        {
+          "name": "Settings / Navigation / Options",
+          "key": "4dbd6fb1e35ab9808d95c356c630d1d6da3850cc",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:34.750Z"
+        },
+        {
+          "name": "Native / iOS / Alert",
+          "key": "4b7785535bf33a17a375b094738adaa3c18f5642",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:34.744Z"
+        },
+        {
+          "name": "Stripe payment / Card Element Only",
+          "key": "ef237a236eb70439e1323ad23043fc9b047332c9",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:15.341Z"
+        },
+        {
+          "name": "Native / iOS / Action Sheet",
+          "key": "c1a8669dc745915c841af63b20062f20854d458d",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:15.335Z"
+        },
+        {
+          "name": "Bottom Navigation",
+          "key": "b939620cca9cc9892c0e34ff2e2337c0045cd24d",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:15.330Z"
+        },
+        {
+          "name": "Native / iOS / Grouped Actions",
+          "key": "a735067100224dd9c1f53b4c0162a56c5e7ab20a",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:15.324Z"
+        },
+        {
+          "name": "Carousel",
+          "key": "68271ee1dde47698f5a4f161dcb464aa7181e5d5",
+          "page": "Carousel",
+          "updatedAt": "2026-10-20T17:33:15.318Z"
+        },
+        {
+          "name": "Native / iOS / Table Row",
+          "key": "56a7b5e2696e77155a751ab44dcf0182e08b608c",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:15.305Z"
+        },
+        {
+          "name": "Headers",
+          "key": "3cfc372ee1f47596e532602fa7c0e269ed723aa0",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:15.302Z"
+        },
+        {
+          "name": "Native / Browser Navigation",
+          "key": "3b0cd1a159f3955d7c3a061d94773d4a5192a744",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:15.298Z"
+        },
+        {
+          "name": "Headers / Tab",
+          "key": "0346ecfd1edf4cd2ded732657ce4b4f32305fddd",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:15.290Z"
+        },
+        {
+          "name": "App Icons",
+          "key": "011672a9ffed6370844af6f120b3f0720e57c0f1",
+          "page": "Additional components",
+          "updatedAt": "2026-10-20T17:33:15.277Z"
+        },
+        {
           "name": "Action Sheet",
           "key": "ac6c54e89daf08a8753737e739e8258ace3c42ac",
           "page": "Action Sheet",
@@ -42,30 +433,6 @@
           "key": "452a8f5a6829044c6c9bedb2338d649643d07c78",
           "page": "Accordion",
           "updatedAt": "2026-10-05T20:41:47.252Z"
-        },
-        {
-          "name": "Themed Link",
-          "key": "379ced8ba1b39a1897e02593105eb1cc3001394a",
-          "page": "Link",
-          "updatedAt": "2026-10-05T20:41:47.163Z"
-        },
-        {
-          "name": "Button",
-          "key": "ebc80753f095633977049c061a28a082816ef9c7",
-          "page": "Button",
-          "updatedAt": "2026-10-05T20:41:42.145Z"
-        },
-        {
-          "name": "Alert",
-          "key": "de49bf36b6d0b8c71a038c26d7075b9dfea79d0e",
-          "page": "Alert",
-          "updatedAt": "2026-10-05T20:41:42.140Z"
-        },
-        {
-          "name": "Modal / Default",
-          "key": "d351078b671aff5fc049ebbaca592d99f6059da9",
-          "page": "Modal",
-          "updatedAt": "2026-10-05T20:41:42.135Z"
         },
         {
           "name": "Progress Meter",
@@ -80,12 +447,6 @@
           "updatedAt": "2026-10-05T20:41:42.125Z"
         },
         {
-          "name": "Popovers",
-          "key": "14cb5072dcc07ea9dbaf137060572146d03b4fda",
-          "page": "Popover",
-          "updatedAt": "2026-10-05T20:41:42.118Z"
-        },
-        {
           "name": "Icon Button",
           "key": "f78f3a616236692e3c921a2003c2ea2e54a787e8",
           "page": "Icon Button",
@@ -98,88 +459,10 @@
           "updatedAt": "2026-10-05T20:41:34.741Z"
         },
         {
-          "name": "view",
-          "key": "872028cf3cf9807db992c1402fa69c9d9c269188",
-          "page": "Guidelines",
-          "updatedAt": "2026-09-26T02:41:45.992Z"
-        },
-        {
-          "name": "Native / Device Mock",
-          "key": "6a0c19ad7edb949af0dd59a226dae696c97c309e",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:45.976Z"
-        },
-        {
-          "name": "Star Rating / ReviewScoreSummary",
-          "key": "ffcab530279d1ac112077e913697bf646f7378c6",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:45.718Z"
-        },
-        {
-          "name": "Device template / Web",
-          "key": "a2afd87ef9a0c3fb39fd4ca027aeeea4e31b8060",
-          "page": "Layouts",
-          "updatedAt": "2026-09-26T02:41:45.715Z"
-        },
-        {
-          "name": "iOS / Sheet",
-          "key": "972cc358b317396273e7e170662c4d27972d546d",
-          "page": "Layouts",
-          "updatedAt": "2026-09-26T02:41:45.711Z"
-        },
-        {
-          "name": "❌ Headers",
-          "key": "8f322739b21f9129cc7c22d3974077956a27855b",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:45.708Z"
-        },
-        {
-          "name": "Bubble / Structure",
-          "key": "7c26792bdf3e00981a775f352feb5c2ba6fe3a48",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:45.703Z"
-        },
-        {
-          "name": "Modal / Confirmation",
-          "key": "f78874ffe7d01874c5e339f93343daff8e51a484",
-          "page": "Modal",
-          "updatedAt": "2026-09-26T02:41:40.719Z"
-        },
-        {
           "name": "Modal / Factory / Close action",
           "key": "ebb5feb70630504d6cf4f965ae6248a0a07a68b1",
           "page": "Modal",
           "updatedAt": "2026-09-26T02:41:40.716Z"
-        },
-        {
-          "name": "Native / iOS / Push Notification",
-          "key": "e37db50dbb8b179840ec92856fe4b0dfef9dc815",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:40.713Z"
-        },
-        {
-          "name": "Native / iOS / Action Sheet",
-          "key": "c1a8669dc745915c841af63b20062f20854d458d",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:40.707Z"
-        },
-        {
-          "name": "Button Row",
-          "key": "ac39db4bceb59767f18e209979b5fdf7067ca94f",
-          "page": "Button Row",
-          "updatedAt": "2026-09-26T02:41:40.703Z"
-        },
-        {
-          "name": "Device template / Native",
-          "key": "9517010b8ef0ebd6a0a1fd9a48399233abda5785",
-          "page": "Layouts",
-          "updatedAt": "2026-09-26T02:41:40.699Z"
-        },
-        {
-          "name": "Bubble / Media",
-          "key": "90886b403d572593a255ee99a401a9e67bb496f7",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:40.695Z"
         },
         {
           "name": "Modal / Factory / Modal",
@@ -188,88 +471,16 @@
           "updatedAt": "2026-09-26T02:41:40.691Z"
         },
         {
-          "name": "Messenger Elements / Composer",
-          "key": "83e7413015b6501e917d8aa7d460129cdc01abfd",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:40.688Z"
-        },
-        {
-          "name": "Carousel",
-          "key": "68271ee1dde47698f5a4f161dcb464aa7181e5d5",
-          "page": "Carousel",
-          "updatedAt": "2026-09-26T02:41:40.683Z"
-        },
-        {
-          "name": "Native / iOS / Table Row",
-          "key": "56a7b5e2696e77155a751ab44dcf0182e08b608c",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:40.679Z"
-        },
-        {
-          "name": "Modal / Factory / Footer",
-          "key": "564c5653745f5a1c069e48f49d66b7ca57a11f04",
-          "page": "Modal",
-          "updatedAt": "2026-09-26T02:41:40.676Z"
-        },
-        {
           "name": "TextInput",
           "key": "522dbc457c6160fe2d2673326448ee3c16245519",
           "page": "Text Input",
           "updatedAt": "2026-09-26T02:41:40.671Z"
         },
         {
-          "name": "Input Row",
-          "key": "506a18c60761d0371cd1752f2a797a05272ef189",
-          "page": "Input Row",
-          "updatedAt": "2026-09-26T02:41:40.667Z"
-        },
-        {
-          "name": "Native / iOS / Alert",
-          "key": "4b7785535bf33a17a375b094738adaa3c18f5642",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:40.661Z"
-        },
-        {
-          "name": "Headers",
-          "key": "3cfc372ee1f47596e532602fa7c0e269ed723aa0",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:40.659Z"
-        },
-        {
           "name": "Tooltip",
           "key": "3b8a2ee447d1e1cbebb3193781eef426821486f6",
           "page": "Tooltip",
           "updatedAt": "2026-09-26T02:41:40.655Z"
-        },
-        {
-          "name": "Native / Browser Navigation",
-          "key": "3b0cd1a159f3955d7c3a061d94773d4a5192a744",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:40.652Z"
-        },
-        {
-          "name": "Modal / Promotion",
-          "key": "2333a8ce880a7c536463a24850a4096422e59eeb",
-          "page": "Modal",
-          "updatedAt": "2026-09-26T02:41:40.648Z"
-        },
-        {
-          "name": "Tabs",
-          "key": "15314a533334d9410e275a416ae210ccab747ef6",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:40.644Z"
-        },
-        {
-          "name": "App Icons",
-          "key": "011672a9ffed6370844af6f120b3f0720e57c0f1",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:40.632Z"
-        },
-        {
-          "name": "Native / iOS / Grouped Table",
-          "key": "007bc7034753c733ae662c4e32c3c4cd00612190",
-          "page": "Additional components",
-          "updatedAt": "2026-09-26T02:41:40.627Z"
         }
       ]
     },
@@ -440,17 +651,19 @@
     }
   },
   "findings": [
-    "The Pushpin Thumbprint UI Kit capture has not been taken in 68 days. Nothing is known to have changed — only that it has been long enough that nobody has checked, so re-capture it before trusting a value out of it.",
+    "The Pushpin Thumbprint UI Kit capture has not been taken in 78 days. Nothing is known to have changed — only that it has been long enough that nobody has checked, so re-capture it before trusting a value out of it.",
     "2 components in the catalog are no longer published. Importing by key throws at runtime:\n    Headers / Navbar / iOS\n    Platform Section",
-    "40 components in the kit changed after the capture (2026-09-22), most recently on 2026-10-05. Every import key still resolves, but variant options and property keys may have moved, and a changed property key breaks setProperties:\n   Action Sheet\n   Accordion / Group\n   Themed Link\n   Button\n   Alert\n   Modal / Default\n   Progress Meter\n   Link\n   Popovers\n   Icon Button\n   Badge\n   view\n   …and 28 more",
+    "75 components in the kit changed after the capture (2026-09-22), most recently on 2026-10-20. Every import key still resolves, but variant options and property keys may have moved, and a changed property key breaks setProperties:\n   Navigation / Badge\n   Disclosure copy\n   iOS / Sheet / Header\n   Messager / Media modal\n   iOS / Sheet / Backdrop\n   Settings / Navigation\n   view\n   Native / Device Mock\n   Progress\n   Themed Link\n   Device template / Web\n   iOS / Sheet\n   …and 63 more",
     "14 styles in the catalog are no longer published. Importing by key throws at runtime:\n    text style Headings/Native/Title 7\n    text style Body/Text 1\n    text style Headings/Native/Title 5\n    text style Headings/Desktop/Title 2\n    text style Body/Text 2\n    text style Body/Text 3\n    text style Headings/Native/Title 6\n    text style Headings/Desktop/Title 3\n    text style Headings/Native/Title 8\n    text style Headings/Native/Title 3\n    ...and 4 more",
-    "26 components in the Annotation Kit changed after the capture (2026-09-22), most recently on 2026-10-07. Every import key still resolves, but variant options and property keys may have moved, and a changed property key breaks setProperties:\n   Project status\n   Thumbnail\n   Gesture / Long press\n   Framing Cards / Hypothesis\n   Cursor / Pointer\n   Cursor / Hand\n   Gesture / Swipe / Horizontal\n   Gesture / Tap\n   Framing Cards / Establish POV\n   Framing Cards / Intro\n   Deprecated\n   Gesture / Touch\n   …and 14 more"
+    "26 components in the Annotation Kit changed after the capture (2026-09-22), most recently on 2026-10-07. Every import key still resolves, but variant options and property keys may have moved, and a changed property key breaks setProperties:\n   Project status\n   Thumbnail\n   Gesture / Long press\n   Framing Cards / Hypothesis\n   Cursor / Pointer\n   Cursor / Hand\n   Gesture / Swipe / Horizontal\n   Gesture / Tap\n   Framing Cards / Establish POV\n   Framing Cards / Intro\n   Deprecated\n   Gesture / Touch\n   …and 14 more",
+    "The content design rules have not been pulled in 31 days. Nothing is known to have changed — only that nobody has asked GitHub — so re-pull them before trusting a rule quoted out of them."
   ],
   "brief": [
-    "Pushpin's copy of the Pushpin kit is 68 days old and may be behind; the next plugin update will carry a fresh one.",
+    "Pushpin's copy of the Pushpin kit is 78 days old and may be behind; the next plugin update will carry a fresh one.",
     "The Pushpin team has changed some components since this version of Pushpin; the next plugin update will carry those.",
     "The Pushpin team has changed some text styles since this version of Pushpin; the next plugin update will carry those.",
-    "The Pushpin team has changed some annotation components since this version of Pushpin; the next plugin update will carry those."
+    "The Pushpin team has changed some annotation components since this version of Pushpin; the next plugin update will carry those.",
+    "Pushpin's copy of Thumbtack's content rules is 31 days old and may be behind; the next plugin update will carry a fresh one."
   ],
-  "observedAt": "2026-10-13"
+  "observedAt": "2026-10-23"
 }

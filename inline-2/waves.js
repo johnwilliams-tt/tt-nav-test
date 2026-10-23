@@ -1,6 +1,9 @@
 /* The voice panel's waves: the "Ethereal voice waves" Figma shader, run on a
-   WebGPU canvas inside .jobs__waves. The panel's CSS places and fades the
-   layer; this draws into it, and only while the assistant is listening.
+   canvas inside .jobs__waves — WebGPU where the browser has it and it
+   starts, WebGL 2 otherwise, which every current phone browser has. The two
+   run the same shader, ported line for line, over the same uniform layout.
+   The panel's CSS places and fades the layer; this draws into it, and only
+   while the assistant is listening.
 
    The shader is the Figma agent's WGSL with two departures. It no longer
    samples the layer beneath it — the canvas composites over the panel with
@@ -13,10 +16,6 @@
   var tabbar = document.querySelector('.jobs__tabbar');
   var canvas = document.querySelector('.jobs__waves-canvas');
   if (!tabbar || !canvas) return;
-  if (!navigator.gpu) {
-    console.info('Voice waves: this browser has no WebGPU, so the panel stays plain.');
-    return;
-  }
 
   // Composition. The Figma defaults were set against a 377 x 220 frame with
   // the waves centred in it; this layer is the bottom 110px of the panel, so
@@ -281,7 +280,6 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
     return out;
   }
 
-  var header = new Float32Array(HEADER_FLOATS);
   function writeHeader(width, height, level, phase, calm) {
     header[1] = width;
     header[2] = height;
@@ -298,16 +296,145 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
     header[36] = SHAPE.height;
   }
 
-  // The GPU side is built the first time the panel opens and kept; a lost
-  // device is rebuilt on the next open.
-  var gpu = null;
-  var gpuPending = null;
-  var gpuFailed = false;
+  // The same shader for WebGL 2. The uniform block is the WGSL one read as
+  // a flat array of vec4: ten of header, then twelve per layer (eight
+  // colours, two of stop positions, the stop count, the settings), so one
+  // Float32Array feeds either renderer unchanged.
+  var UNIFORM_VECS = UNIFORM_BYTES / 16;
+  var glsl =
+    '#version 300 es\n' +
+    'precision highp float;\n' +
+    'precision highp int;\n' +
+    'uniform vec4 u[' + UNIFORM_VECS + '];\n' +
+    `in vec2 vUv;
+out vec4 outColor;
 
-  function initGPU() {
-    if (gpu) return Promise.resolve(gpu);
-    if (gpuPending) return gpuPending;
-    gpuPending = navigator.gpu
+vec4 layerColor(int l, int i) { return u[10 + l * 12 + i]; }
+float stopPos(int l, int i) { return u[10 + l * 12 + 8 + i / 4][i - (i / 4) * 4]; }
+
+vec4 paletteRamp(int l, float t) {
+  int n = clamp(int(u[10 + l * 12 + 10].x), 0, 8);
+  if (n == 0) { return vec4(0.0); }
+  if (n == 1 || t <= stopPos(l, 0)) { return layerColor(l, 0); }
+  int last = n - 1;
+  if (t >= stopPos(l, last)) { return layerColor(l, last); }
+  for (int i = 0; i < 7; i++) {
+    if (i >= last) { break; }
+    float p1 = stopPos(l, i + 1);
+    if (t <= p1) {
+      float p0 = stopPos(l, i);
+      return mix(layerColor(l, i), layerColor(l, i + 1), (t - p0) / max(p1 - p0, 1e-5));
+    }
+  }
+  return layerColor(l, last);
+}
+
+float waveY(float x, float fi, float position, float h, float energy, float phase) {
+  float inside = 1.0 - smoothstep(0.96, 1.0, abs(x));
+  float envelope = pow(max(0.0, 1.0 - x * x), 1.65) * inside;
+  float freq = u[3].x;
+  float angle = x * 3.141592654 * freq + phase * (0.74 + fi * 0.075) + fi * 1.31;
+  float harmonic = sin(angle) * 0.72
+    + sin(angle * 1.73 - phase * 0.37 + fi * 0.91) * (0.12 + 0.16 * energy)
+    + sin(x * 3.141592654 * (freq * 3.1 + 0.4) + phase * 1.27 + fi * 2.1) * 0.10 * energy;
+  float breathing = 0.84 + 0.16 * sin(phase * 0.53 + fi * 1.7);
+  return envelope * (h * (0.012 + 0.38 * energy) * harmonic * breathing + position * h * u[5].x * 0.75);
+}
+
+float filledMask(vec2 p, float span, float fi, float position, float h, float energy, float phase, float feather) {
+  float x = p.x / (span * 0.5);
+  float upper = waveY(x, fi, position, h, energy, phase);
+  float lower = h * 0.58;
+  float edge = 0.6 + feather;
+  float sides = 1.0 - smoothstep(span * 0.5 - edge, span * 0.5 + edge, abs(p.x));
+  float topCoverage = smoothstep(-edge, edge, p.y - upper);
+  float bottomCoverage = 1.0 - smoothstep(lower - edge, lower + edge, p.y);
+  float depthFade = mix(1.0, 0.42, clamp((p.y - upper) / max(lower - upper, 1.0), 0.0, 1.0));
+  return sides * topCoverage * bottomCoverage * depthFade;
+}
+
+void main() {
+  vec2 dims = max(u[0].yz, vec2(1.0));
+  float voiceLevel = u[1].x;
+  float feather = max(u[1].y, 0.0);
+  float motionPhase = u[2].x;
+  float layerCount = u[4].x;
+  float waveOpacity = u[6].x;
+  vec2 center = u[7].xy;
+  float waveWidth = u[8].x;
+  float waveHeight = u[9].x;
+  vec2 p = (vUv - center / 100.0) * dims;
+  float span = max(dims.x * waveWidth / 100.0, 1.0);
+  float h = dims.y * waveHeight / 100.0;
+  float x = p.x / (span * 0.5);
+  float inside = 1.0 - smoothstep(0.96, 1.0, abs(x));
+  float envelope = pow(max(0.0, 1.0 - x * x), 1.65) * inside;
+  float energy = clamp(voiceLevel, 0.0, 1.0);
+  int count = clamp(int(round(layerCount)), 1, 8);
+  float phase = motionPhase * 6.283185307;
+  vec3 color = vec3(0.0);
+  float alpha = 0.0;
+  for (int i = 0; i < 8; i++) {
+    if (i >= count) { break; }
+    float fi = float(i);
+    float position = (fi - float(count - 1) * 0.5) / max(float(count - 1), 1.0);
+    vec4 settings = u[10 + i * 12 + 11];
+    float blurRadius = max(settings.x, 0.0) + feather * 0.5;
+    float glowStrength = max(settings.y, 0.0);
+    float softness = max(settings.z, 0.35) + feather * 1.5;
+    float coverage = 0.0;
+    for (int by = -1; by <= 1; by++) {
+      for (int bx = -1; bx <= 1; bx++) {
+        float weightX = bx == 0 ? 0.5 : 0.25;
+        float weightY = by == 0 ? 0.5 : 0.25;
+        vec2 tap = p + vec2(float(bx), float(by)) * blurRadius * 1.5;
+        coverage += filledMask(tap, span, fi, position, h, energy, phase, feather) * weightX * weightY;
+      }
+    }
+    float y = waveY(x, fi, position, h, energy, phase);
+    float slope = (waveY(x + 2.0 / span, fi, position, h, energy, phase) - waveY(x - 2.0 / span, fi, position, h, energy, phase)) * 0.5;
+    float delta = abs(p.y - y) / sqrt(1.0 + slope * slope);
+    float halo = exp(-pow(delta / softness, 2.0)) * glowStrength * 0.16;
+    float farHalo = exp(-pow(delta / (softness * 2.4), 2.0)) * glowStrength * 0.035;
+    float rampPosition = clamp((x + 1.0) * 0.5 + position * 0.10 + 0.035 * sin(phase * 0.4 + fi), 0.0, 1.0);
+    vec4 tint = paletteRamp(i, rampPosition);
+    float depth = 0.7 + 0.3 * sin(fi * 1.73 + 0.4) * sin(fi * 1.73 + 0.4);
+    float surfaceAlpha = clamp(coverage * tint.a * waveOpacity * depth * (0.62 + energy * 0.18), 0.0, 1.0);
+    color = color * (1.0 - surfaceAlpha) + tint.rgb * surfaceAlpha;
+    alpha = alpha * (1.0 - surfaceAlpha) + surfaceAlpha;
+    vec3 illumination = vec3(1.0) - exp(-tint.rgb * tint.a * (halo + farHalo) * envelope * waveOpacity);
+    float lightAlpha = max(illumination.r, max(illumination.g, illumination.b));
+    color = color * (1.0 - lightAlpha) + illumination;
+    alpha = alpha * (1.0 - lightAlpha) + lightAlpha;
+  }
+  outColor = vec4(color, alpha);
+}
+`;
+
+  var glslVertex =
+    '#version 300 es\n' +
+    'in vec2 pos;\n' +
+    'in vec2 uv;\n' +
+    'out vec2 vUv;\n' +
+    'void main() { vUv = uv; gl_Position = vec4(pos, 0.0, 1.0); }\n';
+
+  // Two triangles over the layer, position then uv; uv runs top to bottom.
+  var QUAD = [-1, -1, 0, 1, 1, -1, 1, 1, -1, 1, 0, 0, -1, 1, 0, 0, 1, -1, 1, 1, 1, 1, 1, 0];
+
+  // Header and layers in one block. The layers only change with the
+  // constants above, so they are written once.
+  var block = new Float32Array(UNIFORM_BYTES / 4);
+  block.set(layerData(), HEADER_FLOATS);
+  var header = block.subarray(0, HEADER_FLOATS);
+
+  // Either renderer is built the first time it is wanted and kept; a lost
+  // device or context is rebuilt on the next open.
+  var renderer = null;
+  var rendererPending = null;
+  var rendererFailed = false;
+
+  function startWebGPU() {
+    return navigator.gpu
       .requestAdapter()
       .then(function (adapter) {
         if (!adapter) throw new Error('no adapter');
@@ -315,6 +442,7 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
       })
       .then(function (device) {
         var context = canvas.getContext('webgpu');
+        if (!context) throw new Error('no webgpu context');
         var format = navigator.gpu.getPreferredCanvasFormat();
         context.configure({ device: device, format: format, alphaMode: 'premultiplied' });
 
@@ -339,64 +467,142 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
         });
 
         var quad = device.createBuffer({
-          size: 6 * 4 * 4,
+          size: QUAD.length * 4,
           usage: GPUBufferUsage.VERTEX,
           mappedAtCreation: true,
         });
-        new Float32Array(quad.getMappedRange()).set([
-          -1, -1, 0, 1,
-          1, -1, 1, 1,
-          -1, 1, 0, 0,
-          -1, 1, 0, 0,
-          1, -1, 1, 1,
-          1, 1, 1, 0,
-        ]);
+        new Float32Array(quad.getMappedRange()).set(QUAD);
         quad.unmap();
 
         var uniforms = device.createBuffer({
           size: UNIFORM_BYTES,
           usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
         });
-        device.queue.writeBuffer(uniforms, LAYER_OFFSET, layerData());
+        device.queue.writeBuffer(uniforms, LAYER_OFFSET, block, HEADER_FLOATS);
 
         var bindGroup = device.createBindGroup({
           layout: pipeline.getBindGroupLayout(0),
           entries: [{ binding: 0, resource: { buffer: uniforms } }],
         });
 
-        gpu = {
-          device: device,
-          context: context,
-          pipeline: pipeline,
-          quad: quad,
-          uniforms: uniforms,
-          bindGroup: bindGroup,
+        var self = {
+          draw: function () {
+            device.queue.writeBuffer(uniforms, 0, header);
+            var encoder = device.createCommandEncoder();
+            var pass = encoder.beginRenderPass({
+              colorAttachments: [
+                {
+                  view: context.getCurrentTexture().createView(),
+                  loadOp: 'clear',
+                  clearValue: { r: 0, g: 0, b: 0, a: 0 },
+                  storeOp: 'store',
+                },
+              ],
+            });
+            pass.setPipeline(pipeline);
+            pass.setBindGroup(0, bindGroup);
+            pass.setVertexBuffer(0, quad);
+            pass.draw(6);
+            pass.end();
+            device.queue.submit([encoder.finish()]);
+          },
         };
-        gpuPending = null;
         device.lost.then(function () {
-          gpu = null;
-          gpuPending = null;
+          if (renderer === self) renderer = null;
         });
-        return gpu;
+        return self;
+      });
+  }
+
+  function startWebGL() {
+    var gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: false });
+    if (!gl) throw new Error('no webgl2 context');
+
+    function compile(type, source) {
+      var shader = gl.createShader(type);
+      gl.shaderSource(shader, source);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(shader));
+      return shader;
+    }
+    var program = gl.createProgram();
+    gl.attachShader(program, compile(gl.VERTEX_SHADER, glslVertex));
+    gl.attachShader(program, compile(gl.FRAGMENT_SHADER, glsl));
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(program));
+    gl.useProgram(program);
+
+    var buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(QUAD), gl.STATIC_DRAW);
+    var pos = gl.getAttribLocation(program, 'pos');
+    var uv = gl.getAttribLocation(program, 'uv');
+    gl.enableVertexAttribArray(pos);
+    gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 16, 0);
+    gl.enableVertexAttribArray(uv);
+    gl.vertexAttribPointer(uv, 2, gl.FLOAT, false, 16, 8);
+    var location = gl.getUniformLocation(program, 'u');
+
+    var self = {
+      draw: function () {
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.clearColor(0, 0, 0, 0);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+        gl.uniform4fv(location, block);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+      },
+    };
+    canvas.addEventListener('webglcontextlost', function (event) {
+      event.preventDefault();
+      if (renderer === self) renderer = null;
+    });
+    return self;
+  }
+
+  // A canvas keeps the first kind of context it hands out, so when WebGPU
+  // got as far as a context and then failed, WebGL gets a fresh canvas.
+  function freshCanvas() {
+    var next = canvas.cloneNode(false);
+    canvas.replaceWith(next);
+    canvas = next;
+  }
+
+  function initRenderer() {
+    if (renderer) return Promise.resolve(renderer);
+    if (rendererPending) return rendererPending;
+    var attempt = navigator.gpu
+      ? startWebGPU().catch(function (error) {
+          console.info('Voice waves: WebGPU could not start, so WebGL draws them.', error);
+          freshCanvas();
+          return startWebGL();
+        })
+      : Promise.resolve().then(startWebGL);
+    rendererPending = attempt
+      .then(function (ready) {
+        renderer = ready;
+        rendererPending = null;
+        return ready;
       })
       .catch(function (error) {
-        gpuFailed = true;
-        gpuPending = null;
-        console.info('Voice waves: WebGPU could not start, so the panel stays plain.', error);
+        rendererFailed = true;
+        rendererPending = null;
+        console.info('Voice waves: neither WebGPU nor WebGL could start, so the panel stays plain.', error);
         return null;
       });
-    return gpuPending;
+    return rendererPending;
   }
 
   // The backing store follows the layer's CSS size at device density; the
   // shader is told the CSS size. The size is only recorded here and applied
   // on the next draw: the layer is as wide as the field, so while the panel
   // is growing it changes every frame, and reallocating the canvas on each of
-  // those frames is a hitch the spring cannot hide.
+  // those frames is a hitch the spring cannot hide. The layer is watched
+  // rather than the canvas, since the canvas can be swapped for a fresh one.
+  var layer = canvas.parentElement;
   var cssWidth = 0;
   var cssHeight = 0;
   function resize(entry) {
-    var rect = entry ? entry.contentRect : canvas.getBoundingClientRect();
+    var rect = entry ? entry.contentRect : layer.getBoundingClientRect();
     cssWidth = rect.width;
     cssHeight = rect.height;
   }
@@ -404,7 +610,7 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
   if (window.ResizeObserver) {
     new ResizeObserver(function (entries) {
       resize(entries[0]);
-    }).observe(canvas);
+    }).observe(layer);
   }
 
   function fit() {
@@ -416,37 +622,23 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
   }
 
   function draw(level, phase, calm) {
-    if (!gpu) return;
+    if (!renderer) return;
     // On the way out the panel shrinks under a fading layer; the last size is
     // kept and stretched rather than chased.
     if (active) fit();
     writeHeader(cssWidth, cssHeight, level, phase, calm);
-    gpu.device.queue.writeBuffer(gpu.uniforms, 0, header);
-    var encoder = gpu.device.createCommandEncoder();
-    var pass = encoder.beginRenderPass({
-      colorAttachments: [
-        {
-          view: gpu.context.getCurrentTexture().createView(),
-          loadOp: 'clear',
-          clearValue: { r: 0, g: 0, b: 0, a: 0 },
-          storeOp: 'store',
-        },
-      ],
-    });
-    pass.setPipeline(gpu.pipeline);
-    pass.setBindGroup(0, gpu.bindGroup);
-    pass.setVertexBuffer(0, gpu.quad);
-    pass.draw(6);
-    pass.end();
-    gpu.device.queue.submit([encoder.finish()]);
+    renderer.draw();
   }
 
-  // Voice level. The microphone is asked for once the panel has grown and
-  // let go once it has shrunk back, so the browser's recording indicator
-  // tracks the panel; a browser that remembers the grant asks nothing the
-  // second time. Any refusal hands over to the simulated envelope for the
-  // session.
-  var mic = { stream: null, context: null, analyser: null, samples: null, denied: false };
+  // Voice level. The microphone is asked for in the tap that opens voice
+  // mode, and its audio context is started there too: iOS, and other
+  // browsers more and more, only prompt for the microphone and only let audio
+  // start inside a user gesture, so a request made once the panel has
+  // settled is refused without a prompt. It is let go once the panel has
+  // shrunk back, so the recording indicator tracks the panel; a browser that
+  // remembers the grant asks nothing the second time. Any refusal hands over
+  // to the simulated envelope for the session.
+  var mic = { stream: null, context: null, analyser: null, samples: null, denied: false, pending: null };
 
   function micSupported() {
     return !!(
@@ -456,18 +648,23 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
     );
   }
 
-  function startMic() {
+  // Runs inside the voice button's tap, so both the prompt and the audio
+  // context's start ride the gesture.
+  function acquireMic() {
     if (mic.denied || !micSupported()) return Promise.resolve(false);
-    if (mic.stream) return mic.context.resume().then(function () { return true; });
-    return navigator.mediaDevices
+    var Context = window.AudioContext || window.webkitAudioContext;
+    if (!mic.context) mic.context = new Context();
+    var resumed = mic.context.resume().catch(function () {});
+    if (mic.stream) return resumed.then(function () { return true; });
+    if (mic.pending) return mic.pending;
+    mic.pending = navigator.mediaDevices
       .getUserMedia({ audio: true })
       .then(function (stream) {
-        if (!active) {
+        mic.pending = null;
+        if (tabbar.dataset.state !== 'voice' || !mic.context) {
           stream.getTracks().forEach(function (track) { track.stop(); });
           return false;
         }
-        var Context = window.AudioContext || window.webkitAudioContext;
-        mic.context = new Context();
         mic.analyser = mic.context.createAnalyser();
         mic.analyser.fftSize = 1024;
         mic.samples = new Float32Array(mic.analyser.fftSize);
@@ -477,9 +674,29 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
         return mic.context.resume().then(function () { return true; });
       })
       .catch(function () {
+        mic.pending = null;
         mic.denied = true;
         return false;
       });
+    return mic.pending;
+  }
+
+  // What the loop waits on once the panel has settled: the request the tap
+  // already made, or a fresh one where voice mode was opened without a tap.
+  function startMic() {
+    if (mic.pending) return mic.pending;
+    if (mic.stream) return Promise.resolve(true);
+    return acquireMic();
+  }
+
+  // nav.js handles the same tap first and sets the voice state, so by the
+  // time this runs the tap is known to have opened voice rather than sent a
+  // message.
+  var voiceButton = document.querySelector('.jobs__voice');
+  if (voiceButton) {
+    voiceButton.addEventListener('click', function () {
+      if (tabbar.dataset.state === 'voice') acquireMic();
+    });
   }
 
   // Mute is the panel's mic button, read from its pressed state so the two
@@ -505,9 +722,8 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
   }
 
   function stopMic() {
-    if (!mic.stream) return;
-    mic.stream.getTracks().forEach(function (track) { track.stop(); });
-    mic.context.close().catch(function () {});
+    if (mic.stream) mic.stream.getTracks().forEach(function (track) { track.stop(); });
+    if (mic.context) mic.context.close().catch(function () {});
     mic.stream = null;
     mic.context = null;
     mic.analyser = null;
@@ -542,13 +758,14 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
   // The loop. Runs while the panel is open and through its fade on the way
   // out, then stops, so a closed panel costs nothing.
   //
-  // Nothing heavy happens while the panel's shape is moving. The spring is
-  // the one thing on screen, and on a phone the first draw, a canvas
-  // reallocation, or the audio session starting or stopping underneath it
-  // shows as a stutter. So the loop and the microphone wait for the shape
-  // to settle on the way in — the moment the layer starts to fade in anyway —
-  // and the microphone is let go only after the shape has settled on the way
-  // out. The GPU side is the exception: it is warmed while the page is idle.
+  // Nothing heavy happens while the panel's shape is moving that does not
+  // have to. The spring is the one thing on screen, and on a phone the first
+  // draw, a canvas reallocation, or the audio session stopping underneath it
+  // shows as a stutter. So the loop waits for the shape to settle on the way
+  // in — the moment the layer starts to fade in anyway — and the microphone
+  // is let go only after the shape has settled on the way out. Two things
+  // cannot wait: the microphone is asked for in the tap itself, which only a
+  // gesture allows, and the renderer is warmed while the page is idle.
   var active = false;
   var usingMic = false;
   var raf = 0;
@@ -599,11 +816,11 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
     window.clearTimeout(stopping);
     window.clearTimeout(releasing);
     window.clearTimeout(starting);
-    if (gpuFailed) return;
+    if (rendererFailed) return;
     starting = window.setTimeout(function () {
       if (!active) return;
-      initGPU().then(function () {
-        if (gpu && active && !raf) {
+      initRenderer().then(function () {
+        if (renderer && active && !raf) {
           last = 0;
           raf = requestAnimationFrame(frame);
         }
@@ -639,7 +856,7 @@ fn filledMask(p: vec2f, span: f32, fi: f32, position: f32, h: f32, energy: f32, 
   }
 
   var warm = function () {
-    if (!gpu && !gpuPending && !gpuFailed) initGPU();
+    if (!renderer && !rendererPending && !rendererFailed) initRenderer();
   };
   if (window.requestIdleCallback) requestIdleCallback(warm, { timeout: 3000 });
   else window.setTimeout(warm, 1500);

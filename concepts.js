@@ -8,7 +8,8 @@
 (function () {
   var CONCEPTS = [
     { slug: 'inline-2', name: 'Inline 2.0' },
-    { slug: 'inline-action', name: 'Inline Action' },
+    { slug: 'inline-beta', name: 'Inline Beta' },
+    { slug: 'inline-action', name: 'Inline Action', hidden: true },
     { slug: 'floating-chip', name: 'Floating Chip', hidden: true },
     { slug: 'floating-action-button', name: 'Floating Action Button', hidden: true },
     { slug: 'embedded', name: 'Embedded', hidden: true },

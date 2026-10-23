@@ -699,7 +699,7 @@ h1 {
   mask-image: url("../assets/icons/people-medium.svg");
 }
 
-/* Tack AI's star keeps its brand blue here, as in the open bar, rather than taking
+/* The AI assistant's star keeps its brand blue here, as in the open bar, rather than taking
    the row's neutral. */
 .jobs__menu-icon--ask {
   background-color: var(--pp-icon-brand-default);
@@ -782,7 +782,7 @@ h1 {
   mask-image: url("../assets/icons/hamburger-medium.svg");
 }
 
-/* Tack AI's star keeps its brand blue, rather than taking the tab's neutral. */
+/* The AI assistant's star keeps its brand blue, rather than taking the tab's neutral. */
 .jobs__nav-icon--ask {
   background-color: var(--pp-icon-brand-default);
   -webkit-mask-image: url("../assets/icons/ai-spark-medium.svg");

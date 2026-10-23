@@ -330,7 +330,7 @@ h1 {
 }
 
 /* The nav floats over the list, on a scrim that fades the rows out beneath it.
-   Three rows: the Ask Tack AI chip, a gap, the tab shelf. Opening the assistant
+   Three rows: the Ask AI assistant chip, a gap, the tab shelf. Opening the assistant
    hands the shelf's row to the chip's, which is what carries the chip down
    onto the shelf's box as it grows into the bar; the shelf itself leaves by
    translate, pinned to its row's floor so the More menu can overflow upward
@@ -654,7 +654,7 @@ h1 {
   mask-image: url("../assets/icons/people-medium.svg");
 }
 
-/* Tack AI's star keeps its brand blue here, as on the chip, rather than taking
+/* The AI assistant's star keeps its brand blue here, as on the chip, rather than taking
    the row's neutral. */
 .jobs__menu-icon--ask {
   background-color: var(--pp-icon-brand-default);
@@ -742,7 +742,7 @@ h1 {
   white-space: nowrap;
 }
 
-/* The Ask Tack AI chip. Not the kit Chip: no border, a title label, a 14px
+/* The Ask AI assistant chip. Not the kit Chip: no border, a title label, a 14px
    star, and it floats on the same shadow as the shelf. Tapped, it is the
    assistant bar: the same element grows in place to the inline bar's box —
    297 wide at 24 from the frame's edges, beside a 40px close button — so the

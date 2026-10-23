@@ -77,7 +77,7 @@ This project uses **Pushpin**, Thumbtack's design system.
   or a customer wrote. Mark a region of somebody else's words
   `data-pp-content="pro"` and it is left out of the check, the score and any fix;
   `data-pp-content="app"` on a child inside one hands that part back.
-- The prototype is served at http://localhost:8123/, started and restarted for you
+- The prototype is served at http://localhost:8131/, started and restarted for you
   on edit, detached, with caching off. Do not start a second server for this project,
   and do not kill whatever holds the port. To bring it up without editing anything:
   `node .pushpin/pushpin-check.mjs --preview`.

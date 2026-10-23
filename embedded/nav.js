@@ -218,7 +218,7 @@
         else openMenu();
         return;
       }
-      // Ask Tack AI is the assistant, not a page, so the tab that was current
+      // Ask AI assistant is the assistant, not a page, so the tab that was current
       // stays current underneath it.
       if (item === askTab) {
         openAssistant();
@@ -459,7 +459,7 @@
     document.querySelectorAll('.jobs__prompt:not(.jobs__prompt--refresh)')
   );
   var promptSets = [
-    ['Create a quote', 'Start a job', 'Learn about Tack AI'],
+    ['Create a quote', 'Start a job', 'Learn about the AI assistant'],
     ['Post on social media', 'See pending quotes', 'Send a reminder'],
   ];
   var promptSet = 0;

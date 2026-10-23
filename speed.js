@@ -15,6 +15,7 @@
     '--jobs-duration-assistant',
     '--jobs-prompts-delay',
     '--jobs-duration-prompts',
+    '--jobs-duration-dock',
   ];
 
   var root = document.documentElement;
