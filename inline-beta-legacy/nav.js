@@ -9,17 +9,14 @@
   var moreRows = Array.prototype.slice.call(document.querySelectorAll('.jobs__more-item'));
   var moreIndex = items.indexOf(more);
   var pages = Array.prototype.slice.call(document.querySelectorAll('.jobs__page'));
+  var assistantPage = document.querySelector('.jobs__page[data-page="assistant"]');
+  var assistantBack = assistantPage.querySelector('.jobs__back');
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   var current = items.findIndex(function (item) {
     return item.getAttribute('aria-current') === 'page';
   });
   if (current < 0) current = 0;
-
-  var TRAVEL = 460;
-  // Overshoot, which none of the kit's three easings do: the thumb passes the
-  // target by a little and settles back.
-  var SPRING = 'cubic-bezier(0.34, 1.42, 0.52, 1)';
 
   // The CSS half of the motion scales through its duration tokens; these are
   // the timings that live here instead, so they read the same factor. Read at
@@ -28,14 +25,10 @@
     return value / (window.__ppSpeed || 1);
   }
 
-  function boxOf(item) {
-    return { x: item.offsetLeft, width: item.offsetWidth };
-  }
-
-  // The resting geometry is a share of the bar, not a pixel offset, so the
-  // thumb stays over its tab while the shelf is compressing or widening
-  // around it. The bar's inner padding is subtracted because the items sit
-  // inside it while the thumb is positioned against the padding box. Tabs
+  // The geometry is a share of the bar, not a pixel offset, so the thumb
+  // stays over its tab at any width. The bar's inner padding is subtracted
+  // because the items sit inside it while the thumb is positioned against
+  // the padding box. Tabs
   // overlap their neighbours, so each is wider than an even share by its part
   // of the overlaps, and each starts one tab width less the overlap along.
   var count = items.length;
@@ -44,41 +37,14 @@
   function place(index) {
     thumb.style.left = 'calc(var(--jobs-nav-inset) + ' + index + ' * (' + tab + ' - var(--jobs-nav-overlap)))';
     thumb.style.width = tab;
-    thumb.style.translate = '0px';
   }
 
-  function select(index, animate) {
+  function select(index) {
     if (index === current) return;
-    var from = boxOf(items[current]);
-    var to = boxOf(items[index]);
-
     items[current].removeAttribute('aria-current');
     items[index].setAttribute('aria-current', 'page');
     current = index;
-
-    // Rest on the new tab at once; the travel is played as an offset that
-    // decays to zero, so the resting geometry stays proportional throughout.
     place(index);
-    if (!animate || reduced.matches) return;
-
-    // The travel is one keyframe pair on one curve. A midpoint keyframe would
-    // end its own segment at zero velocity, which is the stall that reads as
-    // two motions rather than one.
-    thumb.animate({ translate: [from.x - to.x + 'px', '0px'] }, { duration: ms(TRAVEL), easing: SPRING });
-
-    // The squish rides a separate property so it can peak mid-flight without
-    // interrupting the travel. Stretching along x and thinning on y reads as
-    // the shape being dragged rather than teleported — the liquid part,
-    // without refraction. Further travel stretches more.
-    var stretch = Math.abs(to.x - from.x) > from.width ? 1.12 : 1.07;
-    thumb.animate(
-      [
-        { scale: '1 1', easing: 'cubic-bezier(0.3, 0, 0.5, 1)' },
-        { scale: stretch + ' 0.9', offset: 0.4, easing: 'cubic-bezier(0.3, 0, 0.3, 1)' },
-        { scale: '1 1' },
-      ],
-      { duration: ms(TRAVEL) }
-    );
   }
 
   // A child page pushes in from the right over its parent, as an iOS
@@ -110,6 +76,8 @@
     var to = pageNamed(name);
     var from = shownPage();
     if (!to || to === from) return;
+    if (to === assistantPage) openAssistant();
+    else if (from === assistantPage) closeAssistant();
     if (!how || !from || reduced.matches) {
       pages.forEach(function (page) {
         page.hidden = page !== to;
@@ -157,7 +125,7 @@
     item.addEventListener('click', function (event) {
       event.preventDefault();
       var again = index === current;
-      select(index, true);
+      select(index);
       showPage(item.dataset.page, again ? 'pop' : null);
     });
   });
@@ -167,7 +135,7 @@
   moreRows.forEach(function (row) {
     row.addEventListener('click', function (event) {
       event.preventDefault();
-      select(moreIndex, true);
+      select(moreIndex);
       showPage(row.dataset.page, 'push');
     });
   });
@@ -211,7 +179,7 @@
     var swipe = null;
 
     edge.addEventListener('pointerdown', function (event) {
-      if (settle || tabbar.dataset.state !== 'nav') return;
+      if (settle || tabbar.dataset.state === 'voice') return;
       if (event.pointerType === 'mouse' && event.button !== 0) return;
       swipe = {
         x: event.clientX,
@@ -257,6 +225,7 @@
         event.type !== 'pointercancel' &&
         (ended.progress > SWIPE_COMMIT || ended.velocity > SWIPE_FLICK);
       var target = commit ? 1 : 0;
+      if (commit && page === assistantPage) closeAssistant();
       var duration = reduced.matches ? 1 : Math.max(ms(PUSH) * Math.abs(target - ended.progress), 120);
       var timing = { duration: duration, easing: PUSH_EASE, fill: 'forwards' };
       var moves = [
@@ -325,7 +294,6 @@
   var fab = document.querySelector('.jobs__fab');
   var fieldBox = document.querySelector('.jobs__field');
   var field = document.querySelector('.jobs__input');
-  var close = document.querySelector('.jobs__close');
   var voice = document.querySelector('.jobs__voice');
   var talk = document.querySelector('.jobs__talk');
   var talkClose = talk.querySelector('.jobs__talk-button--close');
@@ -349,7 +317,6 @@
     return /[\d.]s$/.test(value) ? number * 1000 : number;
   }
 
-  var returning = 0;
   var talking = 0;
 
   // The surface's corner, written from the box rather than transitioned,
@@ -447,22 +414,47 @@
     );
   }
 
+  // The assistant is a page of its own, pushed over whichever page is showing
+  // and popped back to it. While it is up the bar is its composer: the tabs
+  // and the fab give way to the open field at once. The bar's transitions are
+  // finished on the spot rather than played, since they remain for voice
+  // mode's way in and out.
+  function snapBar(state) {
+    tabbar.dataset.state = state;
+    tabbar.getAnimations({ subtree: true }).forEach(function (animation) {
+      if (animation instanceof CSSTransition) animation.finish();
+    });
+  }
+
+  function openAssistant() {
+    snapBar('assistant');
+    field.focus({ preventScroll: true });
+  }
+
+  // Leaving from voice mode takes the panel down with the page, and the mute
+  // is cleared so the next session opens live.
+  function closeAssistant() {
+    window.clearTimeout(talking);
+    leaveVoice(false);
+    scopeDark(false);
+    talk.hidden = true;
+    setMuted(false);
+    field.blur();
+    field.value = '';
+    syncTyped();
+    snapBar('nav');
+  }
+
   fab.addEventListener('click', function () {
-    window.clearTimeout(returning);
-    tabbar.dataset.state = 'assistant';
-    focusField();
+    assistantBack.dataset.back = shownPage().dataset.page;
+    showPage('assistant', 'push');
   });
 
-  // The suggestions step aside while the field holds words, and come back if
-  // it is emptied; a tapped one becomes those words. The voice button turns
-  // into send for as long as there is something to send.
+  // The voice button turns into send for as long as there is something to
+  // send.
   function syncTyped() {
-    if (field.value) {
-      tabbar.dataset.typed = '';
-    } else if ('typed' in tabbar.dataset) {
-      delete tabbar.dataset.typed;
-      tabbar.dataset.cleared = '';
-    }
+    if (field.value) tabbar.dataset.typed = '';
+    else delete tabbar.dataset.typed;
     voice.setAttribute('aria-label', field.value ? 'Send message' : 'Speak instead');
   }
 
@@ -479,48 +471,6 @@
       event.preventDefault();
       send();
     }
-  });
-  Array.prototype.slice
-    .call(document.querySelectorAll('.jobs__prompt:not(.jobs__prompt--refresh)'))
-    .forEach(function (prompt) {
-      prompt.addEventListener('click', function () {
-        field.value = prompt.textContent.trim();
-        syncTyped();
-        field.focus();
-      });
-    });
-
-  // Two sets, and a refresh advances to the next. The glyph turns once while
-  // the suggestions drop out; the labels change while they are hidden.
-  var prompts = Array.prototype.slice.call(
-    document.querySelectorAll('.jobs__prompt:not(.jobs__prompt--refresh)')
-  );
-  var promptSets = [
-    ['Create a quote', 'Start a job', 'What can AI do?'],
-    ['Post on social media', 'See pending quotes', 'Send a reminder'],
-  ];
-  var promptSet = 0;
-  var refresh = document.querySelector('.jobs__prompt--refresh');
-  var refreshIcon = refresh.querySelector('.jobs__prompt-icon');
-  var refreshing = 0;
-  refresh.addEventListener('click', function () {
-    var pace = window.__ppSpeed || 1;
-    if (!reduced.matches) {
-      refreshIcon.animate({ rotate: ['0deg', '360deg'] }, { duration: 500 / pace, easing: 'cubic-bezier(0.45, 0, 0.4, 1)' });
-    }
-    window.clearTimeout(refreshing);
-    tabbar.dataset.cleared = '';
-    tabbar.dataset.refreshing = '';
-    refreshing = window.setTimeout(
-      function () {
-        promptSet = (promptSet + 1) % promptSets.length;
-        prompts.forEach(function (prompt, index) {
-          prompt.textContent = promptSets[promptSet][index];
-        });
-        delete tabbar.dataset.refreshing;
-      },
-      reduced.matches ? 0 : 200 / pace
-    );
   });
 
   // Voice mode. The panel is always dark, whatever the app's theme. Its
@@ -590,125 +540,5 @@
     focusField();
   });
 
-  // The tabs' return has its own, later delay while the field collapses; the
-  // state that carries it is released once the track has finished moving.
-  close.addEventListener('click', function () {
-    leaveVoice(false);
-    // Opened from the docked bar, it closes back to the docked bar. Caught
-    // halfway through undocking, it finishes on the full one.
-    if (tabbar.dataset.dock !== 'in') clearDock();
-    tabbar.dataset.state = 'returning';
-    field.blur();
-    field.value = '';
-    delete tabbar.dataset.typed;
-    delete tabbar.dataset.cleared;
-    voice.setAttribute('aria-label', 'Speak instead');
-    window.clearTimeout(returning);
-    returning = window.setTimeout(
-      function () {
-        if (tabbar.dataset.state === 'returning') tabbar.dataset.state = 'nav';
-      },
-      reduced.matches ? 0 : token('--jobs-duration-assistant')
-    );
-  });
-
-  // Docking. Scrolling a list down folds the bar into two circles; reaching
-  // the top of the list or tapping the left circle unfolds it. Scrolling back
-  // up partway leaves it docked.
-  var dockButton = shelf.querySelector('.jobs__dock');
-  var undocking = 0;
-  var tops = new WeakMap();
-  var travel = 0;
-  // Downward scroll, in px, that docks the bar, so a nudge does not.
-  var DOCK_TRAVEL = 24;
-
-  // The tabs keep the undocked shelf's width while it narrows over them: the
-  // row less both gutters, the closed field and the gap in front of it, and
-  // the margin the shelf carries.
-  function sizeNav() {
-    var width =
-      tabbar.clientWidth -
-      token('--jobs-gutter-left') -
-      token('--jobs-gutter-right') -
-      PILL.height -
-      2 * token('--pp-space-2');
-    nav.style.setProperty('--jobs-nav-width', width + 'px');
-  }
-
-  // From the current tab's icon to the docked circle's centre. The shelf's
-  // left and bottom edges hold still while it docks, so this is measured in
-  // the nav's own box, untranslated.
-  function aimDock() {
-    var item = items[current];
-    var glyph = item.querySelector('.jobs__nav-glyph');
-    var half = token('--jobs-dock') / 2;
-    var x = item.offsetLeft + glyph.offsetLeft + glyph.offsetWidth / 2;
-    var y = item.offsetTop + glyph.offsetTop + glyph.offsetHeight / 2;
-    nav.style.setProperty('--jobs-dock-x', half - x + 'px');
-    nav.style.setProperty('--jobs-dock-y', nav.offsetHeight - half - y + 'px');
-  }
-
-  function dock() {
-    if (tabbar.dataset.dock === 'in' || tabbar.dataset.state !== 'nav') return;
-    window.clearTimeout(undocking);
-    aimDock();
-    tabbar.dataset.dock = 'in';
-    nav.inert = true;
-  }
-
-  function undock() {
-    if (tabbar.dataset.dock !== 'in') return;
-    tabbar.dataset.dock = 'out';
-    nav.inert = false;
-    travel = 0;
-    if (document.activeElement === dockButton) items[current].focus({ preventScroll: true });
-    window.clearTimeout(undocking);
-    undocking = window.setTimeout(
-      function () {
-        if (tabbar.dataset.dock === 'out') delete tabbar.dataset.dock;
-      },
-      reduced.matches ? 0 : token('--jobs-duration-dock')
-    );
-  }
-
-  function clearDock() {
-    window.clearTimeout(undocking);
-    delete tabbar.dataset.dock;
-    nav.inert = false;
-    travel = 0;
-  }
-
-  dockButton.addEventListener('click', undock);
-
-  // Scroll does not bubble, so the lists are heard in the capture phase; the
-  // week strip and the chip rows scroll sideways and are not lists.
-  document.addEventListener(
-    'scroll',
-    function (event) {
-      var body = event.target;
-      if (!body.classList || !body.classList.contains('jobs__body')) return;
-      var top = body.scrollTop;
-      var previous = tops.has(body) ? tops.get(body) : top;
-      tops.set(body, top);
-      if (tabbar.dataset.state !== 'nav') return;
-      if (top <= 0) {
-        undock();
-        travel = 0;
-        return;
-      }
-      if (top > previous) {
-        travel += top - previous;
-        if (travel >= DOCK_TRAVEL) dock();
-      } else {
-        travel = 0;
-      }
-    },
-    true
-  );
-
   place(current);
-  sizeNav();
-  window.addEventListener('resize', function () {
-    sizeNav();
-  });
 })();
