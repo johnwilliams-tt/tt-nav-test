@@ -58,12 +58,15 @@
   // The resting geometry is a share of the bar, not a pixel offset, so the
   // thumb stays over its tab while the shelf is compressing or widening
   // around it. The bar's inner padding is subtracted because the items sit
-  // inside it while the thumb is positioned against the padding box.
+  // inside it while the thumb is positioned against the padding box. Tabs
+  // overlap their neighbours, so each is wider than an even share by its part
+  // of the overlaps, and each starts one tab width less the overlap along.
   var count = items.length;
   var inner = 'calc(100% - 2 * var(--jobs-nav-inset))';
+  var tab = 'calc((' + inner + ' + ' + (count - 1) + ' * var(--jobs-nav-overlap)) / ' + count + ')';
   function place(index) {
-    thumb.style.left = 'calc(var(--jobs-nav-inset) + ' + index + ' * ' + inner + ' / ' + count + ')';
-    thumb.style.width = 'calc(' + inner + ' / ' + count + ')';
+    thumb.style.left = 'calc(var(--jobs-nav-inset) + ' + index + ' * (' + tab + ' - var(--jobs-nav-overlap)))';
+    thumb.style.width = tab;
     thumb.style.translate = '0px';
   }
 
@@ -218,7 +221,7 @@
         else openMenu();
         return;
       }
-      // Ask AI assistant is the assistant, not a page, so the tab that was current
+      // Ask AI is the assistant, not a page, so the tab that was current
       // stays current underneath it.
       if (item === askTab) {
         openAssistant();
@@ -283,15 +286,15 @@
   // The surface's corner, written from the box rather than transitioned,
   // since a transition between two path() values snaps halfway in engines
   // that cannot interpolate them. The radius follows the height — a pill up
-  // to the bar's 52, the phone's 54 at the panel's 180 — so the clip is right
+  // to the bar's 56, the phone's 54 at the panel's 180 — so the clip is right
   // at every size the box passes through, in whichever direction it is
-  // travelling. At 52 square the pill is a circle.
+  // travelling. At 56 square the pill is a circle.
   var surface = ask.querySelector('.jobs__ask-surface');
   // The shadow's caster under the surface, kept in step with it: same clip,
   // same colour scope.
   var shade = ask.querySelector('.jobs__ask-shade-fill');
   var skins = [surface, shade].filter(Boolean);
-  var PILL_BOX = { height: 52, radius: 26 };
+  var PILL_BOX = { height: 56, radius: 28 };
   var PANEL_BOX = { height: 180, radius: 54 };
   var SMOOTHING = 0.6;
 
@@ -365,11 +368,11 @@
     fitSurface();
   }
 
-  // The shelf keeps the bar's 26 at every height. Its size comes from the
+  // The shelf keeps the bar's 28 at every height. Its size comes from the
   // observer rather than the bounding box, which the squash scales.
   var shelfSurface = shelf.querySelector('.jobs__shelf-surface');
   var shelfSkins = [shelfSurface, shelf.querySelector('.jobs__shelf-shade-fill')].filter(Boolean);
-  var SHELF_RADIUS = 26;
+  var SHELF_RADIUS = 28;
 
   if (shelfSurface && 'ResizeObserver' in window) {
     new ResizeObserver(function (entries) {
@@ -459,7 +462,7 @@
     document.querySelectorAll('.jobs__prompt:not(.jobs__prompt--refresh)')
   );
   var promptSets = [
-    ['Create a quote', 'Start a job', 'Learn about the AI assistant'],
+    ['Create a quote', 'Start a job', 'What can AI do?'],
     ['Post on social media', 'See pending quotes', 'Send a reminder'],
   ];
   var promptSet = 0;

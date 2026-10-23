@@ -229,6 +229,34 @@ h1 {
   height: 24px;
 }
 
+.side-menu__glyph {
+  position: relative;
+  flex: none;
+  display: flex;
+}
+
+/* A count on the row's icon, overhanging its top right corner, as on the
+   tab bars. The kit records only the small count; this is the medium one. */
+.side-menu__badge {
+  position: absolute;
+  top: -3px;
+  left: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--pp-space-4);
+  min-width: var(--pp-space-4);
+  padding: 0 var(--pp-space-1);
+  border-radius: var(--pp-radius-sides);
+  background: var(--pp-background-alert-medium);
+  color: var(--pp-heading-neutral-inverse);
+  font-size: var(--pp-font-size-body-3);
+  font-weight: var(--pp-font-weight-medium-regular);
+  line-height: 1;
+  letter-spacing: var(--pp-tracking-extra-tight);
+  white-space: nowrap;
+}
+
 .side-menu__icon--business {
   -webkit-mask-image: url("../assets/icons/business-medium.svg");
   mask-image: url("../assets/icons/business-medium.svg");
@@ -1043,7 +1071,7 @@ h1 {
 }
 
 /* The resting label, on the placeholder's line and inset, in the design's
-   low heading colour. nav.js cycles it from Ask AI assistant through every
+   low heading colour. nav.js cycles it from Ask AI through every
    suggestion, fading each out and the next in. It steps aside while the
    assistant is open, and is back as the field shrinks home. */
 .jobs__hint {

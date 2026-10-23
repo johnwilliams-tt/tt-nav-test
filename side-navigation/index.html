@@ -46,8 +46,15 @@
           </div>
           <ul class="side-menu__list">
             <li>
-              <button type="button" class="side-menu__item" data-page="jobs" aria-current="page">
-                <span class="side-menu__icon side-menu__icon--business" aria-hidden="true"></span>
+              <button type="button" class="side-menu__item" data-page="jobs" aria-current="page" aria-label="Jobs, 1 alert">
+                <span class="side-menu__glyph" aria-hidden="true">
+                  <span class="side-menu__icon side-menu__icon--business"></span>
+                  <span
+                    class="side-menu__badge"
+                    data-pp-component="Badge"
+                    data-pp-variant="size=medium, type=count, theme=alert"
+                  >1</span>
+                </span>
                 <span class="pp-body-1">Jobs</span>
               </button>
             </li>
@@ -961,13 +968,13 @@
             <input
               class="pp-body-1 jobs__input"
               type="text"
-              placeholder="Ask AI assistant"
-              aria-label="Ask AI assistant"
+              placeholder="Ask AI"
+              aria-label="Ask AI"
               data-pp-proposed="Pro / Assistant field"
             />
             <!-- The resting bar's label, which nav.js cycles through the
                  suggestions. -->
-            <span class="pp-body-1 jobs__hint" aria-hidden="true">Ask AI assistant</span>
+            <span class="pp-body-1 jobs__hint" aria-hidden="true">Ask AI</span>
             <button
               type="button"
               class="jobs__voice"

@@ -975,8 +975,8 @@
             <input
               class="pp-body-2 jobs__ask-input"
               type="text"
-              placeholder="Ask AI assistant"
-              aria-label="Ask AI assistant"
+              placeholder="Ask AI"
+              aria-label="Ask AI"
               data-pp-proposed="Pro / Assistant field"
             />
             <button
@@ -989,7 +989,7 @@
               <span class="jobs__ask-voice-icon" aria-hidden="true"></span>
               <span class="jobs__ask-voice-icon jobs__ask-voice-icon--send" aria-hidden="true"></span>
             </button>
-            <button type="button" class="jobs__ask-open" aria-label="Ask AI assistant"></button>
+            <button type="button" class="jobs__ask-open" aria-label="Ask AI"></button>
             <div class="jobs__talk" data-pp-proposed="Pro / Voice panel" data-pp-theme="dark" hidden>
               <div class="jobs__talk-row jobs__talk-row--top">
                 <button type="button" class="jobs__talk-button" aria-label="Expand" data-pp-component="Icon Button" data-pp-variant="theme=secondary, size=large">
@@ -1022,13 +1022,20 @@
             </button>
             <button type="button" class="pp-title-7 jobs__prompt" data-pp-component="Button" data-pp-variant="theme=tertiary, size=small">Create a quote</button>
             <button type="button" class="pp-title-7 jobs__prompt" data-pp-component="Button" data-pp-variant="theme=tertiary, size=small">Start a job</button>
-            <button type="button" class="pp-title-7 jobs__prompt" data-pp-component="Button" data-pp-variant="theme=tertiary, size=small">Learn about the AI assistant</button>
+            <button type="button" class="pp-title-7 jobs__prompt" data-pp-component="Button" data-pp-variant="theme=tertiary, size=small">What can AI do?</button>
           </div>
           <div class="jobs__shelf" data-state="tabs">
             <nav class="jobs__nav" aria-label="Main">
               <span class="jobs__nav-thumb" aria-hidden="true"></span>
-              <a class="jobs__nav-item" href="#" aria-current="page" data-page="jobs">
-                <span class="jobs__nav-icon jobs__nav-icon--business" aria-hidden="true"></span>
+              <a class="jobs__nav-item" href="#" aria-current="page" data-page="jobs" aria-label="Jobs, 1 alert">
+                <span class="jobs__nav-glyph" aria-hidden="true">
+                  <span class="jobs__nav-icon jobs__nav-icon--business"></span>
+                  <span
+                    class="jobs__nav-badge"
+                    data-pp-component="Badge"
+                    data-pp-variant="size=medium, type=count, theme=alert"
+                  >1</span>
+                </span>
                 <span class="pp-body-4 jobs__nav-label">Jobs</span>
               </a>
               <a class="jobs__nav-item" href="#" data-page="schedule">
@@ -1081,7 +1088,7 @@
               </button>
               <button class="jobs__menu-item" type="button" data-action="ask">
                 <span class="jobs__menu-icon jobs__menu-icon--ask" aria-hidden="true"></span>
-                <span class="pp-body-2 jobs__menu-label">Ask AI assistant</span>
+                <span class="pp-body-2 jobs__menu-label">Ask AI</span>
               </button>
             </div>
           </div>

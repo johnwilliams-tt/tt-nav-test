@@ -81,6 +81,8 @@ h1 {
   /* The assistant runs at 1.5x the More menu's pace; every assistant timing
      is a fraction of this one clock. nav.js reads it rather than restating it. */
   --jobs-duration-assistant: 480ms;
+  /* The shelf's height, which the assistant bar shares. */
+  --jobs-bar: 56px;
   /* Voice mode's lead: the bar's contents clear before it starts to grow into
      the panel, in both directions. Rides the same 1.5x. */
   --jobs-assistant-start: calc(var(--pp-duration-3) / 1.5);
@@ -288,8 +290,8 @@ h1 {
 
 .jobs__body {
   padding: 0 var(--pp-space-6);
-  /* Clears the shelf: its 52 plus the bar's padding above and below it. */
-  padding-bottom: calc(52px + 2 * var(--pp-space-6));
+  /* Clears the shelf: its height plus the bar's padding above and below it. */
+  padding-bottom: calc(var(--jobs-bar) + 2 * var(--pp-space-6));
 }
 
 .jobs__list {
@@ -362,7 +364,7 @@ h1 {
   inset: auto 0 0 0;
   display: grid;
   grid-template-columns: 100%;
-  grid-template-rows: 0px 0px 52px;
+  grid-template-rows: 0px 0px var(--jobs-bar);
   padding: var(--pp-space-6);
   transition:
     grid-template-rows var(--jobs-nav-exit) var(--pp-ease-in-out) var(--jobs-nav-return),
@@ -507,8 +509,8 @@ h1 {
    and has to grow with it, and a grid row is the one layout-driven size that
    interpolates cleanly. */
 .jobs__shelf {
-  --jobs-shelf-row: 52px;
-  --jobs-shelf-open: 52px;
+  --jobs-shelf-row: var(--jobs-bar);
+  --jobs-shelf-open: var(--jobs-bar);
 
   grid-area: 3 / 1;
   /* Pinned to the track's floor: the menu grows upward out of it, and voice
@@ -537,10 +539,10 @@ h1 {
    the shade under it casts the shadow from a fill clipped to the same curve,
    with the bar's drop shadow so the two match where one hands over to the
    other. nav.js writes both clips from the surface's size on every frame it
-   changes. The radius is the collapsed bar's 26, held as a constant so the
+   changes. The radius is the collapsed bar's 28, held as a constant so the
    corners do not change as it grows — a stadium radius on the open panel
    would bow its sides — and the smoothing only shows once the panel is more
-   than a pill. The kit publishes no 26px radius; it is here for the frames
+   than a pill. The kit publishes no 28px radius; it is here for the frames
    before the script runs. */
 .jobs__shelf-shade {
   position: absolute;
@@ -555,7 +557,7 @@ h1 {
 .jobs__shelf-surface {
   position: absolute;
   inset: 0;
-  border-radius: 26px;
+  border-radius: calc(var(--jobs-bar) / 2);
   background: var(--pp-background-neutral-default);
 }
 
@@ -589,14 +591,18 @@ h1 {
 }
 
 /* Both states sit on the bottom edge, so the shelf grows upward. The thumb
-   and nav.js read the inset from here. */
+   and nav.js read the inset from here.
+
+   Each tab overlaps the next by --jobs-nav-overlap, which nav.js reads to
+   size the thumb to a tab's real box. */
 .jobs__nav {
   --jobs-nav-inset: var(--pp-space-1);
+  --jobs-nav-overlap: var(--pp-space-2);
   position: absolute;
   inset: auto 0 0 0;
   display: flex;
   align-items: center;
-  height: 52px;
+  height: var(--jobs-bar);
   padding: var(--jobs-nav-inset);
   transition:
     opacity var(--pp-duration-2) var(--pp-ease-in),
@@ -733,15 +739,20 @@ h1 {
   align-items: center;
   justify-content: center;
   height: 100%;
+  margin-right: calc(-1 * var(--jobs-nav-overlap));
+  padding: 0 var(--pp-space-2);
   border-radius: var(--pp-radius-sides);
   color: var(--pp-text-neutral-medium);
   text-decoration: none;
   transition: color var(--pp-duration-3) var(--pp-ease-out);
 }
 
+.jobs__nav-item:last-child {
+  margin-right: 0;
+}
+
 .jobs__nav-item--more,
 .jobs__nav-item--ask {
-  padding: 0;
   border: 0;
   background: none;
   font: inherit;
@@ -752,9 +763,38 @@ h1 {
   color: var(--pp-text-neutral-default);
 }
 
+.jobs__nav-glyph {
+  position: relative;
+  flex: none;
+  width: 24px;
+  height: 24px;
+}
+
 .jobs__nav-icon {
   width: 24px;
   height: 24px;
+}
+
+/* A count on the tab's icon, overhanging its top right corner. The kit
+   records only the small count; this is the medium one the nav design uses. */
+.jobs__nav-badge {
+  position: absolute;
+  top: -3px;
+  left: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--pp-space-4);
+  min-width: var(--pp-space-4);
+  padding: 0 var(--pp-space-1);
+  border-radius: var(--pp-radius-sides);
+  background: var(--pp-background-alert-medium);
+  color: var(--pp-heading-neutral-inverse);
+  font-size: var(--pp-font-size-body-3);
+  font-weight: var(--pp-font-weight-medium-regular);
+  line-height: 1;
+  letter-spacing: var(--pp-tracking-extra-tight);
+  white-space: nowrap;
 }
 
 .jobs__nav-icon--business {
@@ -864,7 +904,7 @@ h1 {
 .jobs__ask-shade-fill {
   position: absolute;
   inset: 0;
-  border-radius: 26px;
+  border-radius: calc(var(--jobs-bar) / 2);
   background: var(--pp-background-neutral-default);
   transition: background-color var(--jobs-duration-assistant) var(--jobs-ease-settle);
 }
@@ -872,7 +912,7 @@ h1 {
 /* The painted surface, clipped to the phone's corner curve while the shade
    keeps casting the shadow. The clip is
    written by nav.js from the box's size on every frame it changes — a pill
-   up to 52px high, the phone's 54px smoothed corner at 180 — because a CSS
+   up to the bar's 56px, the phone's 54px smoothed corner at 180 — because a CSS
    transition between two path() values is only interpolated by some engines
    and snaps halfway in the rest. The radius here is the pill's, for the
    frames before the script runs. */
@@ -880,7 +920,7 @@ h1 {
   position: absolute;
   inset: 0;
   overflow: clip;
-  border-radius: 26px;
+  border-radius: calc(var(--jobs-bar) / 2);
   background: var(--pp-background-neutral-default);
   transition: background-color var(--jobs-duration-assistant) var(--jobs-ease-settle);
 }
@@ -1041,8 +1081,8 @@ h1 {
 .jobs__add {
   position: absolute;
   right: var(--pp-space-6);
-  /* The bar's bottom margin plus half of what its 52 has beyond 40. */
-  bottom: calc(var(--pp-space-6) + (52px - 40px) / 2);
+  /* The bar's bottom margin plus half of what its height has beyond 40. */
+  bottom: calc(var(--pp-space-6) + (var(--jobs-bar) - 40px) / 2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1155,7 +1195,7 @@ h1 {
 .jobs__prompts {
   position: absolute;
   left: var(--pp-space-6);
-  bottom: calc(var(--pp-space-6) + 52px + var(--pp-space-6));
+  bottom: calc(var(--pp-space-6) + var(--jobs-bar) + var(--pp-space-6));
   display: flex;
   flex-direction: column;
   align-items: flex-start;

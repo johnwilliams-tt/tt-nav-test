@@ -57,12 +57,15 @@
   // The resting geometry is a share of the bar, not a pixel offset, so the
   // thumb stays over its tab while the shelf is compressing or widening
   // around it. The bar's inner padding is subtracted because the items sit
-  // inside it while the thumb is positioned against the padding box.
+  // inside it while the thumb is positioned against the padding box. Tabs
+  // overlap their neighbours, so each is wider than an even share by its part
+  // of the overlaps, and each starts one tab width less the overlap along.
   var count = items.length;
   var inner = 'calc(100% - 2 * var(--jobs-nav-inset))';
+  var tab = 'calc((' + inner + ' + ' + (count - 1) + ' * var(--jobs-nav-overlap)) / ' + count + ')';
   function place(index) {
-    thumb.style.left = 'calc(var(--jobs-nav-inset) + ' + index + ' * ' + inner + ' / ' + count + ')';
-    thumb.style.width = 'calc(' + inner + ' / ' + count + ')';
+    thumb.style.left = 'calc(var(--jobs-nav-inset) + ' + index + ' * (' + tab + ' - var(--jobs-nav-overlap)))';
+    thumb.style.width = tab;
     thumb.style.translate = '0px';
   }
 
@@ -293,7 +296,7 @@
   // The surface's corner, written from the box rather than transitioned,
   // since a transition between two path() values snaps halfway in engines
   // that cannot interpolate them. The radius follows the height — a pill up
-  // to the bar's 52, the phone's 54 at the panel's 180 — so the clip is right
+  // to the bar's 56, the phone's 54 at the panel's 180 — so the clip is right
   // at every size the box passes through, in whichever direction it is
   // travelling. The chip's 30px is a pill too: the radius clamps to half the
   // height.
@@ -302,7 +305,7 @@
   // same colour scope.
   var shade = ask.querySelector('.jobs__ask-shade-fill');
   var skins = [surface, shade].filter(Boolean);
-  var PILL_BOX = { height: 52, radius: 26 };
+  var PILL_BOX = { height: 56, radius: 28 };
   var PANEL_BOX = { height: 180, radius: 54 };
   var SMOOTHING = 0.6;
 
@@ -455,7 +458,7 @@
     document.querySelectorAll('.jobs__prompt:not(.jobs__prompt--refresh)')
   );
   var promptSets = [
-    ['Create a quote', 'Start a job', 'Learn about the AI assistant'],
+    ['Create a quote', 'Start a job', 'What can AI do?'],
     ['Post on social media', 'See pending quotes', 'Send a reminder'],
   ];
   var promptSet = 0;

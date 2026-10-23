@@ -953,7 +953,7 @@
           </div>
           <div class="jobs__dim" data-state="closed" aria-hidden="true"></div>
           <div class="jobs__ai-scrim" aria-hidden="true"></div>
-          <!-- The assistant bar. The Ask AI assistant tab opens it; nothing of it
+          <!-- The assistant bar. The Ask AI tab opens it; nothing of it
                shows while the tabs are up. -->
           <div class="jobs__ask">
             <!-- The shade casts the shadow from a clipped fill of its own, the
@@ -970,8 +970,8 @@
             <input
               class="pp-body-2 jobs__ask-input"
               type="text"
-              placeholder="Ask AI assistant"
-              aria-label="Ask AI assistant"
+              placeholder="Ask AI"
+              aria-label="Ask AI"
               data-pp-proposed="Pro / Assistant field"
             />
             <button
@@ -1019,7 +1019,7 @@
             </button>
             <button type="button" class="pp-title-7 jobs__prompt" data-pp-component="Button" data-pp-variant="theme=tertiary, size=small">Create a quote</button>
             <button type="button" class="pp-title-7 jobs__prompt" data-pp-component="Button" data-pp-variant="theme=tertiary, size=small">Start a job</button>
-            <button type="button" class="pp-title-7 jobs__prompt" data-pp-component="Button" data-pp-variant="theme=tertiary, size=small">Learn about the AI assistant</button>
+            <button type="button" class="pp-title-7 jobs__prompt" data-pp-component="Button" data-pp-variant="theme=tertiary, size=small">What can AI do?</button>
           </div>
           <div class="jobs__shelf" data-state="tabs">
             <!-- The same split as the assistant bar's: the shade casts the
@@ -1029,8 +1029,15 @@
             <div class="jobs__shelf-surface">
               <nav class="jobs__nav" aria-label="Main">
                 <span class="jobs__nav-thumb" aria-hidden="true"></span>
-                <a class="jobs__nav-item" href="#" aria-current="page" data-page="jobs">
-                  <span class="jobs__nav-icon jobs__nav-icon--business" aria-hidden="true"></span>
+                <a class="jobs__nav-item" href="#" aria-current="page" data-page="jobs" aria-label="Jobs, 1 alert">
+                  <span class="jobs__nav-glyph" aria-hidden="true">
+                    <span class="jobs__nav-icon jobs__nav-icon--business"></span>
+                    <span
+                      class="jobs__nav-badge"
+                      data-pp-component="Badge"
+                      data-pp-variant="size=medium, type=count, theme=alert"
+                    >1</span>
+                  </span>
                   <span class="pp-body-4 jobs__nav-label">Jobs</span>
                 </a>
                 <a class="jobs__nav-item" href="#" data-page="schedule">
@@ -1039,7 +1046,7 @@
                 </a>
                 <button class="jobs__nav-item jobs__nav-item--ask" type="button">
                   <span class="jobs__nav-icon jobs__nav-icon--ask" aria-hidden="true"></span>
-                  <span class="pp-body-4 jobs__nav-label">Ask AI assistant</span>
+                  <span class="pp-body-4 jobs__nav-label">Ask AI</span>
                 </button>
                 <a class="jobs__nav-item" href="#" data-page="get-paid">
                   <span class="jobs__nav-icon jobs__nav-icon--money" aria-hidden="true"></span>
@@ -1083,7 +1090,7 @@
                 </button>
                 <button class="jobs__menu-item" type="button" data-action="ask">
                   <span class="jobs__menu-icon jobs__menu-icon--ask" aria-hidden="true"></span>
-                  <span class="pp-body-2 jobs__menu-label">Ask AI assistant</span>
+                  <span class="pp-body-2 jobs__menu-label">Ask AI</span>
                 </button>
               </div>
             </div>

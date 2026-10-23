@@ -8,12 +8,12 @@
 (function () {
   var CONCEPTS = [
     { slug: 'inline-2', name: 'Inline 2.0' },
-    { slug: 'inline-beta', name: 'Inline Beta' },
+    { slug: 'inline-beta', name: 'Inline Beta', hidden: true },
     { slug: 'inline-action', name: 'Inline Action', hidden: true },
-    { slug: 'floating-chip', name: 'Floating Chip', hidden: true },
-    { slug: 'floating-action-button', name: 'Floating Action Button', hidden: true },
-    { slug: 'embedded', name: 'Embedded', hidden: true },
-    { slug: 'side-navigation', name: 'Side Navigation', hidden: true },
+    { slug: 'floating-chip', name: 'Floating Chip' },
+    { slug: 'floating-action-button', name: 'Floating Action Button' },
+    { slug: 'embedded', name: 'Embedded' },
+    { slug: 'side-navigation', name: 'Side Navigation' },
   ];
 
   var match = window.location.pathname.match(/\/([^/]+)\/(?:index\.html)?$/);
