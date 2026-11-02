@@ -9,6 +9,7 @@
   var moreRows = Array.prototype.slice.call(document.querySelectorAll('.jobs__more-item'));
   var moreIndex = items.indexOf(more);
   var pages = Array.prototype.slice.call(document.querySelectorAll('.jobs__page'));
+  var tabbar = document.querySelector('.jobs__tabbar');
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   var current = items.findIndex(function (item) {
@@ -103,6 +104,24 @@
     });
   }
 
+  // A page marked data-tabbar="away" is pushed over the tab bar as well as
+  // its parent, as an iOS view that hides the bottom bar when pushed: the bar
+  // belongs to the parent, so it slides off with it and back with it.
+  function hidesBar(page) {
+    return page.dataset.tabbar === 'away';
+  }
+
+  // The bar travels with the page underneath when the page on top hides it
+  // and the one underneath does not.
+  function carriesBar(top, under) {
+    return hidesBar(top) && !hidesBar(under);
+  }
+
+  function setAway(away) {
+    if (away) tabbar.dataset.away = '';
+    else delete tabbar.dataset.away;
+  }
+
   // how is 'push' for a child arriving, 'pop' for going back to its parent,
   // or nothing for a switch between tabs, which iOS does not animate.
   function showPage(name, how) {
@@ -114,6 +133,7 @@
       pages.forEach(function (page) {
         page.hidden = page !== to;
       });
+      setAway(hidesBar(to));
       return;
     }
 
@@ -121,6 +141,7 @@
     var push = how === 'push';
     var top = push ? to : from;
     var under = push ? from : to;
+    var carried = carriesBar(top, under);
     top.dataset.moving = 'over';
     var timing = { duration: ms(PUSH), easing: PUSH_EASE, fill: 'forwards' };
     var off = ['100% 0', '0 0'];
@@ -135,6 +156,11 @@
       top.animate({ translate: off }, timing),
       under.animate({ translate: shifted, filter: dimmed }, timing),
     ];
+    if (carried) {
+      setAway(false);
+      tabbar.dataset.under = '';
+      moves.push(tabbar.animate({ translate: shifted, filter: dimmed }, timing));
+    }
 
     // Run once, whether the move finishes or a new one cuts it short.
     var done = false;
@@ -144,6 +170,10 @@
       settle = null;
       from.hidden = true;
       delete top.dataset.moving;
+      if (carried) {
+        delete tabbar.dataset.under;
+        setAway(push);
+      }
       moves.forEach(function (move) {
         move.cancel();
       });
@@ -188,14 +218,17 @@
   var SWIPE_START = 6;
   var screen = document.querySelector('.jobs');
 
-  function lean(top, under, progress) {
+  // unders is the parent, and the tab bar when it is being carried with it.
+  function lean(top, unders, progress) {
     top.style.translate = progress * 100 + '% 0';
-    under.style.translate = 'calc(' + PARENT_SHIFT + ' * ' + (1 - progress) + ') 0';
-    under.style.filter = 'brightness(' + (0.92 + 0.08 * progress) + ')';
+    unders.forEach(function (under) {
+      under.style.translate = 'calc(' + PARENT_SHIFT + ' * ' + (1 - progress) + ') 0';
+      under.style.filter = 'brightness(' + (0.92 + 0.08 * progress) + ')';
+    });
   }
 
-  function unlean(top, under) {
-    [top, under].forEach(function (page) {
+  function unlean(top, unders) {
+    [top].concat(unders).forEach(function (page) {
       page.style.translate = '';
       page.style.filter = '';
     });
@@ -211,13 +244,15 @@
     var swipe = null;
 
     edge.addEventListener('pointerdown', function (event) {
-      if (settle || tabbar.dataset.state !== 'nav') return;
+      if (settle) return;
       if (event.pointerType === 'mouse' && event.button !== 0) return;
+      var parent = pageNamed(back.dataset.back);
       swipe = {
         x: event.clientX,
         y: event.clientY,
         width: screen.clientWidth,
-        parent: pageNamed(back.dataset.back),
+        parent: parent,
+        unders: carriesBar(page, parent) ? [parent, tabbar] : [parent],
         started: false,
         progress: 0,
         lastX: event.clientX,
@@ -239,9 +274,13 @@
         swipe.started = true;
         swipe.parent.hidden = false;
         page.dataset.moving = 'over';
+        if (swipe.unders.length > 1) {
+          setAway(false);
+          tabbar.dataset.under = '';
+        }
       }
       swipe.progress = Math.min(Math.max(dx / swipe.width, 0), 1);
-      lean(page, swipe.parent, swipe.progress);
+      lean(page, swipe.unders, swipe.progress);
       var dt = event.timeStamp - swipe.lastTime;
       if (dt > 0) swipe.velocity = (event.clientX - swipe.lastX) / dt;
       swipe.lastX = event.clientX;
@@ -253,22 +292,25 @@
       swipe = null;
       if (!ended || !ended.started) return;
       var parent = ended.parent;
+      var unders = ended.unders;
+      var carried = unders.length > 1;
       var commit =
         event.type !== 'pointercancel' &&
         (ended.progress > SWIPE_COMMIT || ended.velocity > SWIPE_FLICK);
       var target = commit ? 1 : 0;
       var duration = reduced.matches ? 1 : Math.max(ms(PUSH) * Math.abs(target - ended.progress), 120);
       var timing = { duration: duration, easing: PUSH_EASE, fill: 'forwards' };
-      var moves = [
-        page.animate({ translate: [page.style.translate, target * 100 + '% 0'] }, timing),
-        parent.animate(
-          {
-            translate: [parent.style.translate, 'calc(' + PARENT_SHIFT + ' * ' + (1 - target) + ') 0'],
-            filter: [parent.style.filter, 'brightness(' + (0.92 + 0.08 * target) + ')'],
-          },
-          timing
-        ),
-      ];
+      var moves = [page.animate({ translate: [page.style.translate, target * 100 + '% 0'] }, timing)].concat(
+        unders.map(function (under) {
+          return under.animate(
+            {
+              translate: [under.style.translate, 'calc(' + PARENT_SHIFT + ' * ' + (1 - target) + ') 0'],
+              filter: [under.style.filter, 'brightness(' + (0.92 + 0.08 * target) + ')'],
+            },
+            timing
+          );
+        })
+      );
       var done = false;
       settle = function () {
         if (done) return;
@@ -277,7 +319,11 @@
         if (commit) page.hidden = true;
         else parent.hidden = true;
         delete page.dataset.moving;
-        unlean(page, parent);
+        if (carried) {
+          delete tabbar.dataset.under;
+          setAway(!commit);
+        }
+        unlean(page, unders);
         moves.forEach(function (move) {
           move.cancel();
         });
@@ -321,26 +367,7 @@
     });
   });
 
-  var tabbar = document.querySelector('.jobs__tabbar');
-  var fab = document.querySelector('.jobs__fab');
-  var fieldBox = document.querySelector('.jobs__field');
-  var field = document.querySelector('.jobs__input');
-  var close = document.querySelector('.jobs__close');
-  var voice = document.querySelector('.jobs__voice');
-  var talk = document.querySelector('.jobs__talk');
-  var talkClose = talk.querySelector('.jobs__talk-button--close');
-  var mute = talk.querySelector('.jobs__talk-button--mic');
-
-  function setMuted(muted) {
-    mute.setAttribute('aria-pressed', String(muted));
-    mute.setAttribute('aria-label', muted ? 'Unmute' : 'Mute');
-  }
-
-  mute.addEventListener('click', function () {
-    setMuted(mute.getAttribute('aria-pressed') !== 'true');
-  });
-
-  // The assistant's clock lives in CSS; these read it rather than restate it,
+  // The dock's clock lives in CSS; this reads it rather than restating it,
   // and the speed devtool's scaling comes along for free.
   function token(name) {
     var value = getComputedStyle(tabbar).getPropertyValue(name).trim();
@@ -349,267 +376,16 @@
     return /[\d.]s$/.test(value) ? number * 1000 : number;
   }
 
-  var returning = 0;
-  var talking = 0;
-
-  // The surface's corner, written from the box rather than transitioned,
-  // since a transition between two path() values snaps halfway in engines
-  // that cannot interpolate them. The radius follows the height — the pill's
-  // 28 at 56px high, the phone's 54 at 180 — so the clip is right at every
-  // size the box passes through, in whichever direction it is travelling.
-  var surface = fieldBox.querySelector('.jobs__surface');
-  // The shadow's caster under the surface, kept in step with it: same clip,
-  // same colour scope.
-  var shade = fieldBox.querySelector('.jobs__shade-fill');
-  var skins = [surface, shade].filter(Boolean);
-  var PILL = { height: 56, radius: 28 };
-  var PANEL = { height: 180, radius: 54 };
-  var SMOOTHING = 0.6;
-
-  function rad(deg) {
-    return (deg * Math.PI) / 180;
-  }
-
-  function n(value) {
-    return String(Math.round(value * 100) / 100);
-  }
-
-  // Figma's corner smoothing: a cubic eases out of each edge into a shorter
-  // arc than a plain radius would draw. At a radius of half the height the
-  // cubics shrink to nothing and the arcs meet, which is exactly the pill.
-  function squircle(width, height, radius) {
-    var limit = Math.min(width, height) / 2;
-    var r = Math.min(radius, limit);
-    var p = Math.min((1 + SMOOTHING) * r, limit);
-    var beta;
-    var alpha;
-    if (r <= limit / 2) {
-      beta = 90 * (1 - SMOOTHING);
-      alpha = 45 * SMOOTHING;
-    } else {
-      var k = (r - limit / 2) / (limit / 2);
-      beta = 90 * (1 - SMOOTHING * (1 - k));
-      alpha = 45 * SMOOTHING * (1 - k);
-    }
-    var theta = (90 - beta) / 2;
-    var p34 = r * Math.tan(rad(theta / 2));
-    var c = p34 * Math.cos(rad(alpha));
-    var d = c * Math.tan(rad(alpha));
-    var arc = Math.sin(rad(beta / 2)) * r * Math.SQRT2;
-    var b = (p - arc - c - d) / 3;
-    var a = 2 * b;
-    var A = n(a), AB = n(a + b), ABC = n(a + b + c), BC = n(b + c), C = n(c), D = n(d), R = n(r), ARC = n(arc);
-    return (
-      'M ' + n(width - p) + ' 0 ' +
-      'c ' + A + ' 0 ' + AB + ' 0 ' + ABC + ' ' + D + ' ' +
-      'a ' + R + ' ' + R + ' 0 0 1 ' + ARC + ' ' + ARC + ' ' +
-      'c ' + D + ' ' + C + ' ' + D + ' ' + BC + ' ' + D + ' ' + ABC + ' ' +
-      'L ' + n(width) + ' ' + n(height - p) + ' ' +
-      'c 0 ' + A + ' 0 ' + AB + ' -' + D + ' ' + ABC + ' ' +
-      'a ' + R + ' ' + R + ' 0 0 1 -' + ARC + ' ' + ARC + ' ' +
-      'c -' + C + ' ' + D + ' -' + BC + ' ' + D + ' -' + ABC + ' ' + D + ' ' +
-      'L ' + n(p) + ' ' + n(height) + ' ' +
-      'c -' + A + ' 0 -' + AB + ' 0 -' + ABC + ' -' + D + ' ' +
-      'a ' + R + ' ' + R + ' 0 0 1 -' + ARC + ' -' + ARC + ' ' +
-      'c -' + D + ' -' + C + ' -' + D + ' -' + BC + ' -' + D + ' -' + ABC + ' ' +
-      'L 0 ' + n(p) + ' ' +
-      'c 0 -' + A + ' 0 -' + AB + ' ' + D + ' -' + ABC + ' ' +
-      'a ' + R + ' ' + R + ' 0 0 1 ' + ARC + ' -' + ARC + ' ' +
-      'c ' + C + ' -' + D + ' ' + BC + ' -' + D + ' ' + ABC + ' -' + D + ' Z'
-    );
-  }
-
-  function fitSurface() {
-    var box = fieldBox.getBoundingClientRect();
-    var width = box.width;
-    var height = box.height;
-    var share = Math.min(Math.max((height - PILL.height) / (PANEL.height - PILL.height), 0), 1);
-    var radius = PILL.radius + share * (PANEL.radius - PILL.radius);
-    var clip = 'path("' + squircle(width, height, radius) + '")';
-    skins.forEach(function (skin) {
-      skin.style.clipPath = clip;
-    });
-  }
-
-  if (skins.length && 'ResizeObserver' in window) {
-    new ResizeObserver(fitSurface).observe(fieldBox);
-    fitSurface();
-  }
-
-  // Lined up with the placeholder's arrival, since the caret rides the same
-  // fade as the words it sits beside.
-  function focusField() {
-    window.setTimeout(
-      function () {
-        if (tabbar.dataset.state === 'assistant') field.focus();
-      },
-      reduced.matches ? 0 : token('--jobs-assistant-start') + 0.7 * token('--jobs-duration-assistant')
-    );
-  }
+  // The assistant, the Transcribe flow's screen, which runs itself
+  // (../transcribe/app.js). The AI button pushes it over whichever page is
+  // showing, and its back button and swipe return there.
+  var fab = document.querySelector('.jobs__fab');
+  var chatBack = pageNamed('assistant').querySelector('.jobs__back');
 
   fab.addEventListener('click', function () {
-    window.clearTimeout(returning);
-    tabbar.dataset.state = 'assistant';
-    focusField();
-  });
-
-  // The suggestions step aside while the field holds words, and come back if
-  // it is emptied; a tapped one becomes those words. The voice button turns
-  // into send for as long as there is something to send.
-  function syncTyped() {
-    if (field.value) {
-      tabbar.dataset.typed = '';
-    } else if ('typed' in tabbar.dataset) {
-      delete tabbar.dataset.typed;
-      tabbar.dataset.cleared = '';
-    }
-    voice.setAttribute('aria-label', field.value ? 'Send message' : 'Speak instead');
-  }
-
-  // Nothing is listening, so sending is the field clearing for the next one.
-  function send() {
-    field.value = '';
-    syncTyped();
-    field.focus();
-  }
-
-  field.addEventListener('input', syncTyped);
-  field.addEventListener('keydown', function (event) {
-    if (event.key === 'Enter' && field.value) {
-      event.preventDefault();
-      send();
-    }
-  });
-  Array.prototype.slice
-    .call(document.querySelectorAll('.jobs__prompt:not(.jobs__prompt--refresh)'))
-    .forEach(function (prompt) {
-      prompt.addEventListener('click', function () {
-        field.value = prompt.textContent.trim();
-        syncTyped();
-        field.focus();
-      });
-    });
-
-  // Two sets, and a refresh advances to the next. The glyph turns once while
-  // the suggestions drop out; the labels change while they are hidden.
-  var prompts = Array.prototype.slice.call(
-    document.querySelectorAll('.jobs__prompt:not(.jobs__prompt--refresh)')
-  );
-  var promptSets = [
-    ['Create a quote', 'Start a job', 'What can AI do?'],
-    ['Post on social media', 'See pending quotes', 'Send a reminder'],
-  ];
-  var promptSet = 0;
-  var refresh = document.querySelector('.jobs__prompt--refresh');
-  var refreshIcon = refresh.querySelector('.jobs__prompt-icon');
-  var refreshing = 0;
-  refresh.addEventListener('click', function () {
-    var pace = window.__ppSpeed || 1;
-    if (!reduced.matches) {
-      refreshIcon.animate({ rotate: ['0deg', '360deg'] }, { duration: 500 / pace, easing: 'cubic-bezier(0.45, 0, 0.4, 1)' });
-    }
-    window.clearTimeout(refreshing);
-    tabbar.dataset.cleared = '';
-    tabbar.dataset.refreshing = '';
-    refreshing = window.setTimeout(
-      function () {
-        promptSet = (promptSet + 1) % promptSets.length;
-        prompts.forEach(function (prompt, index) {
-          prompt.textContent = promptSets[promptSet][index];
-        });
-        delete tabbar.dataset.refreshing;
-      },
-      reduced.matches ? 0 : 200 / pace
-    );
-  });
-
-  // Voice mode. The panel is always dark, whatever the app's theme. Its
-  // contents carry the dark scope in the markup; only the surface and its
-  // shadow caster are re-scoped here, and their colour transition carries the
-  // swap. Scoping the whole field would recolour the controls that are still
-  // fading out.
-  function scopeDark(on) {
-    skins.forEach(function (skin) {
-      if (on) skin.dataset.ppTheme = 'dark';
-      else delete skin.dataset.ppTheme;
-    });
-  }
-
-  voice.addEventListener('click', function () {
-    if (field.value) {
-      send();
-      return;
-    }
-    window.clearTimeout(talking);
-    talk.hidden = false;
-    // A just-shown element has no prior style to transition from; the read
-    // forces one to be computed before the state flips.
-    void talk.offsetHeight;
-    field.blur();
-    scopeDark(true);
-    leaveVoice(false);
-    tabbar.dataset.state = 'voice';
-  });
-
-  // The return's spring is tied to a mark that lasts as long as the panel is
-  // shrinking, so the assistant's own curves are back in place for whatever
-  // comes next.
-  var leaving = 0;
-  function leaveVoice(on) {
-    window.clearTimeout(leaving);
-    if (!on) {
-      delete tabbar.dataset.from;
-      return;
-    }
-    tabbar.dataset.from = 'voice';
-    leaving = window.setTimeout(
-      function () {
-        delete tabbar.dataset.from;
-      },
-      reduced.matches ? 0 : token('--jobs-assistant-start') + token('--jobs-duration-assistant')
-    );
-  }
-
-  // Back one step, to the field. The panel's contents fade before it shrinks,
-  // and leave the tree once they have; the mute is cleared then, out of
-  // sight, so the next session opens live.
-  talkClose.addEventListener('click', function () {
-    leaveVoice(true);
-    tabbar.dataset.state = 'assistant';
-    scopeDark(false);
-    window.clearTimeout(talking);
-    talking = window.setTimeout(
-      function () {
-        if (tabbar.dataset.state !== 'voice') {
-          talk.hidden = true;
-          setMuted(false);
-        }
-      },
-      reduced.matches ? 0 : token('--jobs-assistant-start')
-    );
-    focusField();
-  });
-
-  // The tabs' return has its own, later delay while the field collapses; the
-  // state that carries it is released once the track has finished moving.
-  close.addEventListener('click', function () {
-    leaveVoice(false);
-    // Opened from the docked bar, it closes back to the docked bar. Caught
-    // halfway through undocking, it finishes on the full one.
-    if (tabbar.dataset.dock !== 'in') clearDock();
-    tabbar.dataset.state = 'returning';
-    field.blur();
-    field.value = '';
-    delete tabbar.dataset.typed;
-    delete tabbar.dataset.cleared;
-    voice.setAttribute('aria-label', 'Speak instead');
-    window.clearTimeout(returning);
-    returning = window.setTimeout(
-      function () {
-        if (tabbar.dataset.state === 'returning') tabbar.dataset.state = 'nav';
-      },
-      reduced.matches ? 0 : token('--jobs-duration-assistant')
-    );
+    if (settle) settle();
+    chatBack.dataset.back = shownPage().dataset.page;
+    showPage('assistant', 'push');
   });
 
   // Docking. Scrolling a list down folds the bar into two circles; reaching
@@ -623,14 +399,14 @@
   var DOCK_TRAVEL = 24;
 
   // The tabs keep the undocked shelf's width while it narrows over them: the
-  // row less both gutters, the closed field and the gap in front of it, and
-  // the margin the shelf carries.
+  // row less both gutters, the AI button and the gap in front of it, and the
+  // margin the shelf carries.
   function sizeNav() {
     var width =
       tabbar.clientWidth -
       token('--jobs-gutter-left') -
       token('--jobs-gutter-right') -
-      PILL.height -
+      token('--jobs-bar') -
       2 * token('--pp-space-2');
     nav.style.setProperty('--jobs-nav-width', width + 'px');
   }
@@ -649,7 +425,7 @@
   }
 
   function dock() {
-    if (tabbar.dataset.dock === 'in' || tabbar.dataset.state !== 'nav') return;
+    if (tabbar.dataset.dock === 'in' || 'away' in tabbar.dataset) return;
     window.clearTimeout(undocking);
     aimDock();
     tabbar.dataset.dock = 'in';
@@ -671,13 +447,6 @@
     );
   }
 
-  function clearDock() {
-    window.clearTimeout(undocking);
-    delete tabbar.dataset.dock;
-    nav.inert = false;
-    travel = 0;
-  }
-
   dockButton.addEventListener('click', undock);
 
   // Scroll does not bubble, so the lists are heard in the capture phase; the
@@ -690,7 +459,7 @@
       var top = body.scrollTop;
       var previous = tops.has(body) ? tops.get(body) : top;
       tops.set(body, top);
-      if (tabbar.dataset.state !== 'nav') return;
+      if ('away' in tabbar.dataset) return;
       if (top <= 0) {
         undock();
         travel = 0;

@@ -1,0 +1,837 @@
+/* The AI assistant screen, shared by every flow that shows it. Built from
+   Figma BJbbaCrLcDhly90QyjNDTr, node 2457:8196. The page around it sets
+   --transcribe-status, the height the header clears for the status bar. */
+
+:where(.transcribe) :is(button, input, textarea) {
+  font: inherit;
+  color: inherit;
+}
+
+/* Set on the frame so the flows around the screen can lift their own chrome
+   the same way. */
+.pp-device {
+  /* The shadow on the Figma composer (BJbbaCrLcDhly90QyjNDTr, node
+     2518:12793), shared with the down arrow and the header cluster: a soft
+     spread, a tight contact shadow and a half-pixel hairline. None of the
+     kit's four matches it, so the geometry is written out, each layer's
+     colour the system black mixed down to its opacity. */
+  --transcribe-composer-shadow:
+    0 2px 12px color-mix(in srgb, var(--pp-color-system-black) 6%, transparent),
+    0 1px 2px color-mix(in srgb, var(--pp-color-system-black) 4%, transparent),
+    0 0 0 0.5px color-mix(in srgb, var(--pp-color-system-black) 4%, transparent);
+  /* The composer area's soft shade (node 2518:12792), run toward the floor
+     there and toward the top of the phone over the header. No kit token is a
+     translucent black, so it is mixed from the system black, at 8% rather
+     than the frame's 10%. */
+  --transcribe-shade: color-mix(in srgb, var(--pp-color-system-black) 8%, transparent);
+}
+
+/* The conversation runs the full height under the composer, which floats on
+   it; app.js keeps --transcribe-agent at the composer area's height, and the
+   body pads by that (and by the keyboard's lift) so the last message can
+   always be scrolled clear. */
+.transcribe {
+  position: relative;
+  gap: var(--pp-space-4);
+}
+
+.transcribe > .pp-screen__body {
+  padding-top: calc(var(--transcribe-status, 0px) + 40px + var(--pp-space-4));
+  padding-bottom: calc(var(--transcribe-agent, 0px) + var(--transcribe-lift, 0px));
+}
+
+/* Floats over the top of the conversation the way the composer area floats
+   over the bottom, status bar included, with the same shade run the other
+   way: deepest at the top of the phone. Frosted, with a rule along its foot,
+   while messages sit behind it (data-overlap, from app.js). */
+.transcribe__header {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--pp-space-4);
+  padding: var(--transcribe-status, 0px) var(--pp-space-6) var(--pp-space-2);
+  border-bottom: 1px solid transparent;
+  background-color: transparent;
+  background-origin: border-box;
+  background-image: linear-gradient(to top, transparent, var(--transcribe-shade));
+  -webkit-backdrop-filter: blur(0);
+  backdrop-filter: blur(0);
+  transition:
+    border-color var(--pp-duration-5) var(--pp-ease-in-out),
+    background-color var(--pp-duration-5) var(--pp-ease-in-out),
+    -webkit-backdrop-filter var(--pp-duration-5) var(--pp-ease-in-out),
+    backdrop-filter var(--pp-duration-5) var(--pp-ease-in-out);
+}
+
+.transcribe__header[data-overlap] {
+  border-bottom-color: var(--pp-border-neutral-medium-disabled);
+  background-color: color-mix(in srgb, var(--pp-background-neutral-default) 70%, transparent);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+.transcribe__title {
+  flex: 1;
+  min-width: 0;
+  color: var(--pp-heading-neutral-default);
+}
+
+.transcribe__cluster {
+  display: flex;
+  flex: none;
+  align-items: center;
+  border-radius: var(--pp-radius-sides);
+  background: var(--pp-background-neutral-default);
+  box-shadow: var(--transcribe-composer-shadow);
+}
+
+.transcribe__icon {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pp-radius-sides);
+  background: transparent;
+  color: var(--pp-icon-neutral-default);
+  cursor: pointer;
+}
+
+/* The back arrow is only as wide as its glyph, so the title starts closer to
+   the edge; the full row height keeps it centred on the title. */
+.transcribe__back {
+  width: 18px;
+}
+
+.transcribe__icon:focus-visible {
+  outline: 2px solid var(--pp-border-neutral-default);
+  outline-offset: 2px;
+}
+
+/* Exported glyphs carry a baked fill, so they are masks and the colour stays
+   a token. Each size is its own file; these are the Small glyphs at 18px. */
+.transcribe__glyph {
+  display: block;
+  width: 18px;
+  height: 18px;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.transcribe__glyph--back {
+  -webkit-mask-image: url("../assets/icons/caret-left-small.svg");
+  mask-image: url("../assets/icons/caret-left-small.svg");
+}
+
+.transcribe__glyph--history {
+  -webkit-mask-image: url("../assets/icons/time-small.svg");
+  mask-image: url("../assets/icons/time-small.svg");
+}
+
+.transcribe__glyph--plus {
+  -webkit-mask-image: url("../assets/icons/plus-small.svg");
+  mask-image: url("../assets/icons/plus-small.svg");
+}
+
+.transcribe__glyph--mic {
+  -webkit-mask-image: url("../assets/icons/microphone-small.svg");
+  mask-image: url("../assets/icons/microphone-small.svg");
+}
+
+/* The conversation: the pro's messages on the right in brand low, the
+   assistant's on the left in neutral, each bubble hugging its words up to
+   most of the width so a long reply still reads as a reply. */
+.transcribe__thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pp-space-4);
+  margin: 0;
+  padding: var(--pp-space-7) var(--pp-space-6);
+  list-style: none;
+}
+
+.transcribe__message {
+  display: flex;
+}
+
+.transcribe__message--pro {
+  justify-content: flex-end;
+}
+
+.transcribe__bubble {
+  max-width: 85%;
+  margin: 0;
+  padding: var(--pp-space-3) var(--pp-space-4);
+  border-radius: var(--pp-radius-xlarge);
+  background: var(--pp-background-neutral-medium);
+  color: var(--pp-heading-neutral-default);
+}
+
+.transcribe__message--pro .transcribe__bubble {
+  background: var(--pp-background-brand-low);
+}
+
+.transcribe__bubble p,
+.transcribe__bubble ul {
+  margin: 0;
+}
+
+.transcribe__bubble ul {
+  padding-left: var(--pp-space-5);
+}
+
+.transcribe__bubble > * + * {
+  margin-top: var(--pp-space-2);
+}
+
+.transcribe__glyph--send {
+  -webkit-mask-image: url("../assets/icons/arrow-up-small.svg");
+  mask-image: url("../assets/icons/arrow-up-small.svg");
+}
+
+.transcribe__glyph--down {
+  -webkit-mask-image: url("../assets/icons/arrow-down-small.svg");
+  mask-image: url("../assets/icons/arrow-down-small.svg");
+}
+
+/* A soft shade deepening toward the floor lifts the white composer off the
+   white page. Open, the field reaches out to 8px from the phone's edges.
+   Idle, that shade is all there is. When the composer is open or messages
+   sit behind it (data-overlap, from app.js), it frosts so the conversation
+   reads through as it scrolls under. Open, a rule also appears along the
+   top. The border is always there, transparent at rest, so it never moves
+   anything by its width. */
+.transcribe__agent {
+  position: absolute;
+  inset: auto 0 0;
+  padding: var(--pp-space-2) var(--pp-space-6) var(--pp-space-7);
+  border-top: 1px solid transparent;
+  background-color: transparent;
+  background-origin: border-box;
+  background-image: linear-gradient(to bottom, transparent, var(--transcribe-shade));
+  -webkit-backdrop-filter: blur(0);
+  backdrop-filter: blur(0);
+  transition:
+    padding var(--pp-duration-5) var(--pp-ease-in-out),
+    border-color var(--pp-duration-5) var(--pp-ease-in-out),
+    background-color var(--pp-duration-5) var(--pp-ease-in-out),
+    -webkit-backdrop-filter var(--pp-duration-5) var(--pp-ease-in-out),
+    backdrop-filter var(--pp-duration-5) var(--pp-ease-in-out),
+    translate var(--pp-duration-6) var(--pp-ease-in-out);
+}
+
+.transcribe__agent:has(.transcribe__composer[data-open]) {
+  padding-inline: var(--pp-space-2);
+}
+
+.transcribe__agent:has(.transcribe__composer[data-open]) {
+  border-top-color: var(--pp-border-neutral-medium-disabled);
+}
+
+.transcribe__agent:has(.transcribe__composer[data-open]),
+.transcribe__agent[data-overlap] {
+  background-color: color-mix(in srgb, var(--pp-background-neutral-default) 70%, transparent);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+
+/* Shown by app.js only while the conversation runs on below the fold. It
+   floats a gap above the composer area, white and lifted like the composer,
+   over the mic: its right edge on the mic's, which sits the area's side
+   padding plus the composer's own in from the phone's edge. */
+.transcribe__latest {
+  position: absolute;
+  right: calc(var(--pp-space-6) + var(--pp-space-3) / 2);
+  bottom: calc(100% + var(--pp-space-2));
+  background: var(--pp-background-neutral-default);
+  box-shadow: var(--transcribe-composer-shadow);
+  transition:
+    opacity var(--pp-duration-3) var(--pp-ease-out),
+    right var(--pp-duration-5) var(--pp-ease-in-out);
+}
+
+.transcribe__agent:has(.transcribe__composer[data-open]) .transcribe__latest {
+  right: calc(var(--pp-space-2) + var(--pp-space-2));
+}
+
+.transcribe__latest[hidden] {
+  display: flex;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* At rest a pill: plus, field, mic. Tapping into the field opens it into two
+   rows, the field across the top and plus and mic along the floor, and app.js
+   slides each control from where it was. Once there are words in the field
+   the mic becomes send in the same spot, and sending brings the mic back. The
+   radius starts at half the pill's height rather than the sides token, so it
+   eases to the card's 24 instead of holding a pill until the last frame.
+
+   Tapping the mic turns the field into the transcription bar: the plus turns
+   45 degrees into a cancel cross, the waveform takes the input's place, and
+   the mic becomes stop. Stop hands over to "Transcribing", which holds the
+   cross and the empty field until the words arrive in the input. */
+.transcribe__composer {
+  --transcribe-composer-rest: 56px;
+
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 40px 40px;
+  grid-template-rows: 40px;
+  grid-template-areas: "add field field mic";
+  align-items: center;
+  align-content: center;
+  column-gap: var(--pp-space-2);
+  row-gap: var(--pp-space-2);
+  height: var(--transcribe-composer-rest);
+  padding: calc(var(--pp-space-3) / 2);
+  overflow: clip;
+  border-radius: calc(var(--transcribe-composer-rest) / 2);
+  background: var(--pp-background-neutral-default);
+  box-shadow: var(--transcribe-composer-shadow);
+  transition:
+    height var(--pp-duration-5) var(--pp-ease-in-out),
+    padding var(--pp-duration-5) var(--pp-ease-in-out),
+    border-radius var(--pp-duration-5) var(--pp-ease-in-out);
+}
+
+/* Open, the field row is as tall as its words (--transcribe-field, from
+   app.js): one 40px row for a line, growing to four lines and scrolling
+   inside past that. */
+.transcribe__composer[data-open] {
+  grid-template-rows: var(--transcribe-field, 40px) 40px;
+  grid-template-areas:
+    "field field field field"
+    "add . . mic";
+  height: calc(var(--transcribe-field, 40px) + 40px + 3 * var(--pp-space-2));
+  padding: var(--pp-space-2);
+  border-radius: var(--pp-radius-xxlarge);
+}
+
+.transcribe__add {
+  grid-area: add;
+}
+
+.transcribe__mic {
+  grid-area: mic;
+}
+
+/* Send sits on the mic, the same primary circle, so the swap reads as the
+   icon changing: the mic shrinks out as the arrow grows in. */
+.transcribe__send {
+  grid-area: mic;
+  background: var(--pp-background-brand-strong);
+  color: var(--pp-text-on-brand-strong);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--pp-duration-2) var(--pp-ease-out);
+}
+
+.transcribe__send .transcribe__glyph {
+  scale: 0.5;
+  transition: scale var(--pp-duration-4) var(--pp-ease-in-out);
+}
+
+.transcribe__composer[data-typed] .transcribe__send {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.transcribe__composer[data-typed] .transcribe__send .transcribe__glyph {
+  scale: 1;
+}
+
+.transcribe__composer[data-typed] .transcribe__glyph--mic {
+  opacity: 0;
+  scale: 0.5;
+}
+
+.transcribe__add .transcribe__glyph {
+  transition: rotate var(--pp-duration-5) var(--pp-ease-in-out);
+}
+
+.transcribe__composer:is([data-state="voice"], [data-state="transcribing"]) .transcribe__add .transcribe__glyph {
+  rotate: 45deg;
+}
+
+.transcribe__field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  grid-area: field;
+  min-width: 0;
+  height: 100%;
+}
+
+.transcribe__composer[data-open] .transcribe__field {
+  padding-inline: var(--pp-space-3);
+}
+
+/* A textarea so long words wrap rather than run off the right. Closed it is
+   one line; open it takes the height app.js measures for its words
+   (--transcribe-input), capped at four lines, and scrolls past that. */
+.transcribe__input {
+  display: block;
+  width: 100%;
+  height: var(--pp-line-height-body-1);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--pp-text-neutral-default);
+  resize: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  scrollbar-width: thin;
+  transition: opacity var(--pp-duration-3) var(--pp-ease-out) var(--pp-duration-3);
+}
+
+.transcribe__composer[data-open] .transcribe__input {
+  height: var(--transcribe-input, var(--pp-line-height-body-1));
+}
+
+.transcribe__composer:is([data-state="voice"], [data-state="transcribing"]) .transcribe__input {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--pp-duration-2) var(--pp-ease-in);
+}
+
+/* The bars are drawn by wave.js in this element's colour. They arrive once
+   the input has cleared, and leave first on the way back. */
+.transcribe__wave {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  color: var(--pp-icon-brand-default);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--pp-duration-2) var(--pp-ease-in);
+}
+
+.transcribe__composer[data-state="voice"] .transcribe__wave {
+  opacity: 1;
+  transition: opacity var(--pp-duration-4) var(--pp-ease-out) var(--pp-duration-2);
+}
+
+.transcribe__wave-canvas {
+  display: block;
+  width: 100%;
+  height: var(--pp-space-6);
+}
+
+/* In once the waveform has gone; out alongside the words coming in. */
+.transcribe__status {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--pp-duration-3) var(--pp-ease-in);
+}
+
+.transcribe__composer[data-state="transcribing"] .transcribe__status {
+  opacity: 1;
+  transition: opacity var(--pp-duration-4) var(--pp-ease-out) var(--pp-duration-2);
+}
+
+/* A wide band of the body colour sweeps left to right across the disabled
+   colour. The gradient is two and a half times the word's width, so the word
+   is always covered and the band is only just off it at each end of the
+   sweep. Past the kit's durations, which stop at 350ms: a sweep has to be
+   slow enough to read as light moving across, not a flash. */
+.transcribe__shimmer {
+  --transcribe-duration-shimmer: 1400ms;
+
+  color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    var(--pp-text-disabled) 0%,
+    var(--pp-text-disabled) 30%,
+    var(--pp-text-neutral-default) 50%,
+    var(--pp-text-disabled) 70%,
+    var(--pp-text-disabled) 100%
+  );
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: transcribe-shimmer var(--transcribe-duration-shimmer) linear infinite;
+}
+
+@keyframes transcribe-shimmer {
+  to {
+    background-position: 0% 0;
+  }
+}
+
+.transcribe__input::placeholder {
+  color: var(--pp-text-disabled);
+  opacity: 1;
+}
+
+.transcribe__input:focus {
+  outline: none;
+}
+
+/* Mic and stop share the spot, each shrinking out as the other grows in. */
+.transcribe__mic {
+  position: relative;
+  background: var(--pp-background-brand-strong);
+  color: var(--pp-text-on-brand-strong);
+}
+
+.transcribe__mic:disabled {
+  cursor: default;
+}
+
+.transcribe__mic .transcribe__glyph {
+  transition:
+    opacity var(--pp-duration-2) var(--pp-ease-out),
+    scale var(--pp-duration-4) var(--pp-ease-in-out);
+}
+
+.transcribe__glyph--stop {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  -webkit-mask-image: url("../assets/icons/playback-stop-small.svg");
+  mask-image: url("../assets/icons/playback-stop-small.svg");
+  opacity: 0;
+  scale: 0.5;
+}
+
+.transcribe__composer[data-state="voice"] .transcribe__glyph--mic {
+  opacity: 0;
+  scale: 0.5;
+}
+
+.transcribe__composer[data-state="voice"] .transcribe__glyph--stop {
+  opacity: 1;
+  scale: 1;
+}
+
+/* Chat history: a sheet that rises over the whole screen, status bar
+   included, on a dimmed backdrop, styled after the Jobs Management "Create
+   new" sheet (lbA84xOSur34o56G3CMYZ2, node 10760:67875): a bare close at
+   the top right, a large title, then one line per chat with no rules. It
+   hugs its list up to three quarters of the screen and scrolls inside past
+   that. The open chat's title is in the brand colour. history.js fills and
+   drives it. */
+.transcribe__sheet {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.transcribe__sheet[hidden] {
+  display: none;
+}
+
+.transcribe__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--pp-scrim-dark-80);
+  opacity: 0;
+  transition: opacity var(--pp-duration-5) var(--pp-ease-in-out);
+}
+
+.transcribe__sheet[data-open] .transcribe__backdrop {
+  opacity: 0.5;
+}
+
+.transcribe__sheet-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-height: 75%;
+  border-radius: var(--pp-radius-xlarge) var(--pp-radius-xlarge) 0 0;
+  background: var(--pp-background-neutral-default);
+  translate: 0 100%;
+  transition: translate var(--pp-duration-6) var(--pp-ease-in-out);
+}
+
+.transcribe__sheet[data-open] .transcribe__sheet-panel {
+  translate: 0 0;
+}
+
+.transcribe__sheet-panel:focus {
+  outline: none;
+}
+
+.transcribe__sheet-header {
+  display: flex;
+  flex: none;
+  justify-content: flex-end;
+  padding: var(--pp-space-4) var(--pp-space-3);
+}
+
+/* Only as big as its Medium glyph, as the frame draws it. */
+.transcribe__sheet-close {
+  width: 28px;
+  height: 28px;
+}
+
+.transcribe__glyph--close {
+  width: 28px;
+  height: 28px;
+  -webkit-mask-image: url("../assets/icons/close-medium.svg");
+  mask-image: url("../assets/icons/close-medium.svg");
+}
+
+.transcribe__sheet-title {
+  flex: none;
+  margin: 0;
+  padding: 0 var(--pp-space-6) var(--pp-space-6);
+  color: var(--pp-heading-neutral-default);
+}
+
+.transcribe__chats {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  margin: 0;
+  padding: 0 var(--pp-space-6) var(--pp-space-6);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+}
+
+.transcribe__chat {
+  display: flex;
+  width: 100%;
+  padding: var(--pp-space-3) 0;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.transcribe__chat:focus-visible {
+  outline: 2px solid var(--pp-border-neutral-default);
+  outline-offset: 2px;
+}
+
+.transcribe__chat-title {
+  max-width: 100%;
+  overflow: hidden;
+  color: var(--pp-heading-neutral-default);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transcribe__chat[aria-current] .transcribe__chat-title {
+  color: var(--pp-text-brand-medium);
+}
+
+/* The on-screen keyboard, drawn from the Figma frame for the desk, where no
+   real one appears. It rises with focus in the field and the composer rides
+   up on it to sit 8px above, the way iOS shrinks the view. Like the status
+   bar, its type and colour follow the kit rather than Apple's. */
+.pp-device {
+  --transcribe-keyboard: 317px;
+}
+
+.pp-device[data-keyboard] .transcribe__agent {
+  translate: 0 calc(var(--pp-space-7) - var(--pp-space-2) - var(--transcribe-keyboard));
+}
+
+.pp-device[data-keyboard] .transcribe {
+  --transcribe-lift: calc(var(--transcribe-keyboard) + var(--pp-space-2) - var(--pp-space-7));
+}
+
+.transcribe__keyboard {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  height: var(--transcribe-keyboard);
+  padding: var(--pp-space-6) var(--pp-space-2) 0;
+  border-radius: var(--pp-radius-xxlarge) var(--pp-radius-xxlarge) 0 0;
+  background: var(--pp-background-neutral-medium);
+  translate: 0 100%;
+  transition: translate var(--pp-duration-6) var(--pp-ease-in-out);
+}
+
+.pp-device[data-keyboard] .transcribe__keyboard {
+  translate: 0 0;
+}
+
+.transcribe__keys {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pp-space-3);
+}
+
+/* Keys keep the frame's widths and the rows spread them, which lands the
+   6px between keys without a gap off the spacing scale. */
+.transcribe__key-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.transcribe__key-row--inset {
+  padding-inline: var(--pp-space-5);
+}
+
+.transcribe__key-row--third {
+  gap: var(--pp-space-3);
+}
+
+.transcribe__key-row--third > .transcribe__key-row {
+  flex: 1;
+}
+
+.transcribe__key {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 45px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--pp-radius-medium);
+  background: var(--pp-background-neutral-default);
+  box-shadow: var(--pp-shadow-100);
+  color: var(--pp-text-neutral-default);
+  font-family: var(--pp-font-family);
+  font-size: var(--pp-font-size-title-3);
+  font-weight: var(--pp-font-weight-regular);
+  line-height: var(--pp-leading-flat);
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.transcribe__key:active {
+  background: var(--pp-background-neutral-low);
+}
+
+.transcribe__key--wide {
+  width: 45px;
+}
+
+.transcribe__key--mode {
+  width: 92px;
+  font-size: var(--pp-font-size-body-1);
+}
+
+.transcribe__key--space {
+  width: calc(100% - 196px);
+}
+
+.transcribe__key--return {
+  width: 92px;
+  background: var(--pp-color-blue-600);
+  color: var(--pp-text-neutral-inverse);
+}
+
+.transcribe__key-glyph {
+  display: block;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.transcribe__key-glyph--shift,
+.transcribe__key-glyph--delete {
+  width: 24px;
+  height: 20px;
+}
+
+.transcribe__key-glyph--shift {
+  -webkit-mask-image: url("../assets/icons/keyboard/shift.svg");
+  mask-image: url("../assets/icons/keyboard/shift.svg");
+}
+
+.transcribe__key[data-key="shift"][aria-pressed="true"] {
+  color: var(--pp-icon-brand-default);
+}
+
+.transcribe__key-glyph--delete {
+  -webkit-mask-image: url("../assets/icons/keyboard/delete.svg");
+  mask-image: url("../assets/icons/keyboard/delete.svg");
+}
+
+.transcribe__key-glyph--return {
+  width: 20px;
+  height: 18px;
+  -webkit-mask-image: url("../assets/icons/keyboard/return.svg");
+  mask-image: url("../assets/icons/keyboard/return.svg");
+}
+
+.transcribe__keyboard-floor {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: var(--pp-space-6) var(--pp-space-7) 0;
+  color: var(--pp-icon-neutral-medium);
+}
+
+.transcribe__key-glyph--emoji {
+  width: 27px;
+  height: 27px;
+  -webkit-mask-image: url("../assets/icons/keyboard/emoji.svg");
+  mask-image: url("../assets/icons/keyboard/emoji.svg");
+}
+
+.transcribe__key-glyph--dictate {
+  width: 19px;
+  height: 29px;
+  -webkit-mask-image: url("../assets/icons/keyboard/mic.svg");
+  mask-image: url("../assets/icons/keyboard/mic.svg");
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .transcribe__add .transcribe__glyph,
+  .transcribe__mic .transcribe__glyph,
+  .transcribe__send .transcribe__glyph {
+    transition: none;
+  }
+
+  .transcribe__shimmer {
+    animation: none;
+    color: var(--pp-heading-neutral-low);
+  }
+
+  .transcribe__backdrop,
+  .transcribe__sheet-panel {
+    transition: none;
+  }
+}
+
+/* A real phone brings its own keyboard. */
+@media (max-width: 600px) {
+  .transcribe__keyboard {
+    display: none;
+  }
+
+  .pp-device[data-keyboard] .transcribe__agent {
+    translate: none;
+  }
+
+  .pp-device[data-keyboard] .transcribe {
+    --transcribe-lift: 0px;
+  }
+}

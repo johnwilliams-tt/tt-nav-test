@@ -13,9 +13,10 @@
    when the browser grants one, otherwise from a simulated speech envelope,
    and phase from the clock. */
 (function () {
-  var tabbar = document.querySelector('.jobs__tabbar');
+  // The composer carries the voice state, and the panel's timing with it.
+  var host = document.querySelector('.chat__composer');
   var canvas = document.querySelector('.jobs__waves-canvas');
-  if (!tabbar || !canvas) return;
+  if (!host || !canvas) return;
 
   // Composition. The Figma defaults were set against a 377 x 220 frame with
   // the waves centred in it; this layer is the bottom 110px of the panel, so
@@ -661,7 +662,7 @@ void main() {
       .getUserMedia({ audio: true })
       .then(function (stream) {
         mic.pending = null;
-        if (tabbar.dataset.state !== 'voice' || !mic.context) {
+        if (host.dataset.state !== 'voice' || !mic.context) {
           stream.getTracks().forEach(function (track) { track.stop(); });
           return false;
         }
@@ -692,10 +693,10 @@ void main() {
   // nav.js handles the same tap first and sets the voice state, so by the
   // time this runs the tap is known to have opened voice rather than sent a
   // message.
-  var voiceButton = document.querySelector('.jobs__voice');
+  var voiceButton = document.querySelector('.chat__voice');
   if (voiceButton) {
     voiceButton.addEventListener('click', function () {
-      if (tabbar.dataset.state === 'voice') acquireMic();
+      if (host.dataset.state === 'voice') acquireMic();
     });
   }
 
@@ -800,7 +801,7 @@ void main() {
   }
 
   function token(name) {
-    var value = getComputedStyle(tabbar).getPropertyValue(name).trim();
+    var value = getComputedStyle(host).getPropertyValue(name).trim();
     var number = parseFloat(value) || 0;
     return /[\d.]s$/.test(value) ? number * 1000 : number;
   }
@@ -862,11 +863,11 @@ void main() {
   else window.setTimeout(warm, 1500);
 
   function sync() {
-    var voice = tabbar.dataset.state === 'voice';
+    var voice = host.dataset.state === 'voice';
     if (voice && !active) start();
     else if (!voice && active) stop();
   }
 
-  new MutationObserver(sync).observe(tabbar, { attributes: true, attributeFilter: ['data-state'] });
+  new MutationObserver(sync).observe(host, { attributes: true, attributeFilter: ['data-state'] });
   sync();
 })();

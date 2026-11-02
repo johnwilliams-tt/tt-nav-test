@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" data-pp-form-factor="native" data-pp-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>AI assistant — Transcribe</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="AI assistant" />
+    <link rel="manifest" href="../manifest.webmanifest" />
+    <link rel="stylesheet" href="../styles/fonts.css" />
+    <link rel="stylesheet" href="../styles/pushpin.css" />
+    <link rel="stylesheet" href="../styles/pushpin-device.css" />
+    <link rel="stylesheet" href="assistant.css" />
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <div class="transcribe-device">
+      <div class="pp-device">
+        <div
+          class="pp-status-bar"
+          aria-hidden="true"
+          data-pp-component="Native / Status Bar"
+          data-pp-variant="OS=iOS X [Dynamic Island], Dark Mode=False"
+        >
+          <p class="pp-status-bar__time">9:21</p>
+          <div class="pp-status-bar__levels">
+            <span class="pp-status-bar__glyph pp-status-bar__cellular"></span>
+            <span class="pp-status-bar__glyph pp-status-bar__wifi"></span>
+            <div class="pp-status-bar__battery"></div>
+            <div class="pp-status-bar__battery-fill"></div>
+            <span class="pp-status-bar__glyph pp-status-bar__battery-cap"></span>
+          </div>
+        </div>
+
+        <div class="pp-screen transcribe">
+          <header class="transcribe__header">
+            <button
+              type="button"
+              class="transcribe__icon transcribe__back"
+              aria-label="Back"
+              data-pp-component="Icon Button"
+              data-pp-variant="theme=tertiary, size=small"
+            >
+              <span class="transcribe__glyph transcribe__glyph--back" aria-hidden="true"></span>
+            </button>
+            <h1 class="pp-title-6 transcribe__title" id="transcribe-title">AI assistant</h1>
+            <div class="transcribe__cluster">
+              <button
+                type="button"
+                class="transcribe__icon transcribe__history"
+                aria-label="Chat history"
+                aria-haspopup="dialog"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary, size=small"
+              >
+                <span class="transcribe__glyph transcribe__glyph--history" aria-hidden="true"></span>
+              </button>
+              <button
+                type="button"
+                class="transcribe__icon transcribe__new"
+                aria-label="New chat"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=secondary, size=small"
+              >
+                <span class="transcribe__glyph transcribe__glyph--plus" aria-hidden="true"></span>
+              </button>
+            </div>
+          </header>
+
+          <div class="pp-screen__body">
+            <ol class="transcribe__thread" aria-label="Conversation">
+              <li class="transcribe__message transcribe__message--pro" data-pp-component="Bubble / Text" data-pp-variant="Theme=Sender, Length=Short, Interaction=Initial" data-pp-content="pro">
+                <p class="pp-body-2 transcribe__bubble">Morning. What’s on my plate today?</p>
+              </li>
+              <li class="transcribe__message transcribe__message--agent" data-pp-component="Bubble / Text" data-pp-variant="Theme=Recipient, Length=Long, Interaction=Initial">
+                <div class="pp-body-2 transcribe__bubble">
+                  <p>You have 3 jobs today:</p>
+                  <ul>
+                    <li>9:00 AM: fall cleanup for Dana Whitfield on Maple Ave</li>
+                    <li>12:30 PM: sod install for the Okafor family</li>
+                    <li>4:00 PM: estimate walk-through with Priya Shah</li>
+                  </ul>
+                </div>
+              </li>
+              <li class="transcribe__message transcribe__message--pro" data-pp-component="Bubble / Text" data-pp-variant="Theme=Sender, Length=Short, Interaction=Initial" data-pp-content="pro">
+                <p class="pp-body-2 transcribe__bubble">Push the Okafor job to tomorrow, rain’s coming in after lunch</p>
+              </li>
+              <li class="transcribe__message transcribe__message--agent" data-pp-component="Bubble / Text" data-pp-variant="Theme=Recipient, Length=Long, Interaction=Initial">
+                <p class="pp-body-2 transcribe__bubble">Done. I moved the Okafor sod install to tomorrow at 9:00 AM and messaged them about the weather.</p>
+              </li>
+              <li class="transcribe__message transcribe__message--pro" data-pp-component="Bubble / Text" data-pp-variant="Theme=Sender, Length=Long, Interaction=Initial" data-pp-content="pro">
+                <p class="pp-body-2 transcribe__bubble">Thanks. Can you draft a quote for Priya? Backyard is about 2,400 sq ft. She wants new sod, a paver patio around 12x16, and some low maintenance plants along the fence</p>
+              </li>
+              <li class="transcribe__message transcribe__message--agent" data-pp-component="Bubble / Text" data-pp-variant="Theme=Recipient, Length=Long, Interaction=Initial">
+                <div class="pp-body-2 transcribe__bubble">
+                  <p>Here’s a draft for Priya Shah:</p>
+                  <ul>
+                    <li>Sod, 2,400 sq ft: $2,880</li>
+                    <li>Paver patio, 12 × 16 ft: $5,760</li>
+                    <li>Drought-tolerant fence-line planting: $1,350</li>
+                  </ul>
+                  <p>Total: $9,990. Want me to add grading or edging?</p>
+                </div>
+              </li>
+              <li class="transcribe__message transcribe__message--pro" data-pp-component="Bubble / Text" data-pp-variant="Theme=Sender, Length=Long, Interaction=Initial" data-pp-content="pro">
+                <p class="pp-body-2 transcribe__bubble">Add edging along the beds, and knock 5% off since she’s a referral</p>
+              </li>
+              <li class="transcribe__message transcribe__message--agent" data-pp-component="Bubble / Text" data-pp-variant="Theme=Recipient, Length=Long, Interaction=Initial">
+                <p class="pp-body-2 transcribe__bubble">I added steel edging for $640 and a 5% referral discount. The new total is $10,099. Should I send it after your walk-through this afternoon?</p>
+              </li>
+              <li class="transcribe__message transcribe__message--pro" data-pp-component="Bubble / Text" data-pp-variant="Theme=Sender, Length=Short, Interaction=Initial" data-pp-content="pro">
+                <p class="pp-body-2 transcribe__bubble">Yeah send it after 4</p>
+              </li>
+              <li class="transcribe__message transcribe__message--agent" data-pp-component="Bubble / Text" data-pp-variant="Theme=Recipient, Length=Short, Interaction=Initial">
+                <p class="pp-body-2 transcribe__bubble">Scheduled. Priya will get the quote at 5:00 PM today.</p>
+              </li>
+              <li class="transcribe__message transcribe__message--pro" data-pp-component="Bubble / Text" data-pp-variant="Theme=Sender, Length=Short, Interaction=Initial" data-pp-content="pro">
+                <p class="pp-body-2 transcribe__bubble">How did we do last month?</p>
+              </li>
+              <li class="transcribe__message transcribe__message--agent" data-pp-component="Bubble / Text" data-pp-variant="Theme=Recipient, Length=Long, Interaction=Initial">
+                <p class="pp-body-2 transcribe__bubble">You earned $18,420 across 21 jobs in September, up 14% from August. Lawn aeration and fall cleanups brought in most of it.</p>
+              </li>
+              <li class="transcribe__message transcribe__message--pro" data-pp-component="Bubble / Text" data-pp-variant="Theme=Sender, Length=Short, Interaction=Initial" data-pp-content="pro">
+                <p class="pp-body-2 transcribe__bubble">Any leads I haven’t answered?</p>
+              </li>
+              <li class="transcribe__message transcribe__message--agent" data-pp-component="Bubble / Text" data-pp-variant="Theme=Recipient, Length=Long, Interaction=Initial">
+                <p class="pp-body-2 transcribe__bubble">Two new leads. Marcus Lee wants weekly mowing in Brookside, and Elena Ruiz is asking about a retaining wall. Want me to reply to both with your availability?</p>
+              </li>
+              <li class="transcribe__message transcribe__message--pro" data-pp-component="Bubble / Text" data-pp-variant="Theme=Sender, Length=Short, Interaction=Initial" data-pp-content="pro">
+                <p class="pp-body-2 transcribe__bubble">Reply to Marcus. I’ll call Elena myself</p>
+              </li>
+              <li class="transcribe__message transcribe__message--agent" data-pp-component="Bubble / Text" data-pp-variant="Theme=Recipient, Length=Long, Interaction=Initial">
+                <p class="pp-body-2 transcribe__bubble">I sent Marcus your openings for Tuesday and Thursday mornings, and set a reminder for you to call Elena at 3:30 PM.</p>
+              </li>
+            </ol>
+          </div>
+
+          <div class="transcribe__agent">
+            <button
+              type="button"
+              class="transcribe__icon transcribe__latest"
+              aria-label="Scroll to latest"
+              data-pp-component="Icon Button"
+              data-pp-variant="theme=secondary, size=small"
+              hidden
+            >
+              <span class="transcribe__glyph transcribe__glyph--down" aria-hidden="true"></span>
+            </button>
+            <form class="transcribe__composer" data-pp-proposed="Pro / Composer">
+              <button
+                type="button"
+                class="transcribe__icon transcribe__add"
+                aria-label="Add"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=tertiary, size=small"
+              >
+                <span class="transcribe__glyph transcribe__glyph--plus" aria-hidden="true"></span>
+              </button>
+              <div class="transcribe__field">
+                <textarea
+                  class="pp-body-1 transcribe__input"
+                  rows="1"
+                  placeholder="Let’s get to work"
+                  aria-label="Message AI assistant"
+                  autocomplete="off"
+                  enterkeyhint="send"
+                ></textarea>
+                <div class="transcribe__wave" aria-hidden="true" data-pp-proposed="Pro / Voice waveform">
+                  <canvas class="transcribe__wave-canvas"></canvas>
+                </div>
+                <p class="pp-body-1 transcribe__status" role="status">
+                  <span class="transcribe__shimmer">Transcribing</span>
+                </p>
+              </div>
+              <button
+                type="button"
+                class="transcribe__icon transcribe__mic"
+                aria-label="Transcribe"
+                aria-pressed="false"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=primary, size=small"
+              >
+                <span class="transcribe__glyph transcribe__glyph--mic" aria-hidden="true"></span>
+                <span class="transcribe__glyph transcribe__glyph--stop" aria-hidden="true"></span>
+              </button>
+              <button
+                type="submit"
+                class="transcribe__icon transcribe__send"
+                aria-label="Send"
+                data-pp-component="Icon Button"
+                data-pp-variant="theme=primary, size=small"
+              >
+                <span class="transcribe__glyph transcribe__glyph--send" aria-hidden="true"></span>
+              </button>
+            </form>
+          </div>
+
+          <div class="transcribe__sheet" hidden>
+            <div class="transcribe__backdrop" data-pp-component="iOS / Sheet / Backdrop"></div>
+            <section class="transcribe__sheet-panel" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="transcribe-history-title" data-pp-component="iOS / Sheet">
+              <header class="transcribe__sheet-header">
+                <button
+                  type="button"
+                  class="transcribe__icon transcribe__sheet-close"
+                  aria-label="Close"
+                  data-pp-component="Icon Button"
+                  data-pp-variant="theme=tertiary, size=small"
+                >
+                  <span class="transcribe__glyph transcribe__glyph--close" aria-hidden="true"></span>
+                </button>
+              </header>
+              <h2 class="pp-title-2 transcribe__sheet-title" id="transcribe-history-title">Chat history</h2>
+              <ol class="transcribe__chats" aria-label="Past chats" data-pp-proposed="Pro / Chat history list"></ol>
+            </section>
+          </div>
+        </div>
+
+        <div
+          class="transcribe__keyboard"
+          aria-hidden="true"
+          data-pp-component="Native / Alphabetic Keyboard"
+          data-pp-variant="Dark Mode=False, Uppercase=False, Type=Letters, Platform=iOS, Style=Portrait, Configuration=Base keyboard"
+        >
+          <div class="transcribe__keys">
+            <div class="transcribe__key-row" data-keys="qwertyuiop"></div>
+            <div class="transcribe__key-row transcribe__key-row--inset" data-keys="asdfghjkl"></div>
+            <div class="transcribe__key-row transcribe__key-row--third">
+              <button type="button" class="transcribe__key transcribe__key--wide" data-key="shift" tabindex="-1">
+                <span class="transcribe__key-glyph transcribe__key-glyph--shift"></span>
+              </button>
+              <div class="transcribe__key-row" data-keys="zxcvbnm"></div>
+              <button type="button" class="transcribe__key transcribe__key--wide" data-key="delete" tabindex="-1">
+                <span class="transcribe__key-glyph transcribe__key-glyph--delete"></span>
+              </button>
+            </div>
+            <div class="transcribe__key-row transcribe__key-row--bottom">
+              <button type="button" class="transcribe__key transcribe__key--mode" data-key="mode" tabindex="-1">ABC</button>
+              <button type="button" class="transcribe__key transcribe__key--space" data-key="space" tabindex="-1"></button>
+              <button type="button" class="transcribe__key transcribe__key--return" data-key="return" tabindex="-1">
+                <span class="transcribe__key-glyph transcribe__key-glyph--return"></span>
+              </button>
+            </div>
+          </div>
+          <div class="transcribe__keyboard-floor">
+            <span class="transcribe__key-glyph transcribe__key-glyph--emoji"></span>
+            <span class="transcribe__key-glyph transcribe__key-glyph--dictate"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="../speed.js" data-pp-devtool></script>
+    <script src="../concepts.js" data-pp-devtool></script>
+    <script src="wave.js"></script>
+    <script src="speech.js"></script>
+    <script src="app.js"></script>
+    <script src="history.js"></script>
+    <script src="keyboard.js"></script>
+  </body>
+</html>

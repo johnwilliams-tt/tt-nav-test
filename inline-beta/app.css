@@ -45,39 +45,17 @@ h1 {
   );
 }
 
-/* Registered so its calc() resolves to a time in computed style: nav.js reads
-   it to schedule focus and the voice panel's teardown. */
-@property --jobs-assistant-start {
-  syntax: "<time>";
-  inherits: true;
-  initial-value: 0ms;
-}
-
 /* The screen: header and filters hold still, the list is what scrolls. */
 .jobs {
-  /* The panel's spring: ~24px past its resting height, reached at the halfway
-     point so the settle back down is a distinct second move rather than a
-     slow drift. The kit's three easings all stop at the target. */
-  --jobs-ease-spring: cubic-bezier(0.22, 1.5, 0.5, 1);
-  /* A spring's pace with the overshoot removed, for the assistant: a
-     surface that ends flush with a screen edge has nowhere to overshoot to,
-     and the jiggle showed on the field's edge and the close button. */
+  /* A spring's pace with the overshoot removed: the docking bar ends flush
+     against the AI button and has nowhere to overshoot to. */
   --jobs-ease-settle: cubic-bezier(0.34, 1, 0.64, 1);
-  /* Past the kit's durations, which stop at 350ms: short for a surface this
-     size once it has a curve to settle. */
-  --jobs-duration-assistant: 480ms;
-  /* The tabs clear before the field starts moving; every assistant timing is
-     measured from this start, which rides the same 1.5x. */
-  --jobs-assistant-start: calc(var(--pp-duration-3) / 1.5);
-  /* The suggested prompts wait well past the field's arrival and rise slowly,
-     so they read as offered rather than as part of the bar opening. Measured
-     from the tap. */
-  --jobs-prompts-delay: 1000ms;
-  --jobs-duration-prompts: 700ms;
-  /* Scrolling down docks the bar into two 40px circles, and the top of the
-     list or a tap on the left circle brings it back. */
+  /* Scrolling down docks the bar into two circles, and the top of the list or
+     a tap on the left circle brings it back. Past the kit's durations, which
+     stop at 350ms. */
   --jobs-duration-dock: 400ms;
-
+  /* The tab bar's height and the AI button's diameter. */
+  --jobs-bar: 56px;
   position: relative;
   overflow: clip;
 }
@@ -90,8 +68,27 @@ h1 {
   display: flex;
   flex-direction: column;
   row-gap: var(--pp-space-6);
-  padding-top: var(--pp-space-6);
   background: var(--pp-background-neutral-default);
+}
+
+/* The assistant's header (../transcribe/assistant.css) sits below the status
+   bar here rather than behind it, and is solid white with the gray action
+   cluster, like every other page's header, rather than shaded and frosted. */
+.jobs__page.transcribe {
+  --transcribe-status: 0px;
+}
+
+.jobs__page.transcribe .transcribe__header,
+.jobs__page.transcribe .transcribe__header[data-overlap] {
+  border-bottom-color: transparent;
+  background: var(--pp-background-neutral-default);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+.jobs__page.transcribe .transcribe__cluster {
+  background: var(--pp-background-neutral-medium);
+  box-shadow: none;
 }
 
 .jobs__page[hidden] {
@@ -117,7 +114,7 @@ h1 {
   box-shadow: 0 0 var(--pp-space-6) color-mix(in srgb, var(--pp-color-gray-950) 18%, transparent);
 }
 
-/* Every page's header: a back button on pages that sit under a tab, the
+/* Every page's header: a bare back arrow on pages that sit under a tab, the
    title, and a cluster of up to three actions. The header design fills the
    buttons with neutral-medium where the kit's secondary Icon Button uses
    neutral-low. */
@@ -157,8 +154,16 @@ h1 {
   cursor: pointer;
 }
 
+.jobs__action[hidden] {
+  display: none;
+}
+
+/* The back arrow is only as wide as its glyph, so the title starts closer to
+   the edge; the full row height keeps it centred on the title. */
 .jobs__back {
   flex: none;
+  width: 18px;
+  background: transparent;
 }
 
 /* Exported glyphs carry a baked fill, so they are masks and the colour stays
@@ -188,6 +193,11 @@ h1 {
 .jobs__action-icon--back {
   -webkit-mask-image: url("../assets/icons/caret-left-small.svg");
   mask-image: url("../assets/icons/caret-left-small.svg");
+}
+
+.jobs__action-icon--history {
+  -webkit-mask-image: url("../assets/icons/time-small.svg");
+  mask-image: url("../assets/icons/time-small.svg");
 }
 
 .jobs__action-icon--search {
@@ -376,31 +386,40 @@ h1 {
   user-select: none;
 }
 
-/* The More page: a list of the destinations without a tab of their own. */
-.jobs__body--more {
-  padding-left: var(--pp-space-2);
-  padding-right: var(--pp-space-2);
-}
-
+/* The More page: a list of the destinations without a tab of their own,
+   built like the job list's rows: the same insets, gap and rule between
+   rows, with a caret at the far end saying each one opens a page. */
 .jobs__more {
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+.jobs__more li + li {
+  border-top: 1px solid var(--pp-border-neutral-default);
+}
+
 .jobs__more-item {
   display: flex;
   align-items: center;
-  gap: var(--pp-space-3);
-  height: 44px;
-  padding: 0 var(--pp-space-3);
-  border-radius: var(--pp-radius-sides);
+  gap: var(--pp-space-4);
+  padding: var(--pp-space-4) 0;
   color: var(--pp-link-neutral-low);
   text-decoration: none;
 }
 
-.jobs__more-item:active {
-  background: var(--pp-background-neutral-low);
+.jobs__more-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.jobs__more-caret {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  background-color: var(--pp-icon-neutral-medium);
+  -webkit-mask: url("../assets/icons/caret-right-small.svg") center / contain no-repeat;
+  mask: url("../assets/icons/caret-right-small.svg") center / contain no-repeat;
 }
 
 .jobs__more-icon {
@@ -439,16 +458,6 @@ h1 {
 .jobs__more-icon--settings {
   -webkit-mask-image: url("../assets/icons/settings-medium-28.svg");
   mask-image: url("../assets/icons/settings-medium-28.svg");
-}
-
-.jobs__more-rule {
-  padding: var(--pp-space-4);
-}
-
-.jobs__more-rule hr {
-  margin: 0;
-  border: 0;
-  border-top: 1px solid var(--pp-border-neutral-default);
 }
 
 /* Marketing: for now, only the way into social media, centred in the body. */
@@ -623,44 +632,22 @@ h1 {
   mask: url("../assets/icons/more-vertical-small.svg") center / contain no-repeat;
 }
 
-/* The nav floats over the list, on a scrim that fades the rows out beneath it. */
-/* Five tracks: the tab shelf, a gap, the assistant field, a gap, the close
-   button. Opening the assistant hands track 1's width to track 3, which is
-   what makes the fab grow leftward into a field as the shelf leaves. The
-   gaps are tracks rather than `gap` so they can close to nothing and let the
-   field reach the screen's padding edge exactly.
+/* The nav floats over the list, on a scrim that fades the rows out beneath it.
+   Five tracks: the left margin, the tab shelf, the gap, the AI button and the
+   right margin. The left margin is 8px short and the shelf carries the 8px as
+   its own margin, so docking can close the shelf's track down to a circle
+   plus that margin and give the slack to the gap, leaving the AI button where
+   it is.
 
    All five are lengths: a track cannot interpolate between a length and an
-   fr, so the flexible one is written as a percentage minus its neighbours.
-
-   The gap between shelf and field (track 3) never changes, so the two can
-   only ever be 8px apart while both are on screen. For the field to still
-   land on the screen's padding edge with that gap in front of it, the grid
-   starts 8px early on the left and the shelf carries the 8px as its margin:
-   closed, the shelf sits where it always did; open, the field sits where the
-   shelf's left edge was.
-
-   The screen margins are tracks too (1 and 7, and the second row), rather
-   than padding, because voice mode pulls the panel out to 8px from the
-   phone's edges and the margins have to travel with the rest of the grid. */
+   fr, so the flexible one is written as a percentage minus its neighbours. */
 .jobs__tabbar {
   --jobs-gutter-left: var(--pp-space-4);
   --jobs-gutter-right: var(--pp-space-6);
-  /* The closed bar's height, which is also the closed assistant's diameter. */
-  --jobs-bar: 56px;
-  /* The docked tab circle, matched to the closed assistant beside it. */
+  /* The docked tab circle, matched to the AI button beside it. */
   --jobs-dock: var(--jobs-bar);
-  /* The assistant's scrim: the kit's sheet scrim thinned to 40% at the foot,
-     since it is not a sheet, eased out in steps so its top edge never reads
-     as a line. */
-  --jobs-scrim-fade: linear-gradient(
-    to top,
-    color-mix(in srgb, var(--pp-scrim-dark-80) 40%, transparent),
-    color-mix(in srgb, var(--pp-scrim-dark-80) 26%, transparent) 30%,
-    color-mix(in srgb, var(--pp-scrim-dark-80) 12%, transparent) 60%,
-    color-mix(in srgb, var(--pp-scrim-dark-80) 3%, transparent) 85%,
-    transparent
-  );
+  /* The shelf and the AI button float on the assistant's composer shadow. */
+  --jobs-float-shadow: var(--transcribe-composer-shadow);
   position: absolute;
   inset: auto 0 0 0;
   /* Above a page that is mid-push. */
@@ -671,82 +658,38 @@ h1 {
     calc(100% - var(--jobs-gutter-left) - var(--jobs-gutter-right) - var(--jobs-bar) - var(--pp-space-2))
     var(--pp-space-2)
     var(--jobs-bar)
-    0
-    0
     var(--jobs-gutter-right);
-  grid-template-rows: auto var(--pp-space-6);
-  /* Bottom-aligned so the assistant button holds its place while the shelf
-     beside it grows upward into the More menu. */
+  grid-template-rows: auto var(--pp-space-7);
+  /* Bottom-aligned so the AI button holds its place while the shelf beside it
+     grows upward into the More menu. */
   align-items: end;
-  /* Only matters while the voice panel's spring overshoots: the tracks that
-     are closing cannot go below zero, so for a few frames the columns add up
-     to more than the width, and centring splits that excess over both edges
-     instead of spilling it all to the right. */
-  justify-content: center;
   padding: var(--pp-space-6) 0 0;
-  /* The rows only move on the voice axis, where both directions wait for the
-     panel's contents to clear, so their delay is unconditional. */
-  transition:
-    grid-template-columns var(--jobs-duration-assistant) var(--jobs-ease-settle),
-    grid-template-rows var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
-}
-
-.jobs__tabbar[data-state="assistant"] {
-  grid-template-columns:
-    var(--jobs-gutter-left)
-    0
-    var(--pp-space-2)
-    calc(100% - var(--jobs-gutter-left) - var(--jobs-gutter-right) - 40px - 2 * var(--pp-space-2))
-    var(--pp-space-2)
-    40px
-    var(--jobs-gutter-right);
-  transition:
-    grid-template-columns var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start),
-    grid-template-rows var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
-}
-
-/* Voice: the field takes the whole row and the margins close to 8px, the
-   same inset the phone's own corner curve leaves it. Everything inside the
-   field has faded first (the start delay), so the panel grows empty. */
-.jobs__tabbar[data-state="voice"] {
-  grid-template-columns:
-    var(--pp-space-2)
-    0
-    0
-    calc(100% - 2 * var(--pp-space-2))
-    0
-    0
-    var(--pp-space-2);
-  grid-template-rows: auto var(--pp-space-2);
-  /* The panel opens on the menu's spring and closes on the settle curve: a
-     transition belongs to the state being entered, so the assistant rule
-     above carries the way back. The overshoot lands on the margin tracks,
-     which have 8px to give, so the panel never meets the frame. */
-  transition:
-    grid-template-columns var(--jobs-duration-assistant) var(--jobs-ease-spring) var(--jobs-assistant-start),
-    grid-template-rows var(--jobs-duration-assistant) var(--jobs-ease-spring) var(--jobs-assistant-start);
-}
-
-/* Docked: the shelf's track closes to a circle plus the margin it carries and
-   the slack goes to the gap in front of the field, so the tabs hold the left
-   padding edge and the assistant stays where it is. nav.js holds
-   data-dock="out" for the length of the way back so both directions run on
-   this clock. Scoped to the nav state: opening the assistant from here hands
-   the columns to its own timing. Closing the assistant opened from here
-   lands back on these columns, on the assistant's clock. */
-.jobs__tabbar[data-state="nav"][data-dock] {
   transition: grid-template-columns var(--jobs-duration-dock) var(--jobs-ease-settle);
 }
 
-.jobs__tabbar:is([data-state="nav"], [data-state="returning"])[data-dock="in"] {
+/* Docked: the shelf's track closes to a circle plus the margin it carries and
+   the slack goes to the gap in front of the AI button, so the tabs hold the
+   left padding edge. nav.js holds data-dock="out" for the length of the way
+   back so both directions run on this clock. */
+.jobs__tabbar[data-dock="in"] {
   grid-template-columns:
     var(--jobs-gutter-left)
     calc(var(--jobs-dock) + var(--pp-space-2))
     calc(100% - var(--jobs-gutter-left) - var(--jobs-gutter-right) - var(--jobs-dock) - var(--jobs-bar) - var(--pp-space-2))
     var(--jobs-bar)
-    0
-    0
     var(--jobs-gutter-right);
+}
+
+/* Under the assistant the bar is gone with the page it sits on: nav.js
+   carries it off beneath that page during the push and keeps it hidden until
+   the pop brings it back. While it rides with the page underneath, it sits
+   beneath the page that is moving over both. */
+.jobs__tabbar[data-under] {
+  z-index: 0;
+}
+
+.jobs__tabbar[data-away] {
+  visibility: hidden;
 }
 
 .jobs__scrim {
@@ -792,133 +735,55 @@ h1 {
 }
 
 /* Painted last, so the wash sits over the blurred rows rather than being
-   blurred with them. */
+   blurred with them. Over the wash, the assistant's soft shade deepening
+   toward the floor lifts the white bar off the white page. */
 .jobs__scrim-wash {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to bottom,
-    transparent,
-    color-mix(in srgb, var(--pp-background-neutral-default) 60%, transparent) 50%,
-    color-mix(in srgb, var(--pp-background-neutral-default) 90%, transparent)
-  );
+  background:
+    linear-gradient(to bottom, transparent, var(--transcribe-shade)),
+    linear-gradient(
+      to bottom,
+      transparent,
+      color-mix(in srgb, var(--pp-background-neutral-default) 60%, transparent) 50%,
+      color-mix(in srgb, var(--pp-background-neutral-default) 90%, transparent)
+    );
 }
 
 /* Docked, the bar is two circles that carry their own shadows, so the blur
    and wash behind them go. Each layer fades on its own: opacity on the
    container would make it the blur's backdrop root, and the blur would cut
-   out at the first frame instead of fading. Scoped to the bar at rest, so the
-   assistant opened from the docked bar gets them back. */
+   out at the first frame instead of fading. */
 .jobs__tabbar[data-dock] :is(.jobs__scrim-blur, .jobs__scrim-wash) {
   transition: opacity var(--jobs-duration-dock) var(--pp-ease-out);
 }
 
-.jobs__tabbar:is([data-state="nav"], [data-state="returning"])[data-dock="in"] :is(.jobs__scrim-blur, .jobs__scrim-wash) {
+.jobs__tabbar[data-dock="in"] :is(.jobs__scrim-blur, .jobs__scrim-wash) {
   opacity: 0;
-}
-
-/* The assistant's scrim: easing out to nothing halfway up the frame, so the
-   bar reads as lifted off the list without the screen going dark behind a
-   single line of input. Anchored to the bar's floor like the dim, it sits
-   above the blurred rows and below the field. It arrives as the field starts
-   to grow and leaves with the field's contents. */
-.jobs__ai-scrim {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: calc(var(--pp-device-height) / 2);
-  background: var(--jobs-scrim-fade);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--pp-duration-3) var(--pp-ease-in);
-}
-
-.jobs__tabbar:is([data-state="assistant"], [data-state="voice"]) .jobs__ai-scrim {
-  opacity: 1;
-  transition: opacity var(--jobs-duration-assistant) var(--pp-ease-out) var(--jobs-assistant-start);
 }
 
 /* The white pill that holds the tabs. Positioned so it paints above the scrim
-   rather than under it with the rest of the in-flow content. It takes real
-   layout height, since the scrim behind it is sized by the same row. */
+   rather than under it with the rest of the in-flow content.
+
+   End-aligned in its track, so docking narrows it from the left edge's side
+   toward the AI button; the circle is its floor. Without the explicit width,
+   an aligned item would shrink-wrap its absolutely positioned contents and
+   sit at the floor from the outset. */
 .jobs__shelf {
+  grid-column: 2;
+  justify-self: end;
   position: relative;
+  width: calc(100% - var(--pp-space-2));
+  min-width: var(--jobs-bar);
   height: var(--jobs-bar);
-  min-width: 0;
+  margin-left: var(--pp-space-2);
   border-radius: var(--pp-radius-sides);
   background: var(--pp-background-neutral-default);
   overflow: clip;
-  /* The kit's elevation tokens stop at --pp-shadow-400, which is too slight to
-     lift a bar that floats over scrolling content; the design's own two-layer
-     shadow is mixed from the gray ramp so it stays dark in both themes. */
-  box-shadow:
-    0 8px 7px -7px color-mix(in srgb, var(--pp-color-gray-950) 25%, transparent),
-    0 20px 40px color-mix(in srgb, var(--pp-color-gray-950) 15%, transparent);
-  /* The assistant's bump and return. */
-  transition: translate calc(0.35 * var(--jobs-duration-assistant)) var(--jobs-ease-settle);
+  box-shadow: var(--jobs-float-shadow);
 }
 
-/* Giving up its track takes the shelf down to a circle rather than to
-   nothing, and then it is pushed off the left edge. */
-.jobs__shelf {
-  grid-column: 2;
-  /* End-aligned, so the shelf's right edge is pinned to its track's right edge
-     and the gap to the field never changes: the collapsing track compresses
-     the shelf against the field rather than letting the two drift apart. The
-     circle is the floor, since the track collapses to nothing and the shelf
-     has to stop at a ball rather than shrink away; below the floor it
-     overflows its track leftward, which is the direction it is leaving in.
-     Without the explicit width, an aligned item would shrink-wrap its
-     absolutely positioned contents and sit at the floor from the outset. */
-  justify-self: end;
-  width: calc(100% - var(--pp-space-2));
-  min-width: var(--jobs-bar);
-  margin-left: var(--pp-space-2);
-}
-
-/* The compression is carried entirely by the track, so the gap holds at 8px
-   the whole way: the shelf squeezes down to its circular floor and then, a ball,
-   rides ahead of the field's edge. With the gap held the ball would come to
-   rest 16px inside the screen, so this translate is the bump that takes it
-   the rest of the way off. It starts the moment the ball forms — 0.39 of the
-   way through the settle curve — and runs out on that same curve, so the ball
-   decelerates with the field rather than picking up speed at the end. The
-   travel is the 16px plus the 40px reach of the ball's shadow, so the shadow
-   has left the stage too by the time the ball is hidden. Voice mode is a
-   deeper state of the same open assistant, so the shelf stays out. */
-.jobs__tabbar:is([data-state="assistant"], [data-state="voice"]) .jobs__shelf {
-  translate: -64px;
-  visibility: hidden;
-  pointer-events: none;
-  transition:
-    translate calc(0.61 * var(--jobs-duration-assistant)) var(--jobs-ease-settle)
-      calc(var(--jobs-assistant-start) + 0.39 * var(--jobs-duration-assistant)),
-    visibility 0s linear calc(var(--jobs-assistant-start) + var(--jobs-duration-assistant));
-}
-
-/* Docked, the shelf is a ball already, with nothing to compress or clear, so
-   it slides off as one piece: the bump runs the whole length of the field's
-   growth on the field's own curve, adding to the track's pull rather than
-   taking over from it partway. */
-.jobs__tabbar:is([data-state="assistant"], [data-state="voice"])[data-dock="in"] .jobs__shelf {
-  transition:
-    translate var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start),
-    visibility 0s linear calc(var(--jobs-assistant-start) + var(--jobs-duration-assistant));
-}
-
-/* The start delay is the tabs' exit, and docked there are no tabs to clear,
-   so the whole assistant timeline starts on the tap. */
-.jobs__tabbar[data-state="assistant"][data-dock="in"] {
-  --jobs-assistant-start: 0ms;
-}
-
-/* And slides back the same way as the field closes behind it. */
-.jobs__tabbar[data-state="returning"][data-dock="in"] .jobs__shelf {
-  transition: translate var(--jobs-duration-assistant) var(--jobs-ease-settle);
-}
-
-/* Docked, the shelf is its circular floor, beside the assistant's own circle,
+/* Docked, the shelf is its circular floor, beside the AI button's own circle,
    and the whole circle is the way back to the tabs. */
 .jobs__dock {
   position: absolute;
@@ -931,7 +796,7 @@ h1 {
   visibility: hidden;
 }
 
-.jobs__tabbar[data-state="nav"][data-dock="in"] .jobs__dock {
+.jobs__tabbar[data-dock="in"] .jobs__dock {
   visibility: visible;
 }
 
@@ -951,45 +816,6 @@ h1 {
   align-items: center;
   height: var(--jobs-bar);
   padding: var(--jobs-nav-inset);
-  transition:
-    opacity var(--pp-duration-2) var(--pp-ease-out),
-    scale var(--pp-duration-2) var(--pp-ease-out),
-    filter var(--pp-duration-2) var(--pp-ease-out);
-}
-
-/* The tabs' exit for the assistant: they shrink a little and defocus as
-   they fade. */
-.jobs__tabbar:is([data-state="assistant"], [data-state="voice"]) .jobs__shelf .jobs__nav {
-  opacity: 0;
-  scale: 0.9;
-  filter: blur(6px);
-  pointer-events: none;
-}
-
-/* The tabs are gone before the shelf starts to narrow — their exit is what
-   the field's start delay is waiting for — so a compressed bar is never
-   seen. */
-.jobs__tabbar:is([data-state="assistant"], [data-state="voice"]) .jobs__shelf .jobs__nav {
-  transition:
-    opacity var(--jobs-assistant-start) var(--pp-ease-in),
-    scale var(--jobs-assistant-start) var(--pp-ease-in),
-    filter var(--jobs-assistant-start) var(--pp-ease-in);
-}
-
-/* And on the way back they wait until the bar is within a few percent of its
-   width — 0.62 of the way through the settle curve — so they fade in onto a
-   bar that is all but still. nav.js holds this state until the track has
-   finished. */
-.jobs__tabbar[data-state="returning"] .jobs__shelf .jobs__nav {
-  transition-delay: calc(0.62 * var(--jobs-duration-assistant));
-}
-
-/* Docked, the ball's icon rides off and back with the ball, as it is. */
-.jobs__tabbar[data-dock="in"]:is([data-state="assistant"], [data-state="voice"], [data-state="returning"]) .jobs__shelf .jobs__nav {
-  opacity: 1;
-  scale: 1;
-  filter: none;
-  transition: none;
 }
 
 /* The selected state is one travelling element rather than a background on
@@ -1126,591 +952,30 @@ h1 {
     translate var(--jobs-duration-dock) var(--jobs-ease-settle);
 }
 
-/* The assistant. Closed it is a circle in track 4; open it is the same
-   element spanning the row, so the fab does not hand off to a field — it
-   becomes one. Everything inside is placed against its left edge, which is
-   the edge that travels. */
-.jobs__field {
+/* The AI button: the kit's secondary Icon Fab at the bar's height, on the
+   shelf's shadow. It pushes the assistant's page. */
+.jobs__fab {
   grid-column: 4;
   position: relative;
-  display: grid;
-  grid-template-rows: var(--jobs-bar);
-  /* Only changes on the voice axis; see the tab bar's rows. */
-  transition: grid-template-rows var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
-}
-
-/* The shadow, on a layer of its own under the surface. A drop shadow rather
-   than the box shadow the shelf and close button wear: it is cast from what
-   is painted, so it follows the clipped corner curve, where a box shadow is
-   cast from the circular-radius box and the smoothed corner sits inside it,
-   leaving an unshadowed sliver between the two. drop-shadow's blur is a
-   standard deviation, half the box-shadow blur; the contact layer loses its
-   negative spread. The filter sits on the wrapper and the clip on the fill,
-   since a clip is applied after an element's own filter and would cut it.
-   The fill wears the surface's colour, including its dark re-scope, so its
-   anti-aliased edge never shows as a lighter fringe under the surface's. */
-.jobs__shade {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  filter:
-    drop-shadow(0 20px 20px color-mix(in srgb, var(--pp-color-gray-950) 15%, transparent))
-    drop-shadow(0 2px 2px color-mix(in srgb, var(--pp-color-gray-950) 12%, transparent));
-}
-
-.jobs__shade-fill {
-  position: absolute;
-  inset: 0;
-  border-radius: 28px;
-  background: var(--pp-background-neutral-default);
-  transition: background-color var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
-}
-
-/* The painted surface, separate from the field so it can be clipped to the
-   phone's corner curve while the field keeps casting the shadow (a clip cuts
-   the element's own shadow). The clip is written by nav.js from the box's
-   size on every frame it changes — a pill at 56px high, the phone's 54px
-   smoothed corner at 180 — because a CSS transition between two path() values
-   is only interpolated by some engines and snaps halfway in the rest. The
-   radius here is the pill's, for the frames before the script runs. */
-.jobs__surface {
-  position: absolute;
-  inset: 0;
-  overflow: clip;
-  border-radius: 28px;
-  background: var(--pp-background-neutral-default);
-  transition: background-color var(--jobs-duration-assistant) var(--jobs-ease-settle) var(--jobs-assistant-start);
-}
-
-/* Voice mode: the panel is 377 x 180 at 54px with the phone's 60% smoothing,
-   concentric with the frame's own corners 8px outside it. The panel is
-   always dark, whatever the app's theme: its contents carry the dark scope
-   in the markup, and nav.js re-scopes the surface and its shadow caster for
-   as long as it is a panel so their colour transition does the swap. The field's own controls
-   stay in the app's theme while they fade, which is why the scope is not
-   put on the field. */
-.jobs__tabbar[data-state="voice"] .jobs__field {
-  grid-template-rows: 180px;
-  transition: grid-template-rows var(--jobs-duration-assistant) var(--jobs-ease-spring) var(--jobs-assistant-start);
-}
-
-/* And shrinks back on the same spring. The way back is the assistant state,
-   whose own curves belong to the fab growing into a field and must not
-   overshoot, so nav.js marks the bar for the length of the return and the
-   spring rides the mark. The tracks that grow back from zero are all
-   growing, so nothing clamps and the undershoot stays centred. */
-.jobs__tabbar[data-from="voice"],
-.jobs__tabbar[data-from="voice"] .jobs__field {
-  transition-timing-function: var(--jobs-ease-spring);
-}
-
-/* The waves sit on the panel's floor and arrive once it has reached its
-   size: up from below and in, together. waves.js draws them into the canvas;
-   this layer only places and choreographs it. */
-.jobs__waves {
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 110px;
-  opacity: 0;
-  translate: 0 var(--pp-space-6);
-  transition:
-    opacity var(--pp-duration-3) var(--pp-ease-out),
-    translate var(--pp-duration-3) var(--pp-ease-out);
-}
-
-.jobs__waves-canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-.jobs__tabbar[data-state="voice"] .jobs__waves {
-  opacity: 1;
-  translate: 0 0;
-  transition:
-    opacity var(--pp-duration-4) var(--jobs-ease-settle) calc(var(--jobs-assistant-start) + var(--jobs-duration-assistant)),
-    translate var(--pp-duration-4) var(--jobs-ease-settle) calc(var(--jobs-assistant-start) + var(--jobs-duration-assistant));
-}
-
-.jobs__fab {
-  position: absolute;
-  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--jobs-bar);
+  height: var(--jobs-bar);
   padding: 0;
   border: 0;
   border-radius: var(--pp-radius-sides);
-  background: none;
+  background: var(--pp-background-neutral-default);
+  box-shadow: var(--jobs-float-shadow);
   cursor: pointer;
 }
 
-.jobs__tabbar:not([data-state="nav"], [data-state="returning"]) .jobs__fab {
-  pointer-events: none;
-}
-
-/* Sized for the circle and scaled down to the field's 18px about its own
-   centre, so the spin has no wobble. The nudges are what each state needs to
-   land right: -2px centres the 24px glyph in the circle, and -3px puts the
-   shrunk one back on the field's text inset, since a centre-origin scale
-   pulls both edges in. */
 .jobs__spark {
-  position: absolute;
-  top: 50%;
-  left: 18px;
   width: 24px;
   height: 24px;
-  margin-top: -12px;
-  translate: -2px;
   background-color: var(--pp-icon-brand-default);
-  -webkit-mask-image: url("../assets/icons/ai-spark.svg");
-  mask-image: url("../assets/icons/ai-spark.svg");
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  transition:
-    translate var(--jobs-duration-assistant) var(--pp-ease-in-out),
-    scale var(--jobs-duration-assistant) var(--pp-ease-in-out),
-    rotate var(--jobs-duration-assistant) var(--pp-ease-in-out),
-    opacity var(--pp-duration-3) var(--pp-ease-out);
-}
-
-/* The spin waits for the tabs to clear, the same beat the field waits for, so
-   the icon turns while the field grows around it rather than ahead of it.
-   The fourth delay is the opacity's: once the spin has landed the spark
-   crossfades into the plus. */
-.jobs__tabbar[data-state="assistant"] .jobs__spark {
-  translate: -3px;
-  scale: 0.75;
-  rotate: -360deg;
-  opacity: 0;
-  transition-delay:
-    var(--jobs-assistant-start),
-    var(--jobs-assistant-start),
-    var(--jobs-assistant-start),
-    calc(var(--jobs-assistant-start) + var(--jobs-duration-assistant));
-}
-
-/* Centred where the shrunk spark lands: its 24px box at 18px, nudged -3px,
-   puts the centre 27px in, which is the 18px plus at the same 18px left. */
-.jobs__plus {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 18px;
-  width: 18px;
-  height: 18px;
-  margin: auto 0;
-  background-color: var(--pp-icon-neutral-default);
-  -webkit-mask-image: url("../assets/icons/plus-small.svg");
-  mask-image: url("../assets/icons/plus-small.svg");
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  opacity: 0;
-  transition: opacity var(--pp-duration-3) var(--pp-ease-out);
-}
-
-.jobs__tabbar[data-state="assistant"] .jobs__plus {
-  opacity: 1;
-  transition-delay: calc(var(--jobs-assistant-start) + var(--jobs-duration-assistant));
-}
-
-/* Coming back from voice the field is already open, so the plus returns with
-   the placeholder rather than waiting out a spin that does not happen. */
-.jobs__tabbar[data-from="voice"] .jobs__plus {
-  transition-delay: calc(var(--jobs-assistant-start) + 0.7 * var(--jobs-duration-assistant));
-}
-
-/* Voice mode empties the field first: everything in it, and the close button
-   beside it, is gone before the panel starts to grow. */
-.jobs__tabbar[data-state="voice"] :is(.jobs__spark, .jobs__plus, .jobs__input, .jobs__voice, .jobs__close) {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--jobs-assistant-start) var(--pp-ease-in);
-}
-
-.jobs__tabbar[data-state="voice"] .jobs__spark {
-  translate: -3px;
-  scale: 0.75;
-  rotate: -360deg;
-}
-
-.jobs__input {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: calc(18px + 18px + var(--pp-space-2));
-  right: calc(40px + var(--pp-space-2) * 2);
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--pp-heading-neutral-default);
-  font: inherit;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--pp-duration-2) var(--pp-ease-out);
-}
-
-.jobs__input::placeholder {
-  color: var(--pp-heading-neutral-default);
-  opacity: 1;
-}
-
-.jobs__input:focus {
-  outline: none;
-}
-
-.jobs__voice {
-  position: absolute;
-  top: 50%;
-  right: var(--pp-space-2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  margin-top: -20px;
-  border: 0;
-  border-radius: var(--pp-radius-sides);
-  background: var(--pp-background-brand-strong);
-  cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--pp-duration-2) var(--pp-ease-out);
-}
-
-.jobs__voice-icon {
-  width: 18px;
-  height: 18px;
-  background-color: var(--pp-icon-on-brand-strong);
-  -webkit-mask-image: url("../assets/icons/audio-lines-small.svg");
-  mask-image: url("../assets/icons/audio-lines-small.svg");
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-  transition:
-    opacity var(--pp-duration-2) var(--pp-ease-out),
-    scale var(--pp-duration-3) var(--jobs-ease-settle);
-}
-
-/* With words in the field the button sends them: the audio lines give way to
-   the arrow in the same spot, each shrinking out as the other grows in. */
-.jobs__voice-icon--send {
-  position: absolute;
-  inset: 0;
-  margin: auto;
-  -webkit-mask-image: url("../assets/icons/arrow-up-small.svg");
-  mask-image: url("../assets/icons/arrow-up-small.svg");
-  opacity: 0;
-  scale: 0.5;
-}
-
-.jobs__tabbar[data-typed] .jobs__voice-icon {
-  opacity: 0;
-  scale: 0.5;
-}
-
-.jobs__tabbar[data-typed] .jobs__voice-icon--send {
-  opacity: 1;
-  scale: 1;
-}
-
-/* The field's contents arrive together, once it is nearly at full width, on
-   one slow fade. */
-.jobs__tabbar[data-state="assistant"] :is(.jobs__input, .jobs__voice) {
-  opacity: 1;
-  pointer-events: auto;
-  transition-duration: var(--pp-duration-3);
-  transition-delay: calc(var(--jobs-assistant-start) + 0.7 * var(--jobs-duration-assistant));
-}
-
-.jobs__close {
-  grid-column: 6;
-  align-self: center;
-  /* Positioned for the same reason the shelf and the field are: the scrim is
-     absolutely positioned, so it paints over any static sibling — which was
-     washing this button's shadow out and softening its icon. */
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 40px;
-  min-width: 0;
-  padding: 0;
-  border: 0;
-  border-radius: var(--pp-radius-sides);
-  background: var(--pp-background-neutral-default);
-  overflow: clip;
-  cursor: pointer;
-  opacity: 0;
-  pointer-events: none;
-  box-shadow:
-    0 8px 7px -7px color-mix(in srgb, var(--pp-color-gray-950) 25%, transparent),
-    0 20px 40px color-mix(in srgb, var(--pp-color-gray-950) 15%, transparent);
-  transition: opacity var(--pp-duration-2) var(--pp-ease-out);
-}
-
-.jobs__tabbar[data-state="assistant"] .jobs__close {
-  opacity: 1;
-  pointer-events: auto;
-  transition-delay: calc(var(--jobs-assistant-start) + 0.42 * var(--jobs-duration-assistant));
-}
-
-.jobs__close-icon {
-  flex: none;
-  width: 18px;
-  height: 18px;
-  background-color: var(--pp-icon-neutral-default);
-  -webkit-mask-image: url("../assets/icons/close-small.svg");
-  mask-image: url("../assets/icons/close-small.svg");
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-}
-
-/* Suggested prompts, stacked on the open field's left edge 24px above it. The
-   three labels cannot share one row at 345, so they stack, hugging their
-   words. They are the last thing in: a beat after the field has opened they
-   rise one at a time from the field outward, and they leave together, at
-   once, on any exit — closing, voice, or text in the field. */
-.jobs__prompts {
-  position: absolute;
-  left: calc(var(--jobs-gutter-left) + var(--pp-space-2));
-  bottom: calc(var(--pp-space-6) + var(--jobs-bar) + var(--pp-space-6));
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--pp-space-4);
-  pointer-events: none;
-}
-
-/* The kit's tertiary small Button: white, 40 tall, 20 in from either end. */
-.jobs__prompt {
-  --jobs-prompt-order: 0;
-  height: 40px;
-  padding: 0 var(--pp-space-5);
-  border: 0;
-  border-radius: var(--pp-radius-sides);
-  background: var(--pp-background-neutral-default);
-  color: var(--pp-heading-neutral-default);
-  white-space: nowrap;
-  cursor: pointer;
-  opacity: 0;
-  translate: 0 var(--pp-space-2);
-  transition:
-    opacity var(--pp-duration-2) var(--pp-ease-in),
-    translate var(--pp-duration-2) var(--pp-ease-in);
-}
-
-/* Counted from the bar up, so the nearest arrives first and the refresh
-   control, on top, last. */
-.jobs__prompt:nth-last-child(2) {
-  --jobs-prompt-order: 1;
-}
-
-.jobs__prompt:nth-last-child(3) {
-  --jobs-prompt-order: 2;
-}
-
-.jobs__prompt:nth-last-child(4) {
-  --jobs-prompt-order: 3;
-}
-
-/* The kit's tertiary large Icon Button: a white 40px circle, the 18px glyph
-   centred. */
-.jobs__prompt--refresh {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  padding: 0;
-}
-
-.jobs__prompt-icon {
-  width: 18px;
-  height: 18px;
-  background-color: var(--pp-icon-neutral-default);
-  -webkit-mask-image: url("../assets/icons/sync-small.svg");
-  mask-image: url("../assets/icons/sync-small.svg");
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-}
-
-.jobs__tabbar[data-state="assistant"]:not([data-typed]) .jobs__prompt {
-  opacity: 1;
-  translate: 0 0;
-  pointer-events: auto;
-  transition:
-    opacity var(--jobs-duration-prompts) var(--pp-ease-out),
-    translate var(--jobs-duration-prompts) var(--jobs-ease-settle);
-  transition-delay: calc(var(--jobs-prompts-delay) + var(--jobs-prompt-order) * var(--pp-duration-1));
-}
-
-/* Typed away and back to empty, the field is already open, so they return
-   without waiting out its growth. */
-.jobs__tabbar[data-state="assistant"][data-cleared] .jobs__prompt {
-  transition-delay: calc(var(--jobs-prompt-order) * var(--pp-duration-1));
-}
-
-/* A refresh swaps the set: the suggestions drop out together and rise back
-   in, nearest first, while the control itself stays put. */
-.jobs__tabbar[data-refreshing] .jobs__prompt:not(.jobs__prompt--refresh) {
-  opacity: 0;
-  translate: 0 var(--pp-space-2);
-  transition:
-    opacity var(--pp-duration-2) var(--pp-ease-in),
-    translate var(--pp-duration-2) var(--pp-ease-in);
-}
-
-/* The voice panel's contents: an expand control up top, the prompt, and the
-   mic, keyboard and stop controls along the floor, all over the waves. It
-   fills the field's grid cell, so it is the panel's padding box, and it is
-   the last thing in: after the panel has its size and the waves are up. */
-.jobs__talk {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  min-height: 0;
-  padding: var(--pp-space-6);
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--jobs-assistant-start) var(--pp-ease-in);
-}
-
-.jobs__talk[hidden] {
-  display: none;
-}
-
-.jobs__tabbar[data-state="voice"] .jobs__talk {
-  opacity: 1;
-  pointer-events: auto;
-  /* Starts once the waves are most of the way in. */
-  transition: opacity var(--pp-duration-3) var(--pp-ease-out)
-    calc(var(--jobs-assistant-start) + var(--jobs-duration-assistant) + 0.6 * var(--pp-duration-4));
-}
-
-.jobs__talk-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.jobs__talk-row--top {
-  justify-content: flex-end;
-}
-
-.jobs__talk-group {
-  display: flex;
-  gap: var(--pp-space-2);
-}
-
-.jobs__talk-caption {
-  color: var(--pp-heading-neutral-default);
-  text-align: center;
-  text-wrap: pretty;
-}
-
-.jobs__talk-button {
-  display: flex;
-  flex: none;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border: 0;
-  border-radius: var(--pp-radius-sides);
-  background: var(--pp-background-neutral-low);
-  cursor: pointer;
-}
-
-.jobs__talk-button--close {
-  background: var(--pp-background-brand-strong);
-}
-
-/* The mic is a mute toggle. Both glyphs share the cell and crossfade, since
-   a mask image cannot transition; the pill goes to the alert fill. */
-.jobs__talk-button--mic {
-  display: grid;
-  place-items: center;
-  transition: background-color var(--pp-duration-2) var(--pp-ease-out);
-}
-
-.jobs__talk-button--mic .jobs__talk-icon {
-  grid-area: 1 / 1;
-  transition: opacity var(--pp-duration-2) var(--pp-ease-out);
-}
-
-.jobs__talk-button--mic .jobs__talk-icon--mic-off {
-  opacity: 0;
-}
-
-.jobs__talk-button--mic[aria-pressed="true"] {
-  background: var(--pp-background-alert-medium);
-}
-
-.jobs__talk-button--mic[aria-pressed="true"] .jobs__talk-icon--mic {
-  opacity: 0;
-}
-
-.jobs__talk-button--mic[aria-pressed="true"] .jobs__talk-icon--mic-off {
-  opacity: 1;
-}
-
-.jobs__talk-icon {
-  width: 18px;
-  height: 18px;
-  background-color: var(--pp-icon-neutral-default);
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
-}
-
-.jobs__talk-button--close .jobs__talk-icon {
-  background-color: var(--pp-icon-on-brand-strong);
-}
-
-.jobs__talk-icon--expand {
-  -webkit-mask-image: url("../assets/icons/expand-small.svg");
-  mask-image: url("../assets/icons/expand-small.svg");
-}
-
-.jobs__talk-icon--mic {
-  -webkit-mask-image: url("../assets/icons/mic-small.svg");
-  mask-image: url("../assets/icons/mic-small.svg");
-}
-
-.jobs__talk-icon--mic-off {
-  -webkit-mask-image: url("../assets/icons/mic-off-small.svg");
-  mask-image: url("../assets/icons/mic-off-small.svg");
-}
-
-.jobs__talk-icon--keyboard {
-  -webkit-mask-image: url("../assets/icons/message-quote-small.svg");
-  mask-image: url("../assets/icons/message-quote-small.svg");
-}
-
-.jobs__talk-icon--close {
-  -webkit-mask-image: url("../assets/icons/close-small.svg");
-  mask-image: url("../assets/icons/close-small.svg");
+  -webkit-mask: url("../assets/icons/ai-spark.svg") center / contain no-repeat;
+  mask: url("../assets/icons/ai-spark.svg") center / contain no-repeat;
 }
 
 /* On a phone the frame is the phone. Below 600px the drawn device gives way:
@@ -1752,11 +1017,6 @@ h1 {
     border-radius: 0;
     clip-path: none;
     padding-top: env(safe-area-inset-top);
-  }
-
-  /* Measured against the frame on the desk; here the frame is the viewport. */
-  .jobs__ai-scrim {
-    height: calc(100dvh / 2);
   }
 
   .pp-status-bar {

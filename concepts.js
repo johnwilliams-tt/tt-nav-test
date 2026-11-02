@@ -11,6 +11,7 @@
     { slug: 'inline-beta-legacy', name: 'Inline Beta (Legacy)', hidden: true },
     { slug: 'inline-action', name: 'Inline Action', hidden: true },
     { slug: 'sidebar-ga', name: 'Sidebar - GA' },
+    { slug: 'transcribe', name: 'Transcribe', hidden: true },
   ];
 
   var match = window.location.pathname.match(/\/([^/]+)\/(?:index\.html)?$/);

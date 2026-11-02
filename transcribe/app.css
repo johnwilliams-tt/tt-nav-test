@@ -1,0 +1,97 @@
+/* The Transcribe flow: the AI assistant screen (assistant.css) on its own in
+   the phone frame. */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: var(--pp-space-7) 0;
+  background: var(--pp-background-neutral-low);
+  font-family: var(--pp-font-family);
+  color: var(--pp-text-neutral-default);
+}
+
+h1 {
+  margin: 0;
+}
+
+/* The frame's corners follow the phone's: 62px with iOS's continuous curve,
+   which is what Figma draws at 60% corner smoothing. The kit frame ships with
+   a plain token radius, and that file is generated, so the override lives
+   here. A clip cuts the element's own shadow, so the wrapper casts it. */
+.transcribe-device {
+  width: fit-content;
+  margin: 0 auto;
+  border-radius: 62px;
+  box-shadow: var(--pp-shadow-200);
+}
+
+.pp-device {
+  border-radius: 62px;
+  box-shadow: none;
+  clip-path: path(
+    "M 293.8 0 c 34.72 0 52.08 0 65.35 6.76 a 62 62 0 0 1 27.09 27.09 c 6.76 13.26 6.76 30.62 6.76 65.35 L 393 752.8 c 0 34.72 0 52.08 -6.76 65.35 a 62 62 0 0 1 -27.09 27.09 c -13.26 6.76 -30.62 6.76 -65.35 6.76 L 99.2 852 c -34.72 0 -52.08 0 -65.35 -6.76 a 62 62 0 0 1 -27.09 -27.09 c -6.76 -13.26 -6.76 -30.62 -6.76 -65.35 L 0 99.2 c 0 -34.72 0 -52.08 6.76 -65.35 a 62 62 0 0 1 27.09 -27.09 c 13.26 -6.76 30.62 -6.76 65.35 -6.76 Z"
+  );
+}
+
+/* The screen runs up behind the status bar, which turns clear and sits on
+   top, so the header's frost reaches the top of the phone. 59px is the
+   drawn status bar's height in pushpin-device.css; on a real phone it is the
+   safe-area inset instead (below). */
+.pp-device {
+  --transcribe-status: 59px;
+}
+
+.pp-device > .transcribe {
+  grid-row: 1 / -1;
+}
+
+.pp-device > .pp-status-bar {
+  z-index: 2;
+  grid-row: 1;
+  grid-column: 1;
+  background: transparent;
+}
+
+/* On a phone the frame is the phone. Below 600px the drawn device gives way:
+   no page padding, radius, shadow or painted status bar; the screen fills the
+   viewport and the real status bar is kept clear through the safe-area inset. */
+@media (max-width: 600px) {
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  body {
+    padding: 0;
+    background: var(--pp-background-neutral-default);
+  }
+
+  .transcribe-device {
+    position: fixed;
+    inset: 0;
+    width: auto;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .pp-device {
+    --pp-device-width: 100%;
+    --pp-device-height: 100%;
+    --transcribe-status: env(safe-area-inset-top);
+    border-radius: 0;
+    clip-path: none;
+  }
+
+  .pp-status-bar {
+    display: none;
+  }
+
+  [data-pp-devtool] {
+    display: none;
+  }
+}
