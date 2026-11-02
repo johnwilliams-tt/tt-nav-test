@@ -20,16 +20,17 @@ The waves need WebGPU. Without it the panel opens and works, but no waves are dr
 
 ## Where the code is
 
-| File | What it holds |
+| Where | What it holds |
 | --- | --- |
 | `sidebar-ga/waves.js` | The waves: shader, tuning constants, mic metering, mute, start/stop timing. Self-contained. |
-| `sidebar-ga/nav.js` lines 1–130, 262–346 | Opening and closing voice mode, mute toggle, the smoothed-corner clip. |
-| `sidebar-ga/app.css` lines 330–350 | Timing tokens and easing curves. |
-| `sidebar-ga/app.css` lines 615–691 | The bar's grid; voice mode widens the field to the full row. |
-| `sidebar-ga/app.css` lines 840–971 | Panel size, shadow, surface color, waves layer. |
-| `sidebar-ga/app.css` lines 1288–1423 | Panel contents: caption and the four buttons. |
-| `sidebar-ga/index.html` lines 943–1037 | The bar and panel markup. |
-| `inline-beta/waves.js` lines 305–430 | The same shader ported to GLSL. Start here for Skia, not from the WGSL. |
+| `sidebar-ga/nav.js`: `squircle()`, `fitSurface()` | The smoothed-corner clip that follows the panel's size. |
+| `sidebar-ga/nav.js`: `voice`, `talkClose`, `mute` click handlers | Opening and closing voice mode, and the mute toggle. |
+| `sidebar-ga/app.css`: `.jobs` | Timing tokens (`--jobs-duration-assistant`, `--jobs-assistant-start`) and easing curves. |
+| `sidebar-ga/app.css`: `.jobs__tabbar[data-state="voice"]` | The bar's grid; voice mode widens the field to the full row. |
+| `sidebar-ga/app.css`: `.jobs__field` through `.jobs__waves` | Panel size, shadow, surface color, waves layer. |
+| `sidebar-ga/app.css`: `.jobs__talk*` | Panel contents: caption and the four buttons. |
+| `sidebar-ga/index.html`: `.jobs__tabbar` | The bar and panel markup. |
+| `inline-beta/waves.js`: `var glsl` | The same shader ported to GLSL. Start here for Skia, not from the WGSL. |
 
 The tuning constants at the top of `inline-beta/waves.js` and `sidebar-ga/waves.js` are identical.
 
