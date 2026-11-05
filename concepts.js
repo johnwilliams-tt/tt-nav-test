@@ -12,6 +12,7 @@
     { slug: 'inline-action', name: 'Inline Action', hidden: true },
     { slug: 'sidebar-ga', name: 'Sidebar - GA' },
     { slug: 'transcribe', name: 'Transcribe', hidden: true },
+    { slug: 'live-voice', name: 'Live Voice' },
   ];
 
   var match = window.location.pathname.match(/\/([^/]+)\/(?:index\.html)?$/);
