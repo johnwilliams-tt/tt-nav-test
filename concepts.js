@@ -7,12 +7,13 @@
    except on its own page, so the control still shows where you are. */
 (function () {
   var CONCEPTS = [
-    { slug: 'inline-beta', name: 'Inline - Beta' },
+    { slug: 'routing', name: 'Routing' },
+    { slug: 'inline-beta', name: 'Inline - Beta', hidden: true },
     { slug: 'inline-beta-legacy', name: 'Inline Beta (Legacy)', hidden: true },
     { slug: 'inline-action', name: 'Inline Action', hidden: true },
-    { slug: 'sidebar-ga', name: 'Sidebar - GA' },
+    { slug: 'sidebar-ga', name: 'Sidebar - GA', hidden: true },
     { slug: 'transcribe', name: 'Transcribe', hidden: true },
-    { slug: 'live-voice', name: 'Live Voice' },
+    { slug: 'live-voice', name: 'Live Voice', hidden: true },
   ];
 
   var match = window.location.pathname.match(/\/([^/]+)\/(?:index\.html)?$/);

@@ -33,6 +33,15 @@
         "value": "cubic-bezier(0.34, 1.56, 0.64, 1)",
         "createdAt": "2026-10-14T13:45:59.291Z",
         "reason": "user confirmed: asked for the More menu to squash then bounce open"
+      },
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "routing/index.html"
+        ],
+        "createdAt": "2026-11-05T18:48:21.470Z",
+        "reason": "Agent triage: fires on the edited fragment only; impeccable detect on the full page with the Today markup applied reports no flat-type-hierarchy (ramp 28/22/16/12px via pp-title-2/3/6 and pp-body-3)"
       }
     ]
   }
